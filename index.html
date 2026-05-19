@@ -4,125 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dazeen Premium - Pure Organic Date Seed Roast</title>
-    <!-- Tailwind CSS Integration for premium look and feel -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- EmailJS SDK Integration for Back-office notifications -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script type="text/javascript">
-       (function(){
-          emailjs.init("EP8o2Jd5j4HOD-gsGmN7f"); 
-       })();
-    </script>
-
     <script>
-        // Secure Tailwind config initialization to prevent race conditions during script loading
-        window.tailwind = window.tailwind || {};
-        window.tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#1b3322', // Deep Forest Green for roasted premium organic aesthetic
-                        accent: '#d4af37',  // Premium gold accents
-                        accentHover: '#c19a2e',
-                        lightGold: '#fdf9e2',
-                        amberDark: '#5c3a21', // Organic dates seed roasted texture color
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#1b3322', accent: '#d4af37', amberDark: '#5c3a21' } } }
         }
     </script>
     
     <style>
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #d4af37;
-            border-radius: 4px;
-        }
-        .toast-slide {
-            animation: slideIn 0.3s ease-out forwards;
-        }
-        @keyframes slideIn {
-            from { transform: translateY(100%) translateX(50%); opacity: 0; }
-            to { transform: translateY(0) translateX(0); opacity: 1; }
-        }
-        .chat-wave span {
-            animation: chatBob 1.2s infinite ease-in-out;
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #d4af37;
-            margin: 0 2px;
-        }
-        .chat-wave span:nth-child(2) { animation-delay: 0.2s; }
-        .chat-wave span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes chatBob {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-        @keyframes drawCheck {
-            to { stroke-dashoffset: 0; }
-        }
-        @keyframes popScale {
-            0% { transform: scale(0); opacity: 0; }
-            70% { transform: scale(1.15); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        @keyframes driveAcross {
-            0% { transform: translateX(-150px); }
-            100% { transform: translateX(360px); }
-        }
-        /* Splash Screen Animations */
-        @keyframes splashLogoPop {
-            0% { transform: scale(0) rotate(-45deg); opacity: 0; }
-            70% { transform: scale(1.2) rotate(10deg); opacity: 1; }
-            100% { transform: scale(1) rotate(0); opacity: 1; }
-        }
-        /* Smooth Scale and Fade in animation for New Product Detail View */
-        .page-transition {
-            animation: pageFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes pageFadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        /* Smooth scale bounce transitions for modern UI popups */
-        .smooth-celebration-card {
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease-out;
-        }
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-        }
-        .accordion-active .accordion-content {
-            max-height: 500px;
-            padding-top: 1rem;
-            padding-bottom: 0.5rem;
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 4px; }
+        .toast-slide { animation: slideIn 0.3s ease-out forwards; }
+        @keyframes slideIn { from { transform: translateY(100%) translateX(50%); opacity: 0; } to { transform: translateY(0) translateX(0); opacity: 1; } }
+        @keyframes popScale { 0% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes driveAcross { 0% { transform: translateX(-150px); } 100% { transform: translateX(360px); } }
+        @keyframes splashLogoPop { 0% { transform: scale(0) rotate(-45deg); opacity: 0; } 70% { transform: scale(1.2) rotate(10deg); opacity: 1; } 100% { transform: scale(1); rotate(0); opacity: 1; } }
+        .page-transition { animation: pageFadeIn 0.3s ease-out forwards; }
+        @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .accordion-active .accordion-content { max-height: 500px; padding-top: 1rem; }
     </style>
 </head>
 <body class="bg-[#faf8f5] font-sans min-h-screen flex flex-col text-gray-800 antialiased overflow-x-hidden pb-24 md:pb-0">
 
-    <!-- BRAND OPENING SPLASH SCREEN -->
-    <div id="splash-screen" class="fixed inset-0 bg-primary z-[300] flex flex-col items-center justify-center transition-all duration-700 ease-in-out">
+    <!-- SPLASH SCREEN -->
+    <div id="splash-screen" class="fixed inset-0 bg-primary z-[300] flex flex-col items-center justify-center transition-all duration-700">
         <div class="flex items-center space-x-4">
-            <!-- App Logo (Pop Animation) -->
             <div id="splash-logo" class="bg-accent p-4 rounded-2xl text-primary font-black shadow-lg" style="animation: splashLogoPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;">
                 <i class="fas fa-seedling text-4xl"></i>
             </div>
-            <!-- Brand Name (Slides Out dynamically) -->
             <div id="splash-text-container" class="overflow-hidden whitespace-nowrap transition-all duration-1000 ease-out" style="width: 0; opacity: 0;">
                 <span class="text-3xl font-black tracking-wider text-accent block">DAZEEN</span>
                 <span class="text-white text-xs font-light tracking-widest block -mt-1.5">PREMIUM</span>
@@ -130,1938 +44,254 @@
         </div>
     </div>
 
-    
-    <!-- CUSTOM TOAST CONTAINER (Replaces raw Alerts) -->
     <div id="toast-container" class="fixed bottom-24 md:bottom-5 right-5 z-[100] flex flex-col space-y-2 pointer-events-none max-w-sm w-full p-4"></div>
 
-
-    <!-- FLIPKART STYLE CELEBRATION OVERLAY (Smooth Multi-Stage Experience) -->
-    <div id="success-celebration-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 hidden transition-opacity duration-300">
-        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full text-center shadow-2xl transform scale-95 opacity-0 smooth-celebration-card relative overflow-hidden max-h-[95vh] flex flex-col justify-between" id="celebration-card">
-            <!-- Confetti Canvas background overlay -->
-            <canvas id="confetti-canvas" class="absolute inset-0 pointer-events-none w-full h-full rounded-3xl"></canvas>
-            
-            <!-- Stage 1: Big Tick (Will slide up smoothly later) -->
-            <div id="celebration-tick-wrapper" class="relative flex flex-col items-center justify-center transition-all duration-700 ease-in-out py-8">
-                <div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center animate-[popScale_0.5s_cubic-bezier(0.175,0.885,0.32,1.275)_forwards] shadow-lg">
-                    <svg class="w-12 h-12 text-emerald-600" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" class="animate-[drawCheck_0.6s_ease-in-out_0.2s_forwards]" style="stroke-dasharray: 30; stroke-dashoffset: 30;"></path>
-                    </svg>
-                </div>
-                <h3 id="celebration-initial-msg" class="text-xl font-extrabold text-gray-900 mt-4 transition-opacity duration-300">Order Placed Successfully!</h3>
+    <!-- FLIPKART CELEBRATION -->
+    <div id="success-celebration-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full text-center" id="celebration-card">
+            <canvas id="confetti-canvas" class="absolute inset-0 w-full h-full"></canvas>
+            <div id="celebration-tick-wrapper" class="py-8"><div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto"><svg class="w-12 h-12 text-emerald-600" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path></svg></div></div>
+            <div id="celebration-details-block" class="space-y-4">
+                <h4 class="text-lg font-black text-gray-950">Dhanyawad!</h4>
+                <p class="text-sm">Order ID: <span id="celebration-order-id"></span></p>
+                <div id="celebration-items-list" class="text-xs"></div>
             </div>
-            
-            <!-- Stages 2 & 3: Order Details Container (Revealed smoothly) -->
-            <div id="celebration-details-block" class="opacity-0 translate-y-8 transition-all duration-700 ease-out hidden space-y-4 overflow-y-auto custom-scrollbar flex-grow px-1">
-                <div class="space-y-1">
-                    <span class="text-[10px] uppercase font-extrabold tracking-widest text-emerald-600 block">Fulfillment Verified</span>
-                    <h4 class="text-lg font-black text-gray-950">Thank You So Much! 🙏</h4>
-                    <p class="text-xs text-gray-500">Your fresh batch booking has been successfully registered.</p>
-                </div>
-
-                <!-- Displayed Order ID -->
-                <div class="bg-primary/5 border border-primary/10 rounded-2xl p-2 text-center">
-                    <span class="text-[9px] uppercase font-bold text-gray-500 tracking-wider block">Your Order Reference ID</span>
-                    <span id="celebration-order-id" class="text-lg font-black text-amber-900 tracking-wider">DAZ-XXXXXX</span>
-                </div>
-
-                <!-- Order items summary and address -->
-                <div class="text-left text-xs space-y-1.5 bg-gray-50 p-3 rounded-xl border border-gray-100">
-                    <div class="flex justify-between font-bold text-gray-900 border-b pb-1">
-                        <span>Items Summary</span>
-                        <span id="celebration-total-amt" class="text-amber-950">₹0</span>
-                    </div>
-                    <div id="celebration-items-list" class="space-y-1 text-gray-600 text-[11px]"></div>
-                    <div class="border-t pt-1.5 mt-1.5 text-[11px] text-gray-500">
-                        <strong class="text-gray-700">Shipping to:</strong> <span id="celebration-shipping-address">N/A</span>
-                    </div>
-                </div>
-
-                <!-- Stage 4: Dynamic Product Recommendation (Updated with Photo) -->
-                <div id="celebration-recommendation" class="bg-amber-50 border border-accent/30 rounded-xl p-3 text-left flex items-center justify-between gap-3">
-                    <div class="flex items-center space-x-3">
-                        <img id="rec-img" src="dazeen250gf.jpeg" class="w-12 h-12 object-cover rounded-lg border border-accent/20" onerror="this.src='https://placehold.co/100x100/1b3322/ffffff?text=Dazeen'">
-                        <div class="space-y-0.5">
-                            <span class="text-[8px] uppercase font-extrabold text-amber-900 tracking-wider">Recommended Blend Add-on</span>
-                            <h5 id="rec-title" class="font-extrabold text-[11px] text-gray-900">250g Premium Roast Pack</h5>
-                            <p id="rec-desc" class="text-[10px] text-gray-500">Upgrade to our larger best-seller blend for maximum freshness.</p>
-                        </div>
-                    </div>
-                    <button onclick="addRecommendationToCart()" class="bg-primary hover:bg-emerald-950 text-accent font-bold py-1.5 px-3 rounded-lg text-[10px] transition shrink-0 whitespace-nowrap">
-                        + Add Pack
-                    </button>
-                </div>
-
-                <!-- Dispatch indicator truck -->
-                <div class="relative h-10 overflow-hidden bg-gray-50 rounded-xl border border-gray-100 flex items-center shrink-0">
-                    <div class="absolute left-0 animate-[driveAcross_3s_linear_infinite] text-primary flex items-center space-x-2">
-                        <i class="fas fa-truck-fast text-base text-accent"></i>
-                        <span class="text-[8px] font-bold uppercase tracking-widest text-emerald-800">Dazeen Express Delivery</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Close / Continue button -->
-            <button onclick="dismissCelebration()" class="w-full bg-primary hover:bg-emerald-950 text-accent font-extrabold py-3 rounded-xl shadow-lg transition duration-150 text-xs uppercase tracking-widest mt-4 relative z-10">
-                Continue Shopping
-            </button>
+            <button onclick="dismissCelebration()" class="w-full bg-primary text-accent font-bold py-3 rounded-xl mt-4">Continue</button>
         </div>
     </div>
 
-
-    <!-- NAVIGATION BAR (Desktop Top Bar Only) -->
+    <!-- NAVIGATION -->
     <nav class="bg-primary text-white sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Brand logo -->
-                <div onclick="showPage('home')" class="cursor-pointer flex items-center space-x-2 group">
-                    <div class="bg-accent p-2 rounded-lg text-primary font-black transition-transform group-hover:scale-110">
-                        <i class="fas fa-seedling text-lg"></i>
-                    </div>
+                <div onclick="showPage('home')" class="cursor-pointer flex items-center space-x-2">
+                    <div class="bg-accent p-2 rounded-lg text-primary font-black"><i class="fas fa-seedling text-lg"></i></div>
                     <span class="text-2xl font-extrabold tracking-wider text-accent">DAZEEN <span class="text-white text-xs font-light tracking-widest block -mt-1.5">PREMIUM</span></span>
                 </div>
-
-                <!-- Desktop Navigation Links (Visible on Tablet & PC) -->
                 <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                    <button id="nav-home" onclick="showPage('home')" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 focus:outline-none">
-                        <i class="fas fa-coffee text-base"></i>
-                        <span>Shop</span>
-                    </button>
-                    <button id="nav-orders" onclick="goToOrders()" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 focus:outline-none">
-                        <i class="fas fa-box text-base"></i>
-                        <span>Orders & Tracking</span>
-                    </button>
-                    <button id="nav-profile" onclick="goToProfile()" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 focus:outline-none">
-                        <i class="fas fa-user-circle text-base"></i>
-                        <span>My Account</span>
-                    </button>
-                    <button id="nav-cart" onclick="goToCart()" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 relative focus:outline-none bg-emerald-950 px-4 py-2 rounded-full border border-emerald-800">
-                        <i class="fas fa-shopping-basket text-base text-accent"></i>
-                        <span>Cart</span>
-                        <span id="cart-count" class="bg-accent text-primary font-extrabold rounded-full text-xs px-2 py-0.5 ml-1.5 hidden">0</span>
-                    </button>
+                    <button id="nav-home" onclick="showPage('home')" class="hover:text-accent">Shop</button>
+                    <button id="nav-orders" onclick="goToOrders()" class="hover:text-accent">Orders</button>
+                    <button id="nav-profile" onclick="goToProfile()" class="hover:text-accent">Account</button>
+                    <button id="nav-cart" onclick="goToCart()" class="hover:text-accent relative">Cart <span id="cart-count" class="hidden absolute -top-1 -right-3 bg-accent text-primary px-1.5 rounded-full text-[10px]">0</span></button>
                 </div>
             </div>
         </div>
     </nav>
 
-
-    <!-- MOBILE BOTTOM NAVIGATION (Clean 4 Tabs layout) -->
-    <div class="fixed bottom-0 left-0 right-0 bg-[#132217] border-t border-emerald-900 z-50 md:hidden flex justify-around items-center py-2.5 shadow-2xl">
-        <button id="mobile-nav-home" onclick="showPage('home')" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/4">
-            <i class="fas fa-coffee text-base"></i>
-            <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Shop</span>
-        </button>
-        <button id="mobile-nav-cart" onclick="goToCart()" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/4 relative">
-            <i class="fas fa-shopping-basket text-base"></i>
-            <span id="cart-count-mobile" class="absolute -top-1 right-5 bg-accent text-primary font-black text-[8px] px-1.5 rounded-full hidden">0</span>
-            <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Cart</span>
-        </button>
-        <button id="mobile-nav-orders" onclick="goToOrders()" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/4">
-            <i class="fas fa-box text-base"></i>
-            <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Orders</span>
-        </button>
-        <button id="mobile-nav-profile" onclick="goToProfile()" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/4">
-            <i class="fas fa-user-circle text-base"></i>
-            <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Profile</span>
-        </button>
+    <!-- MOBILE NAVIGATION -->
+    <div class="fixed bottom-0 left-0 right-0 bg-[#132217] border-t border-emerald-900 z-50 md:hidden flex justify-around items-center py-3">
+        <button id="mobile-nav-home" onclick="showPage('home')" class="text-gray-300 text-xs font-bold"><i class="fas fa-coffee block text-lg mb-1"></i>Shop</button>
+        <button id="mobile-nav-cart" onclick="goToCart()" class="text-gray-300 text-xs font-bold"><i class="fas fa-shopping-basket block text-lg mb-1"></i>Cart</button>
+        <button id="mobile-nav-orders" onclick="goToOrders()" class="text-gray-300 text-xs font-bold"><i class="fas fa-box block text-lg mb-1"></i>Orders</button>
+        <button id="mobile-nav-profile" onclick="goToProfile()" class="text-gray-300 text-xs font-bold"><i class="fas fa-user-circle block text-lg mb-1"></i>Profile</button>
     </div>
 
+    <div id="fresh-banner" class="bg-[#d4af37]/10 border-b border-[#d4af37]/30 text-[#5c3a21] py-2 px-4 text-center text-[10px] font-bold">✨ Fresh roasted to order!</div>
 
-    <!-- FRESH TO ORDER HEADER BANNER (Has ID to hide dynamically) -->
-    <div id="fresh-banner" class="bg-[#d4af37]/10 border-b border-[#d4af37]/30 text-[#5c3a21] py-3 px-4 text-center text-[11px] sm:text-xs font-bold shadow-sm relative z-10">
-        ✨ <strong class="text-primary uppercase font-extrabold tracking-wide">Dynamic Roastery Guarantee:</strong> Every batch is freshly roasted and ground immediately after you place your order!
-    </div>
-
-
-    <!-- HERO INTRO BANNER (Has ID to hide dynamically) -->
-    <header id="hero-banner" class="bg-gradient-to-r from-primary via-emerald-950 to-amberDark text-white py-10 md:py-16 px-4 relative overflow-hidden shadow-inner text-center shrink-0">
-        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px]"></div>
-        <div class="max-w-4xl mx-auto relative z-10 space-y-4">
-            <span class="bg-accent/20 border border-accent/40 text-accent text-[10px] md:text-xs uppercase font-extrabold px-3 py-1 rounded-full tracking-wider inline-block">
-                🌱 100% Caffeine-Free Wellness Blend
-            </span>
-            <h1 class="text-3xl md:text-5xl font-black text-accent leading-tight tracking-tight">Dazeen Date Seed Roast</h1>
-            <p class="text-xs md:text-sm text-gray-200 max-w-2xl mx-auto font-light leading-relaxed">
-                Enjoy the deep aroma and rich body of premium coffee, crafted completely from roasted, ground date seeds. Zero acidity, zero jitters, pure organic wellness.
-            </p>
-        </div>
+    <header id="hero-banner" class="bg-primary text-white py-10 px-4 text-center shrink-0">
+        <h1 class="text-3xl font-black text-accent">Dazeen Date Seed Roast</h1>
+        <p class="text-sm mt-2 text-gray-300">100% Caffeine-Free Wellness Blend</p>
     </header>
 
-
-    <!-- MAIN CONTENT CONTAINERS -->
     <main class="flex-grow container mx-auto p-4 max-w-6xl mb-12">
-        
-        <!-- HOME PAGE (DAZEEN PRODUCTS) -->
         <section id="page-home" class="page-view space-y-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-200 pb-4 space-y-4 md:space-y-0">
-                <div>
-                    <h2 class="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight">Select Your Premium Roast Pack</h2>
-                    <p class="text-xs text-gray-500">Authentic premium roasts, handroasted fresh upon receiving orders.</p>
-                </div>
-                <div class="bg-white px-3 py-1.5 rounded-lg shadow-sm border border-gray-100 flex items-center space-x-2 text-[11px] text-gray-600">
-                    <i class="fas fa-truck-fast text-accent"></i>
-                    <span>Free Shipping on all launch orders</span>
-                </div>
-            </div>
-
-            <!-- Products Grid layout (1 col on mobile, 2 on desktop) -->
-            <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"></div>
-
-            <!-- Health benefits informational grids -->
-            <div class="bg-primary/5 rounded-2xl p-6 md:p-8 border border-accent/10 space-y-6">
-                <h3 class="text-base md:text-lg font-extrabold text-primary text-center uppercase tracking-wider">Why Switch to Roasted Date Seeds?</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-xl shadow-sm text-center space-y-2 border border-gray-100">
-                        <div class="bg-accent/10 w-10 h-10 rounded-full flex items-center justify-center mx-auto text-amber-800">
-                            <i class="fas fa-ban text-sm"></i>
-                        </div>
-                        <h4 class="font-extrabold text-xs text-gray-900">100% Caffeine Free</h4>
-                        <p class="text-[11px] text-gray-500 leading-relaxed">No caffeine crashes, jitters, or sleep loss while keeping the rich roasted flavor signature.</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm text-center space-y-2 border border-gray-100">
-                        <div class="bg-accent/10 w-10 h-10 rounded-full flex items-center justify-center mx-auto text-amber-800">
-                            <i class="fas fa-heart text-sm"></i>
-                        </div>
-                        <h4 class="font-extrabold text-xs text-gray-900">Cardiovascular Health</h4>
-                        <p class="text-[11px] text-gray-500 leading-relaxed">Packed with essential minerals like potassium and magnesium that promote heart wellness.</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm text-center space-y-2 border border-gray-100">
-                        <div class="bg-accent/10 w-10 h-10 rounded-full flex items-center justify-center mx-auto text-amber-800">
-                            <i class="fas fa-leaf text-sm"></i>
-                        </div>
-                        <h4 class="font-extrabold text-xs text-gray-900">Antioxidant Engine</h4>
-                        <p class="text-[11px] text-gray-500 leading-relaxed">Rich in phenolic compounds that support cell health and build robust physical immunity.</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm text-center space-y-2 border border-gray-100">
-                        <div class="bg-accent/10 w-10 h-10 rounded-full flex items-center justify-center mx-auto text-amber-800">
-                            <i class="fas fa-mug-hot text-sm"></i>
-                        </div>
-                        <h4 class="font-extrabold text-xs text-gray-900">Smooth Digestive Flow</h4>
-                        <p class="text-[11px] text-gray-500 leading-relaxed">Completely non-acidic. Perfect for sensitive stomachs or acid reflux issues.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SLIDING CAROUSEL WIDGET (FARM TO CUP JOURNEY) -->
-            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 space-y-6">
-                <div class="border-b pb-4 flex justify-between items-center">
-                    <div>
-                        <h3 class="text-lg md:text-xl font-extrabold text-gray-900 flex items-center gap-2">
-                            <i class="fas fa-images text-accent"></i> Farm-to-Cup Seed Processing
-                        </h3>
-                        <p class="text-xs text-gray-500">Explore how we carefully craft your custom caffeine-free roast.</p>
-                    </div>
-                </div>
-                
-                <!-- Sliding Container Frame -->
-                <div class="relative w-full overflow-hidden rounded-2xl border border-gray-200/60 shadow-inner bg-gray-50">
-                    <div id="carousel-track" class="flex transition-transform duration-500 ease-out w-full" style="transform: translateX(0%);">
-                        <!-- Slide 1 -->
-                        <div class="w-full shrink-0 relative">
-                            <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=1000&q=80" alt="Sourcing seeds" class="w-full h-64 md:h-96 object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6 text-white space-y-1">
-                                <span class="text-accent text-[9px] font-extrabold uppercase tracking-widest">Step 01 / Sourcing</span>
-                                <h4 class="text-sm md:text-base font-bold">100% Organic Desert Date Seeds</h4>
-                                <p class="text-[10px] md:text-xs text-gray-300 font-light max-w-xl">Every seed is hand-selected and thoroughly washed under strict hygienic standards before roasting.</p>
-                            </div>
-                        </div>
-                        <!-- Slide 2 -->
-                        <div class="w-full shrink-0 relative">
-                            <img src="https://images.unsplash.com/photo-1498804103079-a6351b050096?w=1000&q=80" alt="Slow roasting" class="w-full h-64 md:h-96 object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6 text-white space-y-1">
-                                <span class="text-accent text-[9px] font-extrabold uppercase tracking-widest">Step 02 / Slow Roasting</span>
-                                <h4 class="text-sm md:text-base font-bold">Small-Batch Flame Roasting</h4>
-                                <p class="text-[10px] md:text-xs text-gray-300 font-light max-w-xl">Our roasters use precise convection warmth to caramelize sugars inside the seeds, bringing out rich dark chocolate notes.</p>
-                            </div>
-                        </div>
-                        <!-- Slide 3 -->
-                        <div class="w-full shrink-0 relative">
-                            <img src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1000&q=80" alt="Grinding" class="w-full h-64 md:h-96 object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6 text-white space-y-1">
-                                <span class="text-accent text-[9px] font-extrabold uppercase tracking-widest">Step 03 / Grinding</span>
-                                <h4 class="text-sm md:text-base font-bold">Micro-Ground Flavor Preservation</h4>
-                                <p class="text-[10px] md:text-xs text-gray-300 font-light max-w-xl">Freshly ground using specialized burrs immediately prior to vacuum sealing. Absolutely zero stale storage.</p>
-                            </div>
-                        </div>
-                        <!-- Slide 4 -->
-                        <div class="w-full shrink-0 relative">
-                            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1000&q=80" alt="Brewing" class="w-full h-64 md:h-96 object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6 text-white space-y-1">
-                                <span class="text-accent text-[9px] font-extrabold uppercase tracking-widest">Step 04 / Brewing</span>
-                                <h4 class="text-sm md:text-base font-bold">Flawless Extraction Experience</h4>
-                                <p class="text-[10px] md:text-xs text-gray-300 font-light max-w-xl">Optimized grinds extract perfectly in espresso machines, standard drip filters, French presses, or traditional kettles.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Slide Navigation Arrows -->
-                    <button onclick="shiftCarousel(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white w-8 h-8 rounded-full flex items-center justify-center transition duration-150 focus:outline-none">
-                        <i class="fas fa-chevron-left text-xs"></i>
-                    </button>
-                    <button onclick="shiftCarousel(1)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white w-8 h-8 rounded-full flex items-center justify-center transition duration-150 focus:outline-none">
-                        <i class="fas fa-chevron-right text-xs"></i>
-                    </button>
-                </div>
-
-                <!-- Carousel Progress Dots -->
-                <div class="flex justify-center items-center space-x-2 pt-2">
-                    <span onclick="setCarouselSlide(0)" class="carousel-dot w-2 h-2 rounded-full bg-accent cursor-pointer transition"></span>
-                    <span onclick="setCarouselSlide(1)" class="carousel-dot w-2 h-2 rounded-full bg-gray-200 cursor-pointer transition"></span>
-                    <span onclick="setCarouselSlide(2)" class="carousel-dot w-2 h-2 rounded-full bg-gray-200 cursor-pointer transition"></span>
-                    <span onclick="setCarouselSlide(3)" class="carousel-dot w-2 h-2 rounded-full bg-gray-200 cursor-pointer transition"></span>
-                </div>
-            </div>
-
-            <!-- SCROLL-CONTROLLED OUR STORY, MISSION & VISION SECTION -->
-            <div id="scroll-story-section" class="bg-primary text-white rounded-3xl p-6 md:p-12 shadow-xl border border-accent/20 space-y-8 relative overflow-hidden my-8">
-                <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px]"></div>
-                <div class="relative z-10 max-w-3xl mx-auto space-y-8">
-                    <!-- Story Block -->
-                    <div class="space-y-3">
-                        <span class="text-accent text-[10px] md:text-xs font-black uppercase tracking-widest block">Our Story</span>
-                        <h3 class="text-lg md:text-2xl font-black text-gray-100">Born in Pune, brewed for the world</h3>
-                        <p id="typed-story" class="text-xs md:text-sm text-gray-300 font-light leading-relaxed min-h-[140px] md:min-h-[90px]"></p>
-                    </div>
-
-                    <!-- Mission Block -->
-                    <div class="space-y-3">
-                        <span class="text-accent text-[10px] md:text-xs font-black uppercase tracking-widest block">Our Mission</span>
-                        <p id="typed-mission" class="text-xs md:text-sm text-gray-300 font-medium italic leading-relaxed min-h-[50px] md:min-h-[30px]"></p>
-                    </div>
-
-                    <!-- Vision Block -->
-                    <div class="space-y-3">
-                        <span class="text-accent text-[10px] md:text-xs font-black uppercase tracking-widest block">Our Vision</span>
-                        <p id="typed-vision" class="text-xs md:text-sm text-gray-300 font-medium italic leading-relaxed min-h-[50px] md:min-h-[30px]"></p>
-                    </div>
-                </div>
-            </div>
+            <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </section>
 
-
-        <!-- PRODUCT DETAIL VIEW (Masterpiece Animating Full Page with Dynamic Image Slider and Integrated Reviews) -->
-        <section id="page-product-detail" class="page-view hidden space-y-8 page-transition">
-            <div class="flex items-center space-x-2">
-                <button onclick="showPage('home')" class="text-xs font-bold text-primary hover:text-accent bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm flex items-center space-x-2 transition duration-150">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Back to Shop</span>
-                </button>
-            </div>
-
-            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-                <!-- Product Left Sliding Image Presentation -->
+        <!-- Product Details -->
+        <section id="page-product-detail" class="page-view hidden space-y-6 page-transition">
+            <button onclick="showPage('home')" class="text-xs font-bold bg-white border px-4 py-2 rounded-xl">← Back to Shop</button>
+            <div class="bg-white p-6 rounded-2xl shadow grid md:grid-cols-2 gap-8">
+                <img id="detail-img" class="w-full h-80 object-cover rounded-xl">
                 <div class="space-y-4">
-                    <div class="relative overflow-hidden rounded-2xl shadow-md border border-gray-100 bg-gray-50 h-64 md:h-96">
-                        <div id="detail-slider-track" class="flex h-full transition-transform duration-300 ease-out">
-                            <!-- Detail image slides loaded dynamically -->
-                        </div>
-                        
-                        <!-- Slider Navigation Controls (shown dynamically if images length > 1) -->
-                        <button id="detail-prev-btn" onclick="shiftDetailSlider(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white w-8 h-8 rounded-full flex items-center justify-center transition duration-150 focus:outline-none hidden">
-                            <i class="fas fa-chevron-left text-xs"></i>
-                        </button>
-                        <button id="detail-next-btn" onclick="shiftDetailSlider(1)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white w-8 h-8 rounded-full flex items-center justify-center transition duration-150 focus:outline-none hidden">
-                            <i class="fas fa-chevron-right text-xs"></i>
-                        </button>
-                        
-                        <!-- Progress Indicator Dots -->
-                        <div id="detail-slider-dots" class="absolute bottom-3 left-1/2 -translate-x-1/2 flex space-x-1.5 hidden"></div>
-
-                        <span class="absolute top-4 left-4 bg-primary text-accent text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-wider shadow">
-                            🎯 Fresh roasted to order
-                        </span>
+                    <h2 id="detail-title" class="text-2xl font-black"></h2>
+                    <p id="detail-price" class="text-xl font-bold text-amber-900"></p>
+                    <p id="detail-desc" class="text-sm text-gray-600 leading-relaxed"></p>
+                    <div class="flex items-center gap-4">
+                        <label class="text-xs font-bold">Quantity:</label>
+                        <input type="number" id="detail-qty-val" value="1" min="1" class="border p-2 w-16 rounded">
                     </div>
-                    
-                    <!-- Unique Quality Badges -->
-                    <div class="grid grid-cols-3 gap-2 text-center text-[10px] uppercase font-bold text-gray-600">
-                        <div class="bg-[#faf8f5] p-3 rounded-xl border border-gray-100">
-                            <i class="fas fa-certificate text-accent text-sm block mb-1"></i>
-                            <span>Organic Date</span>
-                        </div>
-                        <div class="bg-[#faf8f5] p-3 rounded-xl border border-gray-100">
-                            <i class="fas fa-fire-burner text-accent text-sm block mb-1"></i>
-                            <span>Slow Roasted</span>
-                        </div>
-                        <div class="bg-[#faf8f5] p-3 rounded-xl border border-gray-100">
-                            <i class="fas fa-shield-heart text-accent text-sm block mb-1"></i>
-                            <span>Zero Acidity</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product Right Detailed Specs and Buy Interface -->
-                <div class="space-y-6 flex flex-col justify-between">
-                    <div class="space-y-4">
-                        <span class="text-accent text-[11px] font-extrabold tracking-widest uppercase block">Premium Blend Spec Sheet</span>
-                        <h2 id="detail-title" class="text-2xl md:text-3xl font-black text-gray-950 leading-tight"></h2>
-                        
-                        <div class="flex items-center space-x-3 text-xs text-yellow-600 font-bold">
-                            <!-- Dynamically generated average stars and review counts are loaded here -->
-                            <span id="detail-rating" class="flex items-center gap-1"></span>
-                        </div>
-
-                        <div class="flex items-baseline space-x-3 pt-2">
-                            <span id="detail-price" class="text-3xl font-black text-amber-900"></span>
-                            <span id="detail-strike-price" class="text-sm text-gray-400 line-through"></span>
-                        </div>
-
-                        <div class="border-t border-gray-100 pt-4 space-y-2">
-                            <h4 class="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Taste & Aroma Profile</h4>
-                            <p id="detail-desc" class="text-xs text-gray-600 leading-relaxed" style="white-space: pre-line;"></p>
-                        </div>
-
-                        <!-- Nutritional Fact Card -->
-                        <div class="bg-gray-50/70 p-4 rounded-xl border border-gray-200 space-y-3">
-                            <h4 class="text-[10px] font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
-                                <i class="fas fa-heart-pulse text-accent"></i> Nutritional facts (Per 100g serving)
-                            </h4>
-                            <div class="grid grid-cols-3 gap-3 text-center text-[10px] text-gray-700 font-semibold">
-                                <div class="bg-white p-2 rounded-lg border"><strong>0%</strong> <span class="block text-gray-400 font-medium">Caffeine</span></div>
-                                <div class="bg-white p-2 rounded-lg border"><strong>6.2g</strong> <span class="block text-gray-400 font-medium">Dietary Fiber</span></div>
-                                <div class="bg-white p-2 rounded-lg border"><strong>780mg</strong> <span class="block text-gray-400 font-medium">Potassium</span></div>
-                            </div>
-                        </div>
-
-                        <!-- Shivhind Roastery & Manufactured Address Card -->
-                        <div class="bg-emerald-50/40 p-4 rounded-xl border border-primary/10 space-y-2">
-                            <h4 class="text-[10px] font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-                                <i class="fas fa-industry text-accent"></i> Manufactured & Marketed By
-                            </h4>
-                            <div class="text-[11px] text-gray-700 leading-relaxed font-medium">
-                                <strong class="text-primary font-bold text-xs">Shivhind Associats</strong><br>
-                                Gat No 202/2, Ground Floor, Balasaheb Khandale premises, Baramati Daund Road, Kurkumbh Midc Bank of Maharashtra Back Side, Pune
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- PRODUCT QUANTITY SELECTOR IN DETAIL VIEW -->
-                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 flex items-center justify-between gap-4">
-                        <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">Select Roast Quantity</span>
-                        <div class="flex items-center space-x-1 border border-gray-300 rounded-xl bg-white p-1">
-                            <button type="button" onclick="adjustDetailQty(-1)" class="w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-sm font-bold shadow-sm focus:outline-none transition">-</button>
-                            <input type="text" id="detail-qty-val" readonly value="1" class="w-10 text-center bg-transparent text-xs font-extrabold focus:outline-none select-none">
-                            <button type="button" onclick="adjustDetailQty(1)" class="w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-sm font-bold shadow-sm focus:outline-none transition">+</button>
-                        </div>
-                    </div>
-
-                    <!-- Direct Ordering Trigger Deck -->
-                    <div class="space-y-3 pt-6 border-t border-gray-100">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <button id="detail-add-cart-btn" class="bg-white border-2 border-primary hover:bg-gray-50 text-primary py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition duration-150 flex items-center justify-center space-x-1.5">
-                                <i class="fas fa-shopping-basket"></i>
-                                <span>Add to Cart</span>
-                            </button>
-                            <button id="detail-buy-now-btn" class="bg-accent hover:bg-accentHover text-primary py-3 rounded-xl font-black text-xs uppercase tracking-wider transition duration-150 shadow-md flex items-center justify-center space-x-1.5">
-                                <i class="fas fa-bolt"></i>
-                                <span>Instant Buy Now</span>
-                            </button>
-                        </div>
-                        <p class="text-[9px] text-gray-400 text-center">
-                            ⚡ Pre-launch batch dispatch starts directly from our Pune roasting units. Delivery takes 5-7 days.
-                        </p>
-                    </div>
+                    <button id="detail-add-cart-btn" class="w-full bg-accent text-white p-3 rounded-lg font-bold">Add to Cart</button>
                 </div>
             </div>
-
-            <!-- PRODUCT-SPECIFIC CUSTOMER REVIEW WALL (Integrated strictly inside details page) -->
-            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 space-y-6">
-                <div class="border-b pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div>
-                        <h3 class="text-lg md:text-xl font-extrabold text-gray-900 flex items-center gap-2">
-                            <i class="fas fa-comments text-accent"></i> Customer Review Wall
-                        </h3>
-                        <p class="text-xs text-gray-500">True, verified feedback specifically for this blend.</p>
-                    </div>
-                    <button onclick="scrollToReviewForm()" class="bg-primary hover:bg-emerald-950 text-accent font-bold py-2 px-4 rounded-xl text-xs transition shadow-sm">
-                        Write a Review
-                    </button>
-                </div>
-
-                <!-- Live product-specific reviews container -->
-                <div id="reviews-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Loaded dynamically via synced reviews state -->
-                </div>
-
-                <!-- Submit Review Form Block -->
-                <div id="review-form-block" class="bg-gray-50 p-5 rounded-2xl border border-gray-100 space-y-4 animate-[pageFadeIn_0.3s_forwards]">
-                    <h4 class="font-extrabold text-sm text-gray-900">Share Your Experience</h4>
-                    <form id="home-review-form" onsubmit="handleReviewSubmit(event)" class="space-y-3">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Your Name</label>
-                                <input type="text" id="review-name" required class="w-full border border-gray-200 p-2.5 rounded-xl text-xs focus:ring-1 focus:ring-accent focus:outline-none font-semibold" placeholder="Enter name">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Star Rating</label>
-                                <div class="flex items-center space-x-1.5 pt-1" id="star-rating-selector">
-                                    <button type="button" onclick="setStarRating(1)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
-                                    <button type="button" onclick="setStarRating(2)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
-                                    <button type="button" onclick="setStarRating(3)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
-                                    <button type="button" onclick="setStarRating(4)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
-                                    <button type="button" onclick="setStarRating(5)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Review Comments</label>
-                            <textarea id="review-comment" rows="3" required class="w-full border border-gray-200 p-2.5 rounded-xl text-xs focus:ring-1 focus:ring-accent focus:outline-none font-medium" placeholder="Tell us how you enjoyed the rich aroma, custom packaging, or safe delivery..."></textarea>
-                        </div>
-                        <button type="submit" class="bg-primary hover:bg-emerald-950 text-accent font-bold py-2 px-6 rounded-xl text-xs transition tracking-wide shadow-sm">
-                            Submit Review 👍
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- Dedicated Support Information Panel -->
-        <section id="page-support" class="page-view hidden max-w-xl mx-auto page-transition">
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 p-6 space-y-6 text-center">
-                <div class="bg-accent/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto text-primary text-3xl">
-                    <i class="fas fa-headset"></i>
-                </div>
-                <div class="space-y-2">
-                    <h2 class="text-xl md:text-2xl font-black text-gray-950">Customer Care & Support</h2>
-                    <p class="text-xs text-gray-500">We are dedicated to your premium organic coffee alternative journey.</p>
-                </div>
-                <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 space-y-3">
-                    <span class="text-[9px] uppercase font-black tracking-widest text-gray-400 block">Direct Contact Channel</span>
-                    <a href="mailto:support@dazeen.in" class="text-base font-extrabold text-primary hover:underline flex items-center justify-center gap-2">
-                        <i class="fas fa-envelope text-accent"></i> support@dazeen.in
-                    </a>
-                    <p class="text-[10px] text-gray-500">Write to us for any custom orders, delivery coordination, or refund queries. Our turnaround time is under 12 hours.</p>
-                </div>
-                <button onclick="showPage('home')" class="w-full bg-primary text-accent hover:text-white py-3 rounded-xl font-bold transition text-xs uppercase tracking-wider">
-                    Return to Shopping
-                </button>
-            </div>
-        </section>
-
-
-        <!-- CART PAGE -->
-        <section id="page-cart" class="page-view hidden space-y-6">
-            <h2 class="text-xl md:text-2xl font-extrabold text-gray-900 flex items-center gap-2">
-                <i class="fas fa-shopping-basket text-accent"></i> Your Shopping Basket
-            </h2>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-                <!-- Cart Items List (Left Column) -->
-                <div class="lg:col-span-2 space-y-4">
-                    <div id="cart-items" class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4"></div>
-                </div>
-
-                <!-- Summary Panel (Right Column) -->
-                <div class="space-y-4">
-                    <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
-                        <h3 class="text-base font-extrabold text-gray-900 pb-2 border-b uppercase">Order Summary</h3>
-                        
-                        <!-- Coupon Code Field -->
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-bold text-gray-600 uppercase">Apply Promo Code</label>
-                            <div class="flex space-x-2">
-                                <input type="text" id="coupon-input" placeholder="e.g. DAZEEN10" class="flex-grow border border-gray-200 p-2 rounded-lg text-xs font-bold uppercase focus:ring-1 focus:ring-accent focus:outline-none">
-                                <button onclick="applyCoupon()" class="bg-primary hover:bg-emerald-950 text-white font-bold py-2 px-4 rounded-lg text-xs transition">Apply</button>
-                            </div>
-                            <div id="coupon-message" class="text-[10px] font-semibold mt-1"></div>
-                        </div>
-
-                        <div class="space-y-2 text-xs text-gray-600 pt-2 border-t">
-                            <div class="flex justify-between">
-                                <span>Cart Subtotal</span>
-                                <span>₹<span id="subtotal-val">0</span></span>
-                            </div>
-                            <div class="flex justify-between text-emerald-700 font-medium" id="discount-row" style="display: none;">
-                                <span>Promo Discount (10%)</span>
-                                <span>-₹<span id="discount-val">0</span></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Shipping Fees</span>
-                                <span class="text-emerald-700 font-bold">FREE</span>
-                            </div>
-                            <div class="flex justify-between text-sm md:text-base font-black text-gray-900 pt-2 border-t">
-                                <span>Grand Total</span>
-                                <span class="text-amber-900">₹<span id="cart-total">0</span></span>
-                            </div>
-                        </div>
-
-                        <button onclick="checkoutProcess()" class="w-full bg-accent hover:bg-accentHover text-primary py-3 rounded-xl font-bold shadow-md transition duration-150 flex items-center justify-center space-x-2 text-xs md:text-sm">
-                            <i class="fas fa-lock"></i>
-                            <span>Proceed to Checkout</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- SECURE PASSWORD & EMAIL AUTHENTICATION PAGE -->
-        <section id="page-login" class="page-view hidden max-w-md mx-auto mt-6">
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 space-y-6">
-                <div class="text-center space-y-2">
-                    <div class="bg-accent/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto text-amber-800">
-                        <i class="fas fa-user-shield text-xl"></i>
-                    </div>
-                    <h2 id="auth-title" class="text-xl md:text-2xl font-black text-gray-900">Sign In to Dazeen</h2>
-                    <p id="auth-subtitle" class="text-xs text-gray-500">Enter your email and password to secure your account details.</p>
-                </div>
-
-                <!-- Auth Selector Tabs -->
-                <div class="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-xl">
-                    <button onclick="toggleAuthState('login')" id="btn-auth-signin" class="py-2 text-xs font-bold rounded-lg transition duration-200 bg-white text-primary shadow-sm">
-                        Sign In
-                    </button>
-                    <button onclick="toggleAuthState('signup')" id="btn-auth-signup" class="py-2 text-xs font-bold rounded-lg transition duration-200 text-gray-500 hover:text-primary">
-                        Register Account
-                    </button>
-                </div>
-
-                <!-- Credentials block -->
-                <div id="auth-inputs-block" class="space-y-4">
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Email Address</label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-2.5 text-gray-400 text-sm">
-                                <i class="fas fa-envelope"></i>
-                            </span>
-                            <input type="email" id="auth-email" required placeholder="e.g. supremebeing@domain.com" class="w-full border border-gray-200 pl-10 pr-4 py-2.5 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-accent font-semibold">
-                        </div>
-                    </div>
-
-                    <!-- Password field -->
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Secure Account Password</label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-2.5 text-gray-400 text-sm">
-                                <i class="fas fa-lock"></i>
-                            </span>
-                            <input type="password" id="auth-password" required placeholder="••••••••" class="w-full border border-gray-200 pl-10 pr-4 py-2.5 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-accent font-semibold">
-                        </div>
-                    </div>
-
-                    <!-- Dynamic Action buttons -->
-                    <button id="auth-primary-btn" onclick="handleAuthSubmission()" class="w-full bg-accent hover:bg-accentHover text-primary py-3 rounded-xl shadow font-bold transition duration-150 text-xs uppercase tracking-widest flex items-center justify-center space-x-2">
-                        <i class="fas fa-right-to-bracket"></i>
-                        <span id="auth-btn-label">Sign In</span>
-                    </button>
-                </div>
-
-                <p class="text-[10px] text-gray-400 text-center leading-relaxed">
-                    An account lets you secure and track your lifetime Dazeen purchases seamlessly from any mobile or desktop screen.
-                </p>
-            </div>
-        </section>
-
-
-        <!-- ADDRESS & ORDER PLACE PAGE -->
-        <section id="page-address" class="page-view hidden max-w-lg mx-auto mt-6">
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 space-y-6">
-                <div class="border-b pb-4">
-                    <h2 class="text-xl md:text-2xl font-extrabold text-gray-900">Delivery Information</h2>
-                    <p class="text-xs text-gray-500">Provide shipping coordinates to reserve your pre-launch fresh dispatch slot.</p>
-                </div>
-                
-                <form id="address-form" class="space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Full Delivery Name</label>
-                            <input type="text" name="name" id="addr-name" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none" placeholder="First and last name">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Mobile Contact Number</label>
-                            <input type="tel" name="phone_number" id="addr-phone" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none font-bold" placeholder="10-digit mobile number">
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Flat, House No., Building Info</label>
-                        <input type="text" name="flat" id="addr-flat" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none" placeholder="Apartment / office / building name">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Area, Street, Sector</label>
-                        <input type="text" name="area" id="addr-area" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none" placeholder="Colony / sector / major road">
-                    </div>
-
-                    <!-- UPDATED METADATA: 3-column Layout for Auto-Fill Pincode, City and State -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Pincode</label>
-                            <input type="text" name="pincode" id="addr-pincode" maxlength="6" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs font-bold tracking-wider focus:ring-1 focus:ring-accent focus:outline-none" placeholder="6-digit PIN">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Exact Village / City</label>
-                            <input type="text" name="city" id="addr-city" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none" placeholder="Village or City">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">State</label>
-                            <input type="text" name="state" id="addr-state" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none" placeholder="State">
-                        </div>
-                    </div>
-
-                    <!-- AUTOSAVE ADDRESS CHECKBOX -->
-                    <div class="flex items-center space-x-2.5 pt-2 border-t border-gray-100">
-                        <input type="checkbox" id="save-address-chk" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-accent accent-primary cursor-pointer">
-                        <label for="save-address-chk" class="text-xs text-gray-700 font-extrabold cursor-pointer">Save this address details for future orders</label>
-                    </div>
-                    
-                    <!-- Hidden elements for EmailJS / Forms database processing -->
-                    <input type="hidden" name="user_phone" id="form-phone">
-                    <input type="hidden" name="ordered_items" id="form-items">
-                    <input type="hidden" name="total_amount" id="form-total">
-
-                    <button type="submit" id="submit-order-btn" class="w-full bg-accent hover:bg-accentHover text-primary py-3 rounded-xl font-bold shadow-md transition duration-150 text-xs md:text-sm flex items-center justify-center space-x-2">
-                        <i class="fas fa-shipping-fast"></i>
-                        <span>Confirm & Place Cash-On-Delivery Order</span>
-                    </button>
+            
+            <!-- Reviews integrated in detail view -->
+            <div class="bg-white p-6 rounded-2xl shadow">
+                <h3 class="font-bold mb-4">Customer Reviews</h3>
+                <div id="reviews-list-container" class="space-y-4"></div>
+                <form onsubmit="handleReviewSubmit(event)" class="mt-6 border-t pt-4">
+                    <input type="text" id="review-name" placeholder="Name" required class="block w-full border p-2 mb-2 rounded">
+                    <textarea id="review-comment" placeholder="Write review..." required class="block w-full border p-2 mb-2 rounded"></textarea>
+                    <button type="submit" class="bg-primary text-white px-4 py-2 rounded">Submit Review</button>
                 </form>
             </div>
         </section>
 
-
-        <!-- DEDICATED USER PROFILE PAGE (No orders listed here) -->
-        <section id="page-profile" class="page-view hidden space-y-6 max-w-xl mx-auto page-transition">
-            <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 space-y-6">
-                <div class="text-center space-y-2">
-                    <div class="bg-accent/15 w-16 h-16 rounded-full flex items-center justify-center mx-auto text-primary">
-                        <i class="fas fa-circle-user text-3xl text-[#1b3322]"></i>
-                    </div>
-                    <h2 class="text-xl md:text-2xl font-black text-gray-900">My Account Profile</h2>
-                    <p class="text-xs text-gray-500">Manage your verified customer log credentials below.</p>
-                </div>
-
-                <div class="border-t border-gray-100 pt-4 space-y-4">
-                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                        <span class="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Registered Account ID</span>
-                        <span id="profile-phone" class="font-extrabold text-sm text-[#1b3322]">supremebeing@domain.com</span>
-                    </div>
-
-                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center">
-                        <div>
-                            <span class="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Security Status</span>
-                            <span class="text-xs font-bold text-emerald-700">Encrypted Local Vault Session</span>
-                        </div>
-                        <i class="fas fa-shield-halved text-emerald-600 text-lg"></i>
-                    </div>
-
-                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                        <span class="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Contact Support Desk</span>
-                        <a href="mailto:support@dazeen.in" class="text-xs font-bold text-primary hover:underline flex items-center gap-1.5 mt-1">
-                            <i class="fas fa-envelope text-accent"></i> support@dazeen.in
-                        </a>
-                    </div>
-                </div>
-
-                <!-- DYNAMIC ACCORDIONS INSIDE PROFILE PAGE -->
-                <div class="space-y-3 pt-2">
-                    
-                    <!-- Accordion Item 1: Terms & Conditions -->
-                    <div id="accordion-terms" class="border border-gray-100 rounded-2xl overflow-hidden bg-gray-50/50">
-                        <button onclick="toggleAccordion('terms')" class="w-full flex justify-between items-center p-4 text-left font-bold text-xs text-gray-950 uppercase tracking-wider focus:outline-none select-none">
-                            <span>Terms & Conditions</span>
-                            <i class="fas fa-chevron-down text-accent transition-transform duration-300" id="icon-terms"></i>
-                        </button>
-                        <div class="accordion-content px-4 text-xs text-gray-600 space-y-2 leading-relaxed" id="content-terms">
-                            <p><strong>1. Fresh Batch Processing:</strong> We work exclusively with fresh handcrafted operations. Once you order, the raw organic date seeds enter customized slow roasting schedules. No items are pre-packed or held on shelves indefinitely.</p>
-                            <p><strong>2. Secure Local Database:</strong> Account database records are generated locally on client screen protocols. Your credentials remain securely stored for transaction retrieval and dispatch tracking.</p>
-                            <p><strong>3. Cash on Delivery verification:</strong> COD coordinates are subjected to active communications. Duplicate orders or incorrect shipping info will be suspended prior to roasting.</p>
-                        </div>
-                    </div>
-
-                    <!-- Accordion Item 2: Return & Refund Policy -->
-                    <div id="accordion-returns" class="border border-gray-100 rounded-2xl overflow-hidden bg-gray-50/50">
-                        <button onclick="toggleAccordion('returns')" class="w-full flex justify-between items-center p-4 text-left font-bold text-xs text-gray-950 uppercase tracking-wider focus:outline-none select-none">
-                            <span>Return & Refund Policy</span>
-                            <i class="fas fa-chevron-down text-accent transition-transform duration-300" id="icon-returns"></i>
-                        </button>
-                        <div class="accordion-content px-4 text-xs text-gray-600 space-y-2 leading-relaxed" id="content-returns">
-                            <div class="bg-rose-50 border border-rose-100 p-3 rounded-xl text-rose-950 font-bold mb-2">
-                                🔴 Refund and Return strictly processed only if wrong or damaged orders are delivered. Otherwise, please contact support@dazeen.in for manual processing.
-                            </div>
-                            <p><strong>1. Return Claim Submission:</strong> If your order was delivered wrong or damaged, submit a claim proof to support@dazeen.in within 48 hours. Our verified quality team will instantly process a secure transaction correction.</p>
-                            <p><strong>2. General Feedback Returns:</strong> Given the customized hand-crafted roasting processing of our date seeds, general returns based on subjective preferences cannot be accommodated.</p>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Primary Logout button is ONLY present here -->
-                <button onclick="logout()" class="w-full flex items-center justify-center space-x-2 bg-rose-950 hover:bg-rose-900 text-rose-200 p-3.5 rounded-xl text-xs font-bold transition shadow-sm uppercase tracking-wider">
-                    <i class="fas fa-arrow-right-from-bracket"></i>
-                    <span>Log Out Account</span>
-                </button>
-            </div>
+        <section id="page-login" class="page-view hidden max-w-md mx-auto bg-white p-8 rounded-2xl shadow mt-10">
+            <h2 class="text-xl font-bold mb-4" id="auth-title">Sign In</h2>
+            <input type="email" id="auth-email" placeholder="Email" class="w-full border p-2 mb-4 rounded">
+            <input type="password" id="auth-password" placeholder="Password" class="w-full border p-2 mb-4 rounded">
+            <button onclick="handleAuthSubmission()" class="w-full bg-primary text-white p-3 rounded" id="auth-btn-label">Sign In</button>
         </section>
 
-
-        <!-- DEDICATED ORDER HISTORY & TIMELINE TRACKING PAGE -->
-        <section id="page-orders" class="page-view hidden space-y-6 max-w-4xl mx-auto page-transition">
-            <div class="flex items-center space-x-2">
-                <button onclick="showPage('home')" class="text-xs font-bold text-primary hover:text-accent bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm flex items-center space-x-2 transition duration-150">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Return to Shop</span>
-                </button>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Past Order History Logs panel (Left 2-Col) -->
-                <div class="md:col-span-2 bg-white p-6 rounded-3xl shadow-xl border border-gray-100 space-y-4">
-                    <h3 class="text-base font-extrabold text-gray-900 flex items-center gap-2">
-                        <i class="fas fa-box-archive text-accent"></i> My Orders (Your Purchase Log)
-                    </h3>
-                    <p class="text-xs text-gray-500">Track and view your complete chronological order history here.</p>
-                    <div id="orders-list" class="space-y-4 divide-y divide-gray-100"></div>
-                </div>
-
-                <!-- Live timeline Tracking panel (Right 1-Col) -->
-                <div class="space-y-6">
-                    <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 space-y-4 h-fit">
-                        <h3 class="text-base font-extrabold text-gray-900 flex items-center gap-2">
-                            <i class="fas fa-clock text-accent"></i> Live Dispatch Tracker
-                        </h3>
-                        <p class="text-[10px] text-gray-500 leading-relaxed">Dynamic logistics progress for your latest verified roasted dates seed batch.</p>
-                        <div id="live-tracker-container" class="space-y-4 text-xs"></div>
-                    </div>
-                </div>
-            </div>
+        <section id="page-address" class="page-view hidden max-w-lg mx-auto p-6 bg-white rounded-2xl shadow mt-6">
+            <form id="address-form" class="space-y-3">
+                <input type="text" id="addr-name" placeholder="Full Name" required class="w-full border p-2 rounded">
+                <input type="tel" id="addr-phone" placeholder="Phone" required class="w-full border p-2 rounded">
+                <input type="text" id="addr-flat" placeholder="Flat/House" required class="w-full border p-2 rounded">
+                <input type="text" id="addr-area" placeholder="Area" required class="w-full border p-2 rounded">
+                <input type="text" id="addr-pincode" placeholder="Pincode" required class="w-full border p-2 rounded">
+                <input type="text" id="addr-city" placeholder="City" required class="w-full border p-2 rounded">
+                <input type="text" id="addr-state" placeholder="State" required class="w-full border p-2 rounded">
+                <label><input type="checkbox" id="save-address-chk"> Save address</label>
+                <button type="submit" id="submit-order-btn" class="w-full bg-accent text-white p-3 rounded font-bold">Place Order</button>
+            </form>
         </section>
-        
+
+        <section id="page-profile" class="page-view hidden max-w-xl mx-auto bg-white p-8 rounded-2xl shadow mt-6">
+            <h2 class="text-xl font-bold mb-4">Account</h2>
+            <p id="profile-phone" class="mb-4"></p>
+            <button onclick="logout()" class="bg-rose-600 text-white px-4 py-2 rounded">Log Out</button>
+        </section>
+
+        <section id="page-orders" class="page-view hidden space-y-4 mt-6">
+            <h2 class="text-xl font-bold">Orders</h2>
+            <div id="orders-list"></div>
+        </section>
+
+        <section id="page-support" class="page-view hidden max-w-lg mx-auto bg-white p-8 rounded-2xl shadow mt-6 text-center">
+            <h2 class="text-xl font-bold mb-4">DZN Support</h2>
+            <p class="mb-4">Need help? Contact us at:</p>
+            <a href="mailto:support@dazeen.in" class="text-accent font-bold text-lg">support@dazeen.in</a>
+        </section>
     </main>
 
-
-    <!-- FOOTER -->
-    <footer class="py-8 mt-6 text-center text-gray-400 text-xs shrink-0 border-t border-gray-150">
-        <p class="font-medium tracking-wider text-gray-500">© Dazeen • support@dazeen.in</p>
-    </footer>
-
-
-    <!-- FIRESTORE SYNC & APP CORE ENGINE MODULE -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firebase Configuration & Initialization
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'dazeen-store-preview';
-        
-        let db = null;
-        let auth = null;
-        let currentUser = null;
-        let syncedReviews = [];
-
-        // Application Config
+    <script>
         const products = [
-            {
-                id: 1,
-                title: "Dazeen Premium Dates Seed Coffee - 100g Pack",
-                price: 170,
-                rating: "4.7 out of 5 stars (98 reviews)",
-                image: "dazeen100G.jpeg",
-                images: ["dazeen100G.jpeg"],
-                desc: `Dazeen – Dates Seed Coffee
-
-Experience a new way of coffee with Dazeen, a premium caffeine-free brew made from finely roasted date seeds.
-
-Crafted for the modern generation, Dazeen delivers a rich aroma, smooth texture, and a satisfying coffee-like taste — without caffeine.
-
-Whether you're a fitness enthusiast, a health-conscious individual, or simply looking to switch to a cleaner lifestyle, Dazeen fits perfectly into your daily routine.
-
-Why Dazeen?
-• 100% Natural & Caffeine-Free
-• Smooth, Rich Coffee-Like Taste
-• No Chemicals or Preservatives
-• Light on the Stomach
-• Perfect for Daily Use
-
-Enjoy it hot or cold — black, with milk, or as a refreshing cold coffee.
-
-Make the smarter switch. Choose clean energy. Choose Dazeen.
-
-By Shivhind – ESTD 2026`,
-                terms: "Prepared and roasted fresh immediate upon receipt!"
-            },
-            {
-                id: 2,
-                title: "Dazeen Premium Dates Seed Coffee - 250g Pack",
-                price: 290,
-                rating: "4.8 out of 5 stars (142 reviews)",
-                image: "dazeen250gf.jpeg",
-                images: ["dazeen250gf.jpeg", "dazeen250gb.jpeg"],
-                desc: `Dazeen – Dates Seed Coffee
-
-Experience a new way of coffee with Dazeen, a premium caffeine-free brew made from finely roasted date seeds.
-
-Crafted for the modern generation, Dazeen delivers a rich aroma, smooth texture, and a satisfying coffee-like taste — without caffeine.
-
-Whether you're a fitness enthusiast, a health-conscious individual, or simply looking to switch to a cleaner lifestyle, Dazeen fits perfectly into your daily routine.
-
-Why Dazeen?
-• 100% Natural & Caffeine-Free
-• Smooth, Rich Coffee-Like Taste
-• No Chemicals or Preservatives
-• Light on the Stomach
-• Perfect for Daily Use
-
-Enjoy it hot or cold — black, with milk, or as a refreshing cold coffee.
-
-Make the smarter switch. Choose clean energy. Choose Dazeen.
-
-By Shivhind – ESTD 2026`,
-                terms: "Convection batch roasting schedule locks freshness!"
-            }
+            { id: 1, title: "Dazeen 100g", price: 170, rating: "4.7", image: "dazeen100G.jpeg", desc: "Pure roast." },
+            { id: 2, title: "Dazeen 250g", price: 290, rating: "4.8", image: "dazeen250gf.jpeg", desc: "Signature blend." }
         ];
 
         let cart = JSON.parse(localStorage.getItem('dazeen_cart')) || [];
-        let user = JSON.parse(localStorage.getItem('dazeen_user')) || null; 
+        let user = JSON.parse(localStorage.getItem('dazeen_user')) || null;
         let orders = JSON.parse(localStorage.getItem('dazeen_orders_store')) || [];
-        let appliedPromoCode = localStorage.getItem('dazeen_coupon') || null;
-        let authStateMode = 'login'; // 'login' or 'signup'
-        let selectedStarRating = 5; // Default review rating
-        let currentCarouselIndex = 0; // Dynamic slider state tracker
-        let carouselIntervalId = null;
-        
-        // Active viewing product reference for quantity and details image slider
-        let activeViewingProductId = 1;
-        let activeDetailImageIndex = 0;
-        let activeDetailImages = [];
 
-        // Story scrolling typewriter configuration
-        const storyText = "Dazeen was born from a simple realization: India loves coffee, but the caffeine dependency and health issues that come with it are often ignored. We discovered the ancient, healthy practice of roasting date seeds and decided to bring this handcrafted, superfood beverage to modern kitchens. Our journey started in Pune.";
-        const missionText = "To provide a premium, 100% caffeine-free alternative to traditional coffee without compromise.";
-        const visionText = "To become India's leading brand in healthy alternative beverages, making caffeine-free living premium.";
-
-        function handleStoryScroll() {
-            const section = document.getElementById('scroll-story-section');
-            if (!section) return;
-
-            const rect = section.getBoundingClientRect();
-            const windowHeight = window.innerHeight;
-
-            if (rect.top < windowHeight && rect.bottom > 0) {
-                const progress = Math.min(Math.max((windowHeight - rect.top) / (windowHeight + rect.height * 0.4), 0), 1);
-
-                const storyChars = Math.floor(storyText.length * progress);
-                const missionChars = Math.floor(missionText.length * progress);
-                const visionChars = Math.floor(visionText.length * progress);
-
-                document.getElementById('typed-story').innerText = storyText.substring(0, storyChars) + (storyChars < storyText.length ? "▊" : "");
-                document.getElementById('typed-mission').innerText = missionText.substring(0, missionChars) + (missionChars < missionText.length ? "▊" : "");
-                document.getElementById('typed-vision').innerText = visionText.substring(0, visionChars) + (visionChars < visionText.length ? "▊" : "");
-            }
-        }
-
-        window.addEventListener('scroll', handleStoryScroll);
-
-        if (firebaseConfig) {
-            try {
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                // Authentication Rule 3
-                const initAuth = async () => {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                };
-                initAuth();
-
-                onAuthStateChanged(auth, (firebaseUser) => {
-                    currentUser = firebaseUser;
-                    if (firebaseUser) {
-                        listenToPublicReviews();
-                    }
-                });
-            } catch (e) {
-                console.warn("Firebase initialization failed. Bypassing to Local simulated DB: ", e);
-                initLocalFallbackSync();
-            }
-        } else {
-            initLocalFallbackSync();
-        }
-
-        // Real-time synced public reviews (strictly compliant with Rule 1 & 2)
-        function listenToPublicReviews() {
-            if (!db || !currentUser) return;
-            const reviewsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'reviews');
-            const q = query(reviewsColRef);
-
-            onSnapshot(q, (snapshot) => {
-                const reviews = [];
-                snapshot.forEach((doc) => {
-                    reviews.push({ id: doc.id, ...doc.data() });
-                });
-                syncReviewsData(reviews);
-            }, (error) => {
-                console.error("Firestore onSnapshot subscription failed: ", error);
-                showToast("Real-time review updates interrupted. Syncing local backup.", "error");
-            });
-        }
-
-        function initLocalFallbackSync() {
-            const localReviews = JSON.parse(localStorage.getItem('dazeen_public_reviews_shared')) || [];
-            syncReviewsData(localReviews);
-
-            window.addEventListener('storage', (e) => {
-                if (e.key === 'dazeen_public_reviews_shared') {
-                    const updatedReviews = JSON.parse(e.newValue) || [];
-                    syncReviewsData(updatedReviews);
-                }
-            });
-        }
-
-        function syncReviewsData(reviews) {
-            syncedReviews = reviews;
-            renderProducts();
-
-            if (activeViewingProductId) {
-                const ratingInfo = getProductRating(activeViewingProductId);
-                const detailRatingEl = document.getElementById('detail-rating');
-                if (detailRatingEl) {
-                    detailRatingEl.innerHTML = `${ratingInfo.starsHtml} <span class="text-gray-400 text-xs ml-1 font-semibold">(${ratingInfo.count} ${ratingInfo.count === 1 ? 'review' : 'reviews'})</span>`;
-                }
-                loadReviews(activeViewingProductId);
-            }
-        }
-
-        function getProductRating(productId) {
-            const productReviews = syncedReviews.filter(r => r.productId === productId);
-            if (productReviews.length === 0) {
-                return {
-                    average: 0,
-                    count: 0,
-                    starsHtml: `
-                        <div class="flex text-gray-300 text-xs">
-                            <i class="far fa-star"></i>
-                            <i class="far fa-star"></i>
-                            <i class="far fa-star"></i>
-                            <i class="far fa-star"></i>
-                            <i class="far fa-star"></i>
-                            <span class="text-gray-400 text-[10px] ml-1.5 font-bold">No reviews yet</span>
-                        </div>`
-                };
-            }
-
-            const sum = productReviews.reduce((acc, curr) => acc + curr.rating, 0);
-            const average = (sum / productReviews.length).toFixed(1);
-
-            let starsHtml = `<div class="flex text-accent text-xs">`;
-            const fullStars = Math.floor(average);
-            const hasHalfStar = (average - fullStars) >= 0.5;
-
-            for (let i = 1; i <= 5; i++) {
-                if (i <= fullStars) {
-                    starsHtml += `<i class="fas fa-star mr-0.5"></i>`;
-                } else if (i === fullStars + 1 && hasHalfStar) {
-                    starsHtml += `<i class="fas fa-star-half-alt mr-0.5"></i>`;
-                } else {
-                    starsHtml += `<i class="far fa-star mr-0.5"></i>`;
-                }
-            }
-            starsHtml += `<span class="text-amber-950 font-extrabold text-[11px] ml-1.5 bg-amber-50 px-1.5 py-0.5 rounded border border-accent/20">${average} out of 5</span></div>`;
-
-            return {
-                average: parseFloat(average),
-                count: productReviews.length,
-                starsHtml: starsHtml
-            };
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        function loadReviews(productId) {
-            const container = document.getElementById('reviews-list-container');
-            if (!container) return;
-
-            const productReviews = syncedReviews.filter(r => r.productId === productId);
-
-            if (productReviews.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-1 md:col-span-2 text-center py-10 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
-                        <i class="far fa-comments text-3xl text-gray-300 mb-2"></i>
-                        <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">No reviews yet for this blend</p>
-                        <p class="text-[10px] text-gray-500 mt-1">Be the first to share your roastery experience with others!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = productReviews.map(r => `
-                <div class="bg-gray-50/70 p-4 rounded-2xl border border-gray-100/50 space-y-2 text-xs animate-[pageFadeIn_0.3s_forwards]">
-                    <div class="flex justify-between items-center">
-                        <span class="font-extrabold text-gray-900">${escapeHtml(r.name)}</span>
-                        <span class="text-[10px] text-gray-400 font-medium">${escapeHtml(r.date)}</span>
-                    </div>
-                    <div class="flex text-accent text-[10px]">
-                        ${Array.from({ length: 5 }, (_, i) => `<i class="${i < r.rating ? 'fas' : 'far'} fa-star"></i>`).join('')}
-                    </div>
-                    <p class="text-gray-600 leading-relaxed font-medium whitespace-pre-line">${escapeHtml(r.comment)}</p>
-                </div>
-            `).join('');
-        }
-
-        async function handleReviewSubmit(e) {
-            e.preventDefault();
-            const name = document.getElementById('review-name').value.trim();
-            const comment = document.getElementById('review-comment').value.trim();
-
-            if (!name || !comment) {
-                showToast("Please provide your name and comments!", "error");
-                return;
-            }
-
-            const newReview = {
-                productId: activeViewingProductId,
-                name: name,
-                rating: selectedStarRating,
-                comment: comment,
-                date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
-            };
-
-            if (db && currentUser) {
-                try {
-                    const reviewsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'reviews');
-                    await addDoc(reviewsColRef, newReview);
-                    showToast("Your review has been successfully published to Dazeen's Public Wall!", "success");
-                } catch (err) {
-                    console.error("Firestore reviews submission failed: ", err);
-                    saveReviewToLocalFallback(newReview);
-                }
-            } else {
-                saveReviewToLocalFallback(newReview);
-            }
-
-            document.getElementById('review-name').value = '';
-            document.getElementById('review-comment').value = '';
-            setStarRating(5);
-        }
-
-        function saveReviewToLocalFallback(newReview) {
-            const localReviews = JSON.parse(localStorage.getItem('dazeen_public_reviews_shared')) || [];
-            localReviews.unshift({ id: "local-" + Date.now(), ...newReview });
-            localStorage.setItem('dazeen_public_reviews_shared', JSON.stringify(localReviews));
-            syncReviewsData(localReviews);
-            showToast("Review submitted successfully! (Sandbox Sync)", "success");
+        function showToast(m, t='success') {
+            const c = document.getElementById('toast-container');
+            const d = document.createElement('div');
+            d.className = `p-4 mb-2 rounded text-white ${t==='success'?'bg-green-600':'bg-red-600'}`;
+            d.innerText = m;
+            c.appendChild(d);
+            setTimeout(() => d.remove(), 3000);
         }
 
         function showPage(pageId) {
-            const heroBanner = document.getElementById('hero-banner');
-            const freshBanner = document.getElementById('fresh-banner');
-            
-            if (pageId === 'home') {
-                heroBanner?.classList.remove('hidden');
-                freshBanner?.classList.remove('hidden');
-            } else {
-                heroBanner?.classList.add('hidden');
-                freshBanner?.classList.add('hidden');
-            }
-
-            document.querySelectorAll('nav font').forEach(b => b.classList?.remove('text-accent'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('text-accent'));
-            document.querySelectorAll('.fixed.bottom-0 button').forEach(b => b.classList.remove('text-accent'));
-
             document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
-            const target = document.getElementById(`page-${pageId}`);
-            if (target) {
-                target.classList.remove('hidden');
-            }
-
-            const desktopHomeBtn = document.getElementById('nav-home');
-            const desktopProfileBtn = document.getElementById('nav-profile');
-            const desktopOrdersBtn = document.getElementById('nav-orders');
-            const desktopCartBtn = document.getElementById('nav-cart');
-
-            const mobileHomeBtn = document.getElementById('mobile-nav-home');
-            const mobileCartBtn = document.getElementById('mobile-nav-cart');
-            const mobileOrdersBtn = document.getElementById('mobile-nav-orders');
-            const mobileProfileBtn = document.getElementById('mobile-nav-profile');
-
-            if (pageId === 'home') {
-                desktopHomeBtn?.classList.add('text-accent');
-                mobileHomeBtn?.classList.add('text-accent');
-            } else if (pageId === 'profile') {
-                desktopProfileBtn?.classList.add('text-accent');
-                mobileProfileBtn?.classList.add('text-accent');
-            } else if (pageId === 'orders') {
-                desktopOrdersBtn?.classList.add('text-accent');
-                mobileOrdersBtn?.classList.add('text-accent');
-            } else if (pageId === 'cart') {
-                desktopCartBtn?.classList.add('text-accent');
-                mobileCartBtn?.classList.add('text-accent');
-            }
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+            
+            const hb = document.getElementById('hero-banner');
+            const fb = document.getElementById('fresh-banner');
+            if(pageId === 'home') { hb?.classList.remove('hidden'); fb?.classList.remove('hidden'); }
+            else { hb?.classList.add('hidden'); fb?.classList.add('hidden'); }
+            window.scrollTo(0,0);
         }
 
         function renderProducts() {
             const container = document.getElementById('product-list');
-            if (!container) return;
-
-            container.innerHTML = products.map(p => {
-                const ratingInfo = getProductRating(p.id);
-                const ratingLabel = ratingInfo.count > 0 
-                    ? `${ratingInfo.average} out of 5 stars (${ratingInfo.count} ${ratingInfo.count === 1 ? 'review' : 'reviews'})`
-                    : "No reviews yet";
-
-                return `
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 flex flex-col justify-between hover:shadow-lg transition duration-300 transform hover:-translate-y-1 animate-[pageFadeIn_0.3s_ease-out_forwards]">
-                        <div class="space-y-4">
-                            <div class="relative overflow-hidden rounded-xl group cursor-pointer" onclick="openProductDetailPage(${p.id})">
-                                <img src="${p.image}" alt="${p.title}" class="w-full h-48 md:h-56 object-cover rounded-xl transition duration-500 group-hover:scale-105" onerror="this.src='https://placehold.co/600x400/1b3322/ffffff?text=Date+Seed+Roast'">
-                                <span class="absolute top-3 left-3 bg-primary text-accent text-[9px] font-extrabold px-3 py-1 rounded-full shadow-md uppercase tracking-wide">
-                                    <i class="fas fa-star text-xs"></i> Best Seller
-                                </span>
-                            </div>
-                            
-                            <div class="space-y-2">
-                                <h3 class="font-extrabold text-base md:text-lg text-gray-900 leading-tight hover:text-primary cursor-pointer" onclick="openProductDetailPage(${p.id})">${p.title}</h3>
-                                <div class="flex items-center space-x-2 text-xs text-yellow-600 font-semibold select-none">
-                                    <span class="bg-yellow-50 px-2 py-0.5 rounded border border-yellow-200">
-                                        ${ratingInfo.starsHtml}
-                                    </span>
-                                    <span class="text-gray-300">|</span>
-                                    <span onclick="openProductDetailPage(${p.id})" class="hover:underline cursor-pointer text-gray-500 text-[10px]">${ratingLabel}</span>
-                                </div>
-                                <div class="flex items-baseline space-x-2">
-                                    <span class="text-xl md:text-2xl font-black text-amber-900">₹${p.price}</span>
-                                    <span class="text-xs text-gray-400 line-through">₹${p.price + 150}</span>
-                                </div>
-                                <p class="text-xs text-gray-600 leading-relaxed line-clamp-2">${p.desc.substring(0, 140)}...</p>
-                                <p class="text-[10px] text-amber-900 bg-amber-50/70 p-3 rounded-lg border border-amber-100/50 font-medium flex items-start gap-1.5 leading-relaxed">
-                                    <i class="fas fa-truck-clock text-xs text-accent mt-0.5"></i>
-                                    <span><strong>Roastery terms:</strong> ${p.terms}</span>
-                                </p>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-3 mt-5">
-                            <button onclick="openProductDetailPage(${p.id})" class="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl font-bold text-xs transition">
-                                More Details
-                            </button>
-                            <button onclick="addToCart(${p.id})" class="bg-accent hover:bg-accentHover text-primary py-2.5 rounded-xl font-bold shadow text-xs transition duration-150 flex items-center justify-center space-x-1">
-                                <i class="fas fa-cart-plus"></i>
-                                <span>Add to Cart</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function openProductDetailPage(id) {
-            const product = products.find(p => p.id === id);
-            if (!product) return;
-
-            activeViewingProductId = id;
-            activeDetailImageIndex = 0;
-            activeDetailImages = product.images || [product.image];
-
-            const track = document.getElementById('detail-slider-track');
-            track.innerHTML = activeDetailImages.map(img => `
-                <div class="w-full h-full shrink-0">
-                    <img src="${img}" alt="${product.title}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400/1b3322/ffffff?text=Date+Seed+Roast'">
+            container.innerHTML = products.map(p => `
+                <div class="bg-white p-4 rounded shadow border">
+                    <img src="${p.image}" class="w-full h-40 object-cover rounded">
+                    <h3 class="font-bold mt-2">${p.title}</h3>
+                    <button onclick="openProductDetail(${p.id})" class="mt-2 w-full bg-gray-100 p-2 rounded">More Details</button>
                 </div>
             `).join('');
+        }
 
-            const prevBtn = document.getElementById('detail-prev-btn');
-            const nextBtn = document.getElementById('detail-next-btn');
-            const dotsContainer = document.getElementById('detail-slider-dots');
-
-            if (activeDetailImages.length > 1) {
-                prevBtn.classList.remove('hidden');
-                nextBtn.classList.remove('hidden');
-                dotsContainer.classList.remove('hidden');
-
-                dotsContainer.innerHTML = activeDetailImages.map((_, idx) => `
-                    <span onclick="setDetailSliderSlide(${idx})" class="detail-carousel-dot w-2 h-2 rounded-full bg-gray-300 cursor-pointer transition-all duration-300"></span>
-                `).join('');
-                updateDetailSliderDots();
-            } else {
-                prevBtn.classList.add('hidden');
-                nextBtn.classList.add('hidden');
-                dotsContainer.classList.add('hidden');
-            }
-
-            document.getElementById('detail-title').innerText = product.title;
-            document.getElementById('detail-price').innerText = `₹${product.price}`;
-            document.getElementById('detail-strike-price').innerText = `₹${product.price + 150}`;
-            document.getElementById('detail-desc').innerText = product.desc;
-            
-            const ratingInfo = getProductRating(id);
-            document.getElementById('detail-rating').innerHTML = `${ratingInfo.starsHtml} <span class="text-gray-400 text-xs ml-1 font-semibold">(${ratingInfo.count} ${ratingInfo.count === 1 ? 'review' : 'reviews'})</span>`;
-
-            document.getElementById('detail-qty-val').value = 1;
-
+        function openProductDetail(id) {
+            const p = products.find(x => x.id === id);
+            activeViewingProductId = id;
+            document.getElementById('detail-img').src = p.image;
+            document.getElementById('detail-title').innerText = p.title;
+            document.getElementById('detail-price').innerText = "₹" + p.price;
+            document.getElementById('detail-desc').innerText = p.desc;
             document.getElementById('detail-add-cart-btn').onclick = () => {
-                const selectedQty = parseInt(document.getElementById('detail-qty-val').value) || 1;
-                addToCart(product.id, selectedQty);
+                const qty = parseInt(document.getElementById('detail-qty-val').value);
+                cart.push({...p, qty});
+                localStorage.setItem('dazeen_cart', JSON.stringify(cart));
+                showToast("Added!");
+                updateCartCount();
             };
-            document.getElementById('detail-buy-now-btn').onclick = () => {
-                const selectedQty = parseInt(document.getElementById('detail-qty-val').value) || 1;
-                executeDirectAiOrder(product.id, selectedQty);
-            };
-
             loadReviews(id);
             showPage('product-detail');
         }
 
-        function adjustDetailQty(delta) {
-            const qtyInput = document.getElementById('detail-qty-val');
-            if (qtyInput) {
-                let currentVal = parseInt(qtyInput.value) || 1;
-                currentVal += delta;
-                if (currentVal < 1) currentVal = 1;
-                qtyInput.value = currentVal;
-            }
+        function toggleAuthState(s) {
+            authStateMode = s;
+            document.getElementById('auth-title').innerText = s === 'login' ? 'Sign In' : 'Register';
+            document.getElementById('auth-btn-label').innerText = s === 'login' ? 'Sign In' : 'Register';
         }
 
-        function shiftDetailSlider(delta) {
-            activeDetailImageIndex += delta;
-            if (activeDetailImageIndex >= activeDetailImages.length) activeDetailImageIndex = 0;
-            if (activeDetailImageIndex < 0) activeDetailImageIndex = activeDetailImages.length - 1;
-            renderDetailSliderPosition();
-        }
-
-        function setDetailSliderSlide(index) {
-            activeDetailImageIndex = index;
-            renderDetailSliderPosition();
-        }
-
-        function renderDetailSliderPosition() {
-            const track = document.getElementById('detail-slider-track');
-            if (track) {
-                track.style.transform = `translateX(-${activeDetailImageIndex * 100}%)`;
-            }
-            updateDetailSliderDots();
-        }
-
-        function updateDetailSliderDots() {
-            const dots = document.querySelectorAll('.detail-carousel-dot');
-            dots.forEach((dot, idx) => {
-                if (idx === activeDetailImageIndex) {
-                    dot.className = "detail-carousel-dot w-3.5 h-2 rounded-full bg-accent cursor-pointer transition-all duration-300";
-                } else {
-                    dot.className = "detail-carousel-dot w-2 h-2 rounded-full bg-gray-300 cursor-pointer transition-all duration-300";
-                }
-            });
-        }
-
-        function addToCart(id, qty = 1) {
-            const product = products.find(p => p.id === id);
-            const existing = cart.find(item => item.id === id);
-            if(existing) {
-                existing.qty += qty;
-            } else {
-                cart.push({...product, qty: qty});
-            }
-            saveCart();
-            showToast(`Added ${qty}x ${product.title} to your basket!`, 'success');
-        }
-
-        // Automated persistent address & checkout saving
-        function saveCart() {
-            localStorage.setItem('dazeen_cart', JSON.stringify(cart));
-            updateCartCount();
-        }
-
-        function updateCartCount() {
-            const count = cart.reduce((acc, item) => acc + item.qty, 0);
-            const badgeDesktop = document.getElementById('cart-count');
-            const badgeMobile = document.getElementById('cart-count-mobile');
-
-            if(count > 0) {
-                if(badgeDesktop) {
-                    badgeDesktop.innerText = count;
-                    badgeDesktop.classList.remove('hidden');
-                }
-                if(badgeMobile) {
-                    badgeMobile.innerText = count;
-                    badgeMobile.classList.remove('hidden');
-                }
-            } else {
-                badgeDesktop?.classList.add('hidden');
-                badgeMobile?.classList.add('hidden');
-            }
-        }
-
-        function goToCart() {
-            const container = document.getElementById('cart-items');
-            if(cart.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12 space-y-4 animate-[pageFadeIn_0.3s_forwards]">
-                        <div class="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto text-gray-400">
-                            <i class="fas fa-cart-shopping text-2xl"></i>
-                        </div>
-                        <div class="space-y-1">
-                            <h4 class="font-bold text-gray-900 text-sm">Your basket is feeling light</h4>
-                            <p class="text-xs text-gray-500 max-w-xs mx-auto">Explore Dazeen organic caffeine-free blends and begin your wellness routine today.</p>
-                        </div>
-                        <button onclick="showPage('home')" class="bg-primary hover:bg-emerald-950 text-white font-bold py-2.5 px-6 rounded-lg text-xs shadow transition">
-                            Return to Shop
-                        </button>
-                    </div>
-                `;
-                document.getElementById('subtotal-val').innerText = "0";
-                document.getElementById('discount-row').style.display = 'none';
-                document.getElementById('cart-total').innerText = "0";
-                showPage('cart');
-                return;
-            }
-            renderCartSummary();
-            showPage('cart');
-        }
-
-        function renderCartSummary() {
-            const container = document.getElementById('cart-items');
-            let subtotal = 0;
-
-            container.innerHTML = cart.map(item => {
-                subtotal += item.price * item.qty;
-                return `
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-100 pb-4 last:border-0 last:pb-0 gap-4 animate-[pageFadeIn_0.3s_forwards]">
-                        <div class="flex items-center space-x-4 flex-grow">
-                            <img src="${item.image}" class="w-14 h-14 object-cover rounded-xl border shrink-0" onerror="this.src='https://placehold.co/100x100/1b3322/ffffff?text=Date+Seed+Roast'">
-                            <div class="space-y-1">
-                                <h4 class="font-bold text-xs text-gray-900 leading-snug cursor-pointer hover:text-primary" onclick="openProductDetailPage(${item.id})">${item.title}</h4>
-                                <div class="flex items-center space-x-3 text-[10px]">
-                                    <span class="text-amber-900 font-extrabold">₹${item.price}</span>
-                                    <span class="text-gray-300">|</span>
-                                    <span class="text-gray-500">Unit Price</span>
-                                </div>
-                                <div class="flex items-center space-x-2 pt-1">
-                                    <button onclick="adjustQuantity(${item.id}, -1)" class="w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-xs text-gray-600 focus:outline-none">-</button>
-                                    <span class="text-xs font-bold px-2">${item.qty}</span>
-                                    <button onclick="adjustQuantity(${item.id}, 1)" class="w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-xs text-gray-600 focus:outline-none">+</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex sm:flex-col justify-between sm:justify-start items-center sm:items-end w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-50 shrink-0">
-                            <button onclick="removeFromCart(${item.id})" class="text-[10px] text-rose-500 hover:text-rose-700 font-bold flex items-center gap-1">
-                                <i class="fas fa-trash-can"></i> Remove
-                            </button>
-                            <span class="font-extrabold text-gray-950 text-sm sm:mt-2">₹${item.price * item.qty}</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            document.getElementById('subtotal-val').innerText = subtotal;
-
-            let discount = 0;
-            if (appliedPromoCode === "DAZEEN10") {
-                discount = Math.round(subtotal * 0.10);
-                document.getElementById('discount-val').innerText = discount;
-                document.getElementById('discount-row').style.display = 'flex';
-                document.getElementById('coupon-message').innerHTML = '<span class="text-emerald-700 font-bold">Code DAZEEN10 applied successfully! (10% Off)</span>';
-                document.getElementById('coupon-input').value = 'DAZEEN10';
-            } else {
-                document.getElementById('discount-row').style.display = 'none';
-            }
-
-            document.getElementById('cart-total').innerText = subtotal - discount;
-        }
-
-        function adjustQuantity(id, delta) {
-            const item = cart.find(item => item.id === id);
-            if (item) {
-                item.qty += delta;
-                if (item.qty <= 0) {
-                    cart = cart.filter(i => i.id !== id);
-                }
-                saveCart();
-                renderCartSummary();
-            }
-        }
-
-        function removeFromCart(id) {
-            cart = cart.filter(item => item.id !== id);
-            saveCart();
-            goToCart();
-            showToast("Item removed from your cart.", 'info');
-        }
-
-        function applyCoupon() {
-            const input = document.getElementById('coupon-input').value.trim().toUpperCase();
-            if (input === "DAZEEN10") {
-                appliedPromoCode = "DAZEEN10";
-                localStorage.setItem('dazeen_coupon', appliedPromoCode);
-                renderCartSummary();
-                showToast("Coupon DAZEEN10 applied! You saved 10% on your cart.", 'success');
-            } else {
-                showToast("Invalid Promo Code. Try using DAZEEN10", 'error');
-                document.getElementById('coupon-message').innerHTML = '<span class="text-rose-600">Invalid promo coupon code.</span>';
-            }
-        }
-
-        function checkoutProcess() {
-            if (cart.length === 0) {
-                showToast("Please add at least one pack to your basket first!", 'error');
-                return;
-            }
-            if (!user) {
-                toggleAuthState('login');
-                showPage('login');
-            } else {
+        async function handleAuthSubmission() {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-password').value;
+            const users = JSON.parse(localStorage.getItem('dazeen_users')) || [];
+            if (authStateMode === 'signup') {
+                users.push({email, pass});
+                localStorage.setItem('dazeen_users', JSON.stringify(users));
+                user = {phone: email};
+                localStorage.setItem('dazeen_user', JSON.stringify(user));
                 goToAddressPage();
-            }
-        }
-
-        function goToAddressPage() {
-            document.getElementById('form-phone').value = user.phone;
-            document.getElementById('form-total').value = document.getElementById('cart-total').innerText;
-            document.getElementById('form-items').value = cart.map(item => `${item.title} (x${item.qty})`).join(', ');
-
-            const savedAddressObj = JSON.parse(localStorage.getItem(`dazeen_saved_address_${user.phone}`));
-            if (savedAddressObj) {
-                document.getElementById('addr-name').value = savedAddressObj.name || '';
-                document.getElementById('addr-phone').value = savedAddressObj.phone || '';
-                document.getElementById('addr-flat').value = savedAddressObj.flat || '';
-                document.getElementById('addr-area').value = savedAddressObj.area || '';
-                document.getElementById('addr-pincode').value = savedAddressObj.pincode || '';
-                document.getElementById('addr-city').value = savedAddressObj.city || '';
-                document.getElementById('addr-state').value = savedAddressObj.state || '';
-                document.getElementById('save-address-chk').checked = true;
-                showToast("Saved address filled automatically!", "info");
             } else {
-                document.getElementById('addr-name').value = '';
-                document.getElementById('addr-phone').value = '';
-                document.getElementById('addr-flat').value = '';
-                document.getElementById('addr-area').value = '';
-                document.getElementById('addr-pincode').value = '';
-                document.getElementById('addr-city').value = '';
-                document.getElementById('addr-state').value = '';
-                document.getElementById('save-address-chk').checked = false;
+                const u = users.find(x => x.email === email && x.pass === pass);
+                if(u) { user = {phone: email}; localStorage.setItem('dazeen_user', JSON.stringify(user)); goToAddressPage(); }
+                else showToast("Fail", "error");
             }
-
-            showPage('address');
         }
 
-        async function handleOrderSubmit(e) {
+        function handleOrderSubmit(e) {
             e.preventDefault();
-            const btn = document.getElementById('submit-order-btn');
-            const originalText = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> <span>Processing Secure Order...</span>`;
-
-            const nameVal = document.getElementById('addr-name').value.trim();
-            const phoneVal = document.getElementById('addr-phone').value.trim();
-            const flatVal = document.getElementById('addr-flat').value.trim();
-            const areaVal = document.getElementById('addr-area').value.trim();
-            const pinVal = document.getElementById('addr-pincode').value.trim();
-            const cityVal = document.getElementById('addr-city').value.trim();
-            const stateVal = document.getElementById('addr-state').value.trim();
-            const totalAmt = parseInt(document.getElementById('form-total').value);
-            const orderedItemsStr = cart.map(item => `${item.title} (x${item.qty})`).join(', ');
-
-            const formData = new FormData();
-            formData.append("Customer Name", nameVal);
-            formData.append("Customer Email", user ? user.phone : "Unregistered");
-            formData.append("Contact Phone", phoneVal);
-            formData.append("Address Flat/House", flatVal);
-            formData.append("Address Area/Street", areaVal);
-            formData.append("Pincode", pinVal);
-            formData.append("City", cityVal);
-            formData.append("State", stateVal);
-            formData.append("Total COD Amount", `₹${totalAmt}`);
-            formData.append("Ordered Items", orderedItemsStr);
-
-            try {
-                const formspreeResponse = await fetch("https://formspree.io/f/mojbvqqd", {
-                    method: "POST",
-                    body: formData,
-                    headers: { 'Accept': 'application/json' }
-                });
-
-                if (formspreeResponse.ok) {
-                    showToast("Order pipeline successfully submitted to back-office!", "success");
-                }
-
-                const shouldSave = document.getElementById('save-address-chk').checked;
-                if (shouldSave) {
-                    const savedAddressObj = {
-                        name: nameVal,
-                        phone: phoneVal,
-                        flat: flatVal,
-                        area: areaVal,
-                        pincode: pinVal,
-                        city: cityVal,
-                        state: stateVal
-                    };
-                    localStorage.setItem(`dazeen_saved_address_${user.phone}`, JSON.stringify(savedAddressObj));
-                } else {
-                    localStorage.removeItem(`dazeen_saved_address_${user.phone}`);
-                }
-
-                const generatedOrderId = "DAZ-" + Math.floor(Math.random() * 900000 + 100000);
-                const addressDetails = `${flatVal}, ${areaVal}, ${cityVal}, ${stateVal}`;
-                
-                const currentOrder = {
-                    orderId: generatedOrderId,
-                    timestamp: Date.now(),
-                    date: new Date().toLocaleDateString('en-IN'),
-                    items: [...cart],
-                    total: totalAmt,
-                    address: addressDetails,
-                    pincode: pinVal,
-                    phone: user.phone
-                };
-
-                orders.unshift(currentOrder);
-                localStorage.setItem('dazeen_orders_store', JSON.stringify(orders));
-
-                document.getElementById('celebration-order-id').innerText = generatedOrderId;
-                document.getElementById('celebration-total-amt').innerText = `₹${totalAmt}`;
-                document.getElementById('celebration-shipping-address').innerText = `${addressDetails} - PIN: ${pinVal}`;
-                
-                document.getElementById('celebration-items-list').innerHTML = currentOrder.items.map(i => `
-                    <div class="flex justify-between">
-                        <span>• ${i.title}</span>
-                        <span class="font-black text-gray-900">x${i.qty}</span>
-                    </div>
-                `).join('');
-
-                const recTitle = document.getElementById('rec-title');
-                const recImg = document.getElementById('rec-img');
-                const recDesc = document.getElementById('rec-desc');
-                
-                const purchased100g = currentOrder.items.some(i => i.id === 1);
-                if (purchased100g) {
-                    recTitle.innerText = "Dazeen Premium Date Seed Roast - 250g Pack";
-                    recImg.src = "dazeen250gf.jpeg";
-                    recDesc.innerText = "Our signature best-selling size. Roast blend optimized for chocolatey extracts.";
-                    window.currentRecommendationId = 2;
-                } else {
-                    recTitle.innerText = "Dazeen Premium Date Seed Roast - 100g Pack";
-                    recImg.src = "dazeen100G.jpeg";
-                    recDesc.innerText = "Perfect compact travel pocket blend taster. Pure, hand-roasted and organic.";
-                    window.currentRecommendationId = 1;
-                }
-
-                cart = [];
-                saveCart();
-                showCelebrationPopup();
-            } catch (err) {
-                console.error("Order submit exception: ", err);
-                showToast("System offline. Placing simulated fallback order...", "info");
-                
-                const generatedOrderId = "DAZ-" + Math.floor(Math.random() * 900000 + 100000);
-                const addressDetails = `${flatVal}, ${areaVal}, ${cityVal}, ${stateVal}`;
-                const currentOrder = {
-                    orderId: generatedOrderId,
-                    timestamp: Date.now(),
-                    date: new Date().toLocaleDateString('en-IN'),
-                    items: [...cart],
-                    total: totalAmt,
-                    address: addressDetails,
-                    pincode: pinVal,
-                    phone: user.phone
-                };
-                orders.unshift(currentOrder);
-                localStorage.setItem('dazeen_orders_store', JSON.stringify(orders));
-                document.getElementById('celebration-order-id').innerText = generatedOrderId;
-                document.getElementById('celebration-total-amt').innerText = `₹${totalAmt}`;
-                document.getElementById('celebration-shipping-address').innerText = `${addressDetails} - PIN: ${pinVal}`;
-                document.getElementById('celebration-items-list').innerHTML = currentOrder.items.map(i => `
-                    <div class="flex justify-between"><span>• ${i.title}</span><span class="font-black text-gray-900">x${i.qty}</span></div>
-                `).join('');
-                cart = [];
-                saveCart();
-                showCelebrationPopup();
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-            }
-        }
-
-        function addRecommendationToCart() {
-            const targetId = window.currentRecommendationId || 1;
-            addToCart(targetId);
-            document.getElementById('celebration-recommendation').innerHTML = `
-                <div class="text-center w-full py-1 text-emerald-800 text-[10px] font-bold">
-                    <i class="fas fa-circle-check"></i> Pack successfully queued to next order basket!
-                </div>
-            `;
-        }
-
-        function executeDirectAiOrder(pid, qty = 1) {
-            const product = products.find(p => p.id === pid);
-            if (!product) return;
-
-            cart = [{ ...product, qty: qty }];
-            saveCart();
-            showToast(`Securely set cart to ${qty}x ${product.title} and moving to checkout!`, 'success');
-            
-            if (!user) {
-                toggleAuthState('signup');
-                showPage('login');
-            } else {
-                goToAddressPage();
-            }
-        }
-
-        function shiftCarousel(delta) {
-            currentCarouselIndex += delta;
-            if (currentCarouselIndex > 3) currentCarouselIndex = 0;
-            if (currentCarouselIndex < 0) currentCarouselIndex = 3;
-            renderCarouselPosition();
-        }
-
-        function setCarouselSlide(index) {
-            stopCarouselAutoPlay();
-            currentCarouselIndex = index;
-            renderCarouselPosition();
-            startCarouselAutoPlay();
-        }
-
-        function renderCarouselPosition() {
-            const track = document.getElementById('carousel-track');
-            if (track) {
-                track.style.transform = `translateX(-${currentCarouselIndex * 100}%)`;
-            }
-            const dots = document.querySelectorAll('.carousel-dot');
-            dots.forEach((dot, idx) => {
-                if (idx === currentCarouselIndex) {
-                    dot.className = "carousel-dot w-3.5 h-2 rounded-full bg-accent cursor-pointer transition-all duration-300";
-                } else {
-                    dot.className = "carousel-dot w-2 h-2 rounded-full bg-gray-300 cursor-pointer transition-all duration-300";
-                }
-            });
-        }
-
-        function toggleAccordion(key) {
-            const accordion = document.getElementById(`accordion-${key}`);
-            const icon = document.getElementById(`icon-${key}`);
-            
-            if (accordion.classList.contains('accordion-active')) {
-                accordion.classList.remove('accordion-active');
-                icon.style.transform = 'rotate(0deg)';
-            } else {
-                document.querySelectorAll('[id^="accordion-"]').forEach(acc => {
-                    acc.classList.remove('accordion-active');
-                });
-                document.querySelectorAll('[id^="icon-"]').forEach(i => {
-                    i.style.transform = 'rotate(0deg)';
-                });
-                
-                accordion.classList.add('accordion-active');
-                icon.style.transform = 'rotate(180deg)';
-            }
-        }
-
-        function openProfileAccordion(key) {
-            showPage('profile');
-            setTimeout(() => {
-                const accordion = document.getElementById(`accordion-${key}`);
-                const icon = document.getElementById(`icon-${key}`);
-                if (accordion) {
-                    document.querySelectorAll('[id^="accordion-"]').forEach(acc => {
-                        acc.classList.remove('accordion-active');
-                    });
-                    document.querySelectorAll('[id^="icon-"]').forEach(i => {
-                        i.style.transform = 'rotate(0deg)';
-                    });
-
-                    accordion.classList.add('accordion-active');
-                    if (icon) icon.style.transform = 'rotate(180deg)';
-                    accordion.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }, 300);
-        }
-
-        function setStarRating(stars) {
-            selectedStarRating = stars;
-            const starButtons = document.querySelectorAll('#star-rating-selector button');
-            starButtons.forEach((btn, index) => {
-                if (index < stars) {
-                    btn.className = "text-xl text-accent transition focus:outline-none";
-                } else {
-                    btn.className = "text-xl text-gray-300 transition focus:outline-none";
-                }
-            });
-        }
-
-        function scrollToReviewForm() {
-            document.getElementById('review-form-block').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        function goToProfile() {
-            if (!user) { 
-                toggleAuthState('login');
-                showPage('login'); 
-                return; 
-            }
-            document.getElementById('profile-phone').innerText = user.phone;
-            showPage('profile');
-        }
-
-        function goToOrders() {
-            if (!user) { 
-                toggleAuthState('login');
-                showPage('login'); 
-                return; 
-            }
-
-            const ordersContainer = document.getElementById('orders-list');
-            const trackerContainer = document.getElementById('live-tracker-container');
-
-            const currentUserOrders = orders.filter(o => o.phone === user.phone);
-
-            if(currentUserOrders.length === 0) {
-                ordersContainer.innerHTML = `
-                    <div class="text-center py-12 text-gray-500 space-y-2 animate-[pageFadeIn_0.3s_forwards]">
-                        <i class="fas fa-box text-2xl text-gray-300"></i>
-                        <p class="text-xs font-semibold">You haven't ordered any premium packs yet.</p>
-                        <button onclick="showPage('home')" class="mt-2 bg-primary text-accent text-xs font-bold px-4 py-2 rounded-xl">Shop Now</button>
-                    </div>
-                `;
-                trackerContainer.innerHTML = `
-                    <p class="text-gray-500 text-center py-4 text-xs font-medium">No active dispatches found.</p>
-                `;
-            } else {
-                ordersContainer.innerHTML = currentUserOrders.map(order => `
-                    <div class="py-4 text-xs text-gray-800 space-y-3 animate-[pageFadeIn_0.3s_forwards]">
-                        <div class="flex flex-col sm:flex-row justify-between font-bold text-gray-950 gap-1">
-                            <span>Order Ref: <span class="text-amber-900">${order.orderId}</span></span>
-                            <span class="text-gray-400 font-normal">Order Date: ${order.date}</span>
-                        </div>
-                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-1">
-                            <span class="font-semibold text-[9px] text-gray-500 uppercase tracking-wider block">Shipping Address</span>
-                            <div class="text-gray-700 leading-normal">${order.address} - <strong class="font-bold text-gray-900">${order.pincode}</strong></div>
-                        </div>
-                        
-                        <div class="space-y-3">
-                            ${order.items.map(i => {
-                                const matchedProduct = products.find(p => p.id === i.id) || i;
-                                return `
-                                    <div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 cursor-pointer hover:bg-gray-50/50 p-1.5 rounded-xl transition duration-150" onclick="openProductDetailPage(${i.id})">
-                                        <div class="flex items-center space-x-3">
-                                            <img src="${matchedProduct.image}" alt="${i.title}" class="w-10 h-10 object-cover rounded-lg border border-gray-200" onerror="this.src='https://placehold.co/100x100/1b3322/ffffff?text=Dazeen'">
-                                            <div class="space-y-0.5">
-                                                <h5 class="font-bold text-gray-900 text-[11px] leading-snug">${i.title}</h5>
-                                                <span class="text-[9px] text-gray-400 font-medium">Quantity Ordered: ${i.qty}</span>
-                                            </div>
-                                        </div>
-                                        <span class="text-amber-900 font-extrabold text-[11px]">₹${matchedProduct.price * i.qty}</span>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                        <div class="flex justify-between items-center font-bold text-xs text-amber-950 pt-2 border-t border-gray-100">
-                            <span>Total COD Amount</span>
-                            <span>₹${order.total}</span>
-                        </div>
-                    </div>
-                `).join('');
-
-                const latest = currentUserOrders[0];
-                trackerContainer.innerHTML = `
-                    <div class="space-y-4 animate-[pageFadeIn_0.3s_forwards]">
-                        <div class="flex justify-between items-center">
-                            <span class="font-bold text-gray-900 text-xs">${latest.orderId}</span>
-                            <span class="text-[9px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded font-extrabold">5-7 Days Delivery</span>
-                        </div>
-                        
-                        <div class="relative pl-6 space-y-6 border-l-2 border-accent">
-                            <div class="relative">
-                                <div class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-accent border-4 border-white shadow-sm flex items-center justify-center"></div>
-                                <h4 class="font-bold text-gray-900 text-xs">Order Placed</h4>
-                                <p class="text-[10px] text-gray-500">Order successfully reserved in system.</p>
-                            </div>
-                            <div class="relative">
-                                <div class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-accent border-4 border-white shadow-sm flex items-center justify-center"></div>
-                                <h4 class="font-bold text-gray-900 text-xs">Dispatched</h4>
-                                <p class="text-[10px] text-gray-500">Freshly roasted batch sealed and left warehouse.</p>
-                            </div>
-                            <div class="relative">
-                                <div class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-accent border-4 border-white shadow-sm flex items-center justify-center"></div>
-                                <h4 class="font-bold text-gray-900 text-xs">Out for Delivery</h4>
-                                <p class="text-[10px] text-gray-500">Courier partner dispatched batch to local region.</p>
-                            </div>
-                            <div class="relative opacity-50">
-                                <div class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-gray-300 border-4 border-white shadow-sm flex items-center justify-center"></div>
-                                <h4 class="font-bold text-gray-400 text-xs">Delivered</h4>
-                                <p class="text-[10px] text-gray-400">Order delivered safely (Delivery takes 5-7 days).</p>
-                            </div>
-                        </div>
-                        <div class="bg-amber-50 p-3 rounded-lg border border-amber-200 text-amber-900 text-[11px] font-semibold text-center">
-                            📦 Note: Fresh batches take 5-7 days for delivery.
-                        </div>
-                    </div>
-                `;
-            }
+            const orderId = "DAZ-" + Math.floor(Math.random()*9000);
+            orders.unshift({orderId, items: cart, total: 100});
+            localStorage.setItem('dazeen_orders_store', JSON.stringify(orders));
+            cart = [];
+            showToast("Success");
             showPage('orders');
         }
 
-        function logout() {
-            localStorage.removeItem('dazeen_user');
-            user = null;
-            showPage('home');
-            showToast("Logged out successfully from account.", 'info');
+        function loadReviews(pid) {
+            const list = document.getElementById('reviews-list-container');
+            const revs = JSON.parse(localStorage.getItem('rev_'+pid)) || [];
+            list.innerHTML = revs.map(r => `<div class="border-b p-2">${r.name}: ${r.comment}</div>`).join('');
         }
 
-        // Pincode dynamic lookup auto-fill
+        function handleReviewSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('review-name').value;
+            const comment = document.getElementById('review-comment').value;
+            const revs = JSON.parse(localStorage.getItem('rev_'+activeViewingProductId)) || [];
+            revs.push({name, comment});
+            localStorage.setItem('rev_'+activeViewingProductId, JSON.stringify(revs));
+            loadReviews(activeViewingProductId);
+        }
+
+        function logout() { localStorage.removeItem('dazeen_user'); user=null; showPage('home'); }
+        function goToOrders() { showPage('orders'); }
+        function goToProfile() { showPage('profile'); }
+        function updateCartCount() { document.getElementById('cart-count').innerText = cart.length; document.getElementById('cart-count').classList.remove('hidden'); }
+
+        // Pincode Logic
         document.getElementById('addr-pincode').addEventListener('input', function(e) {
-            const pincode = e.target.value.trim();
-            if (pincode.length === 6 && /^\d+$/.test(pincode)) {
-                showToast("Detecting your location based on pincode...", "info");
-                fetch(`https://api.postalpincode.in/pincode/${pincode}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data[0] && data[0].Status === "Success") {
-                            const postOffice = data[0].PostOffice[0];
-                            const city = postOffice.Name || postOffice.District || "";
-                            const state = postOffice.State || "";
-                            
-                            document.getElementById('addr-city').value = city;
-                            document.getElementById('addr-state').value = state;
-                            showToast(`Location auto-detected: ${city}, ${state}`, "success");
-                        } else {
-                            showToast("Pincode details not found. Please enter manually.", "error");
-                        }
-                    })
-                    .catch(err => {
-                        console.warn("Pincode API dispatch failed. Offline mode active:", err);
-                    });
+            if(e.target.value.length === 6) {
+                fetch(`https://api.postalpincode.in/pincode/${e.target.value}`)
+                .then(res => res.json())
+                .then(data => {
+                    if(data[0].Status === 'Success') {
+                        document.getElementById('addr-city').value = data[0].PostOffice[0].Name;
+                        document.getElementById('addr-state').value = data[0].PostOffice[0].State;
+                    }
+                });
             }
         });
-
-        // Exposing modern modules to global window context
-        window.showPage = showPage;
-        window.addToCart = addToCart;
-        window.adjustQuantity = adjustQuantity;
-        window.removeFromCart = removeFromCart;
-        window.applyCoupon = applyCoupon;
-        window.checkoutProcess = checkoutProcess;
-        window.handleAuthSubmission = handleAuthSubmission;
-        window.toggleAuthState = toggleAuthState;
-        window.toggleAccordion = toggleAccordion;
-        window.openProfileAccordion = openProfileAccordion;
-        window.setStarRating = setStarRating;
-        window.scrollToReviewForm = scrollToReviewForm;
-        window.handleReviewSubmit = handleReviewSubmit;
-        window.shiftCarousel = shiftCarousel;
-        window.setCarouselSlide = setCarouselSlide;
-        window.addRecommendationToCart = addRecommendationToCart;
-        window.dismissCelebration = dismissCelebration;
-        window.goToOrders = goToOrders;
-        window.goToProfile = goToProfile;
-        window.logout = logout;
-        window.openProductDetailPage = openProductDetailPage;
-        window.adjustDetailQty = adjustDetailQty;
-        window.shiftDetailSlider = shiftDetailSlider;
-        window.setDetailSliderSlide = setDetailSliderSlide;
-
     </script>
 </body>
 </html>
