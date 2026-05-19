@@ -54,13 +54,6 @@
             from { transform: translateY(100%) translateX(50%); opacity: 0; }
             to { transform: translateY(0) translateX(0); opacity: 1; }
         }
-        .sms-bounce {
-            animation: smsSlide 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        @keyframes smsSlide {
-            from { transform: translateY(-120%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
         .chat-wave span {
             animation: chatBob 1.2s infinite ease-in-out;
             display: inline-block;
@@ -89,7 +82,11 @@
             100% { transform: translateX(360px); }
         }
         #mobile-menu-drawer {
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Smooth scale bounce transitions for modern UI popups */
+        .smooth-celebration-card {
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease-out;
         }
     </style>
 </head>
@@ -99,33 +96,10 @@
     <!-- CUSTOM TOAST CONTAINER (Replaces Alert systems) -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-[100] flex flex-col space-y-2 pointer-events-none max-w-sm w-full p-4"></div>
 
-    <!-- MOCK TOP-DOWN SMS NOTIFICATION (Rescue system when Fast2SMS fails due to CORS or zero credits) -->
-    <div id="mock-sms-notification" class="fixed top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-gray-900/95 text-white p-4 rounded-2xl shadow-2xl border-2 border-accent/40 z-[150] hidden sms-bounce">
-        <div class="flex items-start space-x-3">
-            <div class="bg-accent/20 p-2 rounded-xl text-accent text-lg">
-                <i class="fas fa-comment-sms"></i>
-            </div>
-            <div class="flex-1">
-                <div class="flex justify-between items-center">
-                    <span class="text-xs font-bold text-accent tracking-wider uppercase">Messages • DAZEEN</span>
-                    <button onclick="dismissMockSms()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
-                </div>
-                <p class="text-[11px] font-semibold text-gray-200 mt-1 leading-relaxed">
-                    Your Dazeen Secure Login OTP code is <strong id="mock-sms-otp" class="text-yellow-400 font-extrabold text-xs">123456</strong>. Valid for 5 minutes.
-                </p>
-                <div class="flex justify-end mt-2">
-                    <button onclick="copyMockOtp()" class="bg-accent hover:bg-accentHover text-primary text-[9px] uppercase font-black px-2 py-1 rounded">
-                        <i class="fas fa-copy mr-1"></i> Copy Code
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <!-- FLIPKART STYLE CELEBRATION OVERLAY -->
-    <div id="success-celebration-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex flex-col items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center space-y-6 shadow-2xl transform scale-90 opacity-0 transition-all duration-500 relative overflow-hidden" id="celebration-card">
+    <div id="success-celebration-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 hidden transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center space-y-6 shadow-2xl transform scale-90 opacity-0 smooth-celebration-card relative overflow-hidden" id="celebration-card">
             <!-- Confetti Canvas background overlay -->
             <canvas id="confetti-canvas" class="absolute inset-0 pointer-events-none w-full h-full rounded-3xl"></canvas>
             
@@ -142,7 +116,7 @@
                 <span class="text-xs uppercase font-extrabold tracking-widest text-emerald-600 block">Ordered successfully!</span>
                 <h3 class="text-2xl font-black text-gray-950">Dhanyawad! 📦</h3>
                 <p class="text-xs text-gray-500 leading-relaxed">
-                    Aapka order pre-launch dispatch queue mein successfully lag chuka hai. Humara Delivery Partner soon aapse judega!
+                    Aapka order successfully register ho gaya hai! Jaise hi dispatch hoga, update mil jayega.
                 </p>
             </div>
             
@@ -241,6 +215,12 @@
     </div>
 
 
+    <!-- FRESH TO ORDER HEADER BANNER -->
+    <div class="bg-[#d4af37]/10 border-b border-[#d4af37]/30 text-[#5c3a21] py-3 px-4 text-center text-[11px] sm:text-xs font-bold shadow-sm relative z-10">
+        ✨ <strong class="text-primary uppercase font-extrabold tracking-wide">Mera Apna Premium batch:</strong> Jaise aap order dete ho, vaise hi fresh roast karke hum aapko banake dete hain!
+    </div>
+
+
     <!-- HERO INTRO BANNER -->
     <header class="bg-gradient-to-r from-primary via-emerald-950 to-amberDark text-white py-10 md:py-16 px-4 relative overflow-hidden shadow-inner text-center">
         <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px]"></div>
@@ -264,7 +244,7 @@
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-200 pb-4 space-y-4 md:space-y-0">
                 <div>
                     <h2 class="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight">Select Your Premium Roast Pack</h2>
-                    <p class="text-xs text-gray-500">Authentic premium roasts, handpicked and perfectly roasted.</p>
+                    <p class="text-xs text-gray-500">Authentic premium roasts, handroasted fresh upon receiving orders.</p>
                 </div>
                 <div class="bg-white px-3 py-1.5 rounded-lg shadow-sm border border-gray-100 flex items-center space-x-2 text-[11px] text-gray-600">
                     <i class="fas fa-truck-fast text-accent"></i>
@@ -305,7 +285,7 @@
                             <i class="fas fa-mug-hot text-sm"></i>
                         </div>
                         <h4 class="font-extrabold text-xs text-gray-900">Smooth Digestive Flow</h4>
-                        <p class="text-[11px] text-gray-500 leading-relaxed">Completely non-acidic. Perfect for those with sensitive stomachs or acid reflux issues.</p>
+                        <p class="text-[11px] text-gray-500 leading-relaxed">Completely non-acidic. Perfect for sensitive stomachs or acid reflux issues.</p>
                     </div>
                 </div>
             </div>
@@ -367,7 +347,7 @@
         </section>
 
 
-        <!-- SECURE PASSWORD & SMS OTP AUTHENTICATION PAGE -->
+        <!-- SECURE PASSWORD & EMAIL AUTHENTICATION PAGE -->
         <section id="page-login" class="page-view hidden max-w-md mx-auto mt-6">
             <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 space-y-6">
                 <div class="text-center space-y-2">
@@ -375,7 +355,7 @@
                         <i class="fas fa-user-shield text-xl"></i>
                     </div>
                     <h2 id="auth-title" class="text-xl md:text-2xl font-black text-gray-900">Sign In to Dazeen</h2>
-                    <p id="auth-subtitle" class="text-xs text-gray-500">Enter your 10-digit mobile number to view and track your orders.</p>
+                    <p id="auth-subtitle" class="text-xs text-gray-500">Enter your email and password to secure your account details.</p>
                 </div>
 
                 <!-- Auth Selector Tabs -->
@@ -388,20 +368,20 @@
                     </button>
                 </div>
 
-                <!-- Phone input step -->
+                <!-- Credentials block -->
                 <div id="auth-inputs-block" class="space-y-4">
                     <div>
-                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">10-Digit Mobile Number</label>
+                        <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Email Address</label>
                         <div class="relative">
                             <span class="absolute left-3 top-2.5 text-gray-400 text-sm">
-                                <i class="fas fa-mobile-screen-button"></i>
+                                <i class="fas fa-envelope"></i>
                             </span>
-                            <input type="tel" id="auth-phone" required placeholder="e.g. 9876543210" maxlength="10" class="w-full border border-gray-200 pl-10 pr-4 py-2.5 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-accent font-semibold">
+                            <input type="email" id="auth-email" required placeholder="e.g. supremebeing@domain.com" class="w-full border border-gray-200 pl-10 pr-4 py-2.5 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-accent font-semibold">
                         </div>
                     </div>
 
-                    <!-- Password field (Visible for login or after OTP verification during registration) -->
-                    <div id="password-group">
+                    <!-- Password field -->
+                    <div>
                         <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Secure Account Password</label>
                         <div class="relative">
                             <span class="absolute left-3 top-2.5 text-gray-400 text-sm">
@@ -411,24 +391,10 @@
                         </div>
                     </div>
 
-                    <!-- OTP verification screen (Only triggers for registration flow) -->
-                    <div id="otp-group" class="hidden bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
-                        <p class="text-[10px] text-gray-500 leading-normal">
-                            We have sent a 6-digit verification code to your phone. Enter code to register.
-                        </p>
-                        <div>
-                            <input type="text" id="auth-otp" placeholder="Enter 6-digit OTP code" maxlength="6" class="w-full border border-gray-200 p-2.5 rounded-lg text-xs text-center font-bold tracking-widest focus:outline-none focus:ring-1 focus:ring-accent">
-                        </div>
-                    </div>
-
                     <!-- Dynamic Action buttons -->
                     <button id="auth-primary-btn" onclick="handleAuthSubmission()" class="w-full bg-accent hover:bg-accentHover text-primary py-3 rounded-xl shadow font-bold transition duration-150 text-xs uppercase tracking-widest flex items-center justify-center space-x-2">
                         <i class="fas fa-right-to-bracket"></i>
-                        <span id="auth-btn-label">Verify & Proceed</span>
-                    </button>
-
-                    <button id="otp-resend-btn" onclick="triggerOtpRequest()" class="hidden w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl font-bold transition text-[10px] uppercase">
-                        Resend Code via SMS
+                        <span id="auth-btn-label">Sign In</span>
                     </button>
                 </div>
 
@@ -444,7 +410,7 @@
             <div class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 space-y-6">
                 <div class="border-b pb-4">
                     <h2 class="text-xl md:text-2xl font-extrabold text-gray-900">Delivery Information</h2>
-                    <p class="text-xs text-gray-500">Provide shipping coordinates to reserve your pre-launch dispatch slot.</p>
+                    <p class="text-xs text-gray-500">Provide shipping coordinates to reserve your pre-launch fresh dispatch slot.</p>
                 </div>
                 
                 <form id="address-form" class="space-y-4">
@@ -488,15 +454,42 @@
         </section>
 
 
+        <!-- TERMS & RETURN POLICY PAGE -->
+        <section id="page-terms" class="page-view hidden max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+            <div class="border-b pb-4 flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-extrabold text-gray-900">Return Policy & Service Terms</h2>
+                    <p class="text-xs text-gray-500">How we prepare, ship, and protect your purchases.</p>
+                </div>
+                <button onclick="showPage('home')" class="text-primary hover:text-accent font-bold text-xs bg-gray-50 px-3 py-1.5 rounded-lg border">← Continue Shopping</button>
+            </div>
+            
+            <div class="space-y-4 text-xs text-gray-600 leading-relaxed">
+                <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-amber-950 font-semibold mb-2">
+                    📢 Note: Humare products stock-held nahi hote! Jaise hi aap order place karte hain, vaise hi raw premium date seeds roast, packaging aur fresh delivery cycle me move hote hain!
+                </div>
+
+                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">1. Live 5-7 Days Delivery Policy</h3>
+                <p>Kyunki hum fresh batch roast karke dispatch karte hain, complete preparation aur courier processing me pure safe transition ke sath total <strong>5 to 7 days</strong> ka samay lagta hai. Standard deliveries safe-sealed package me aapke pincode tak smoothly dispatch ki jati hain.</p>
+                
+                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">2. Return & Full Refund Protection</h3>
+                <p>Hum customer satisfaction ko primary priorities me rakhte hain. Humare date seed roast super-fresh roast hone ke karan aam taur par non-returnable hain, lekin yadi aapko damaged packing, moisture defect ya koi quality discrepancy milti hai toh hum immediate bina sawal uthaye <strong>100% replacement ya direct credit refund</strong> offer karte hain. Apne order status dashboard se hume query submit karein.</p>
+                
+                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">3. Conditions of Premium Sale</h3>
+                <p>Cash on Delivery Orders fully verified customer communication coordinates par verified kiye jate hain. Bulk requests ya commercial supply ke liye please direct business desk par write-up karein.</p>
+            </div>
+        </section>
+
+
         <!-- USER PROFILE PAGE -->
         <section id="page-profile" class="page-view hidden space-y-6 max-w-4xl mx-auto">
             <div class="bg-gradient-to-br from-primary to-emerald-950 p-6 rounded-2xl text-white shadow-md flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                 <div class="space-y-1">
                     <span class="text-[10px] uppercase tracking-widest text-accent font-extrabold">Mera Dashboard</span>
                     <h2 class="text-xl md:text-2xl font-black text-gray-100 flex items-center gap-2">
-                        <i class="fas fa-circle-user text-accent"></i> Verified Mobile Account
+                        <i class="fas fa-circle-user text-accent"></i> Verified Account Panel
                     </h2>
-                    <p class="text-xs text-gray-300">Registered Phone: <span id="profile-phone" class="font-bold text-accent">N/A</span></p>
+                    <p class="text-xs text-gray-300">Registered Email: <span id="profile-phone" class="font-bold text-accent">N/A</span></p>
                 </div>
                 <button onclick="logout()" class="text-xs bg-white/10 hover:bg-white/20 border border-white/10 px-4 py-2 rounded-xl font-bold transition">
                     <i class="fas fa-arrow-right-from-bracket mr-1.5"></i> Sign Out
@@ -559,9 +552,9 @@
                 <div class="flex items-start gap-2 max-w-[85%]">
                     <div class="bg-primary text-accent p-1.5 rounded-lg text-[10px] shrink-0 mt-0.5"><i class="fas fa-robot"></i></div>
                     <div class="bg-white border rounded-xl p-3 shadow-sm leading-relaxed text-gray-800">
-                        Namaste! Swagat hai aapka **Dazeen Premium Assistant** ke sath. ☕ <br><br>
+                        Namaste supreme being! Swagat hai aapka **Dazeen Premium Assistant** ke sath. ☕ <br><br>
                         Main aapko Dazeen Date Seed Roast ke physical benefits bata sakta hoon, **Direct Packs Cart mein add** kar sakta hoon, and directly checkouts order initiate kar sakta hoon! <br><br>
-                        Niche diye prompt chips par click kijiye ya mujhse puchiye!
+                        Jaise hi aap order dete ho, waise hi fresh grind karke hum aapko ready karwa dete hain! Niche diye prompt chips par click kijiye ya mujhse puchiye!
                     </div>
                 </div>
             </div>
@@ -630,12 +623,12 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-emerald-900 pb-6 text-center md:text-left">
                 <div class="space-y-1">
                     <span class="text-xs font-bold text-accent tracking-wide">DAZEEN PREMIUM STORE</span>
-                    <p class="text-[9px] text-gray-400">Pure roasted goodness, direct to your kitchen.</p>
+                    <p class="text-[9px] text-gray-400">Pure roasted goodness, fresh direct to your kitchen.</p>
                 </div>
                 <div class="flex justify-center space-x-6 uppercase font-bold text-[9px]">
                     <a href="#page-home" onclick="showPage('home')" class="hover:text-accent transition">Shop</a>
                     <a href="#page-profile" onclick="goToProfile()" class="hover:text-accent transition">Dashboard</a>
-                    <a href="#" class="hover:text-accent transition">Terms</a>
+                    <a href="#page-terms" onclick="showPage('terms')" class="hover:text-accent transition">Return Policy & Terms</a>
                 </div>
                 <div class="text-center md:text-right text-gray-400">
                     <p class="text-[9px]">Secure Checkout Process Guaranteed</p>
@@ -649,8 +642,7 @@
             
             <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-gray-400 text-[10px]">
                 <div class="space-x-4">
-                    <a href="#" class="hover:underline hover:text-white">Conditions of Sale</a>
-                    <a href="#" class="hover:underline hover:text-white">Privacy Code</a>
+                    <a href="#page-terms" onclick="showPage('terms')" class="hover:underline hover:text-white">Conditions of Sale & Returns Policy</a>
                 </div>
                 <p>Dazeen Premium - Mera Apna Store App</p>
             </div>
@@ -668,7 +660,7 @@
                 rating: "4.8 out of 5 stars (142 reviews)",
                 image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&q=80",
                 desc: "Our premium 100% fine-ground organic date seeds. Hand-roasted carefully in small batches. Optimized specifically for standard drip filters, French presses, or traditional boiling. Clean flavor signature with robust notes of cocoa.",
-                terms: "Priority dispatch scheduled. Free shipping included."
+                terms: "Jaise aap order karenge, vaise hi fresh prepare kiya jayega!"
             },
             {
                 id: 2,
@@ -677,7 +669,7 @@
                 rating: "4.9 out of 5 stars (286 reviews)",
                 image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&q=80", 
                 desc: "Maximize your wellness value pack. Features long-term vacuum-packed premium freshness inside a resealable multi-layer eco-pouch. Excellent value designed for daily premium wellness drink preparation.",
-                terms: "Launch Special: Dispatched immediately in priority queues."
+                terms: "Freshly roasted to order batch. Ultimate preservation."
             }
         ];
 
@@ -724,12 +716,14 @@
             syncAuthInterface();
         });
 
-        // Toggle mobile hamburger menu drawer
+        // Toggle mobile hamburger menu drawer with smooth transitions
         function toggleMobileMenu() {
             const drawer = document.getElementById('mobile-menu-drawer');
             if (drawer.classList.contains('-translate-x-full')) {
                 drawer.classList.remove('-translate-x-full');
+                drawer.classList.add('translate-x-0');
             } else {
+                drawer.classList.remove('translate-x-0');
                 drawer.classList.add('-translate-x-full');
             }
         }
@@ -744,73 +738,10 @@
         function syncAuthInterface() {
             const footerAuth = document.getElementById('drawer-footer-auth');
             if (user) {
-                footerAuth.style.display = 'block';
+                if (footerAuth) footerAuth.style.display = 'block';
             } else {
-                footerAuth.style.display = 'none';
+                if (footerAuth) footerAuth.style.display = 'none';
             }
-        }
-
-
-        // Fast2SMS OTP Dispatch via GET API (Browser level client fetch requested by user)
-        function sendDesktopOTP(userPhone) {
-            const apiKey = "14eYp2D6nfUcWLTyxmVtq97JaAzHbi3FjX8sGuvZElRdKoOCrkuyLcNgESHKsbtYhz1DrinmqpxoZTvP";
-            
-            // 1. Generate dynamic 6-digit secure code
-            const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-            window.currentOtp = generatedOtp; 
-
-            // 2. Exactly formatted URL (route=dlt and without additional pipes)
-            const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${apiKey}&route=dlt&sender_id=DAZEEN&message=214505&variables_values=${generatedOtp}&flash=0&numbers=${userPhone}`;
-
-            // Trigger fallback notification immediately to prevent user blockade if CORS/wallet fails
-            triggerSmsRescueFallback(generatedOtp);
-
-            // 3. Desktop Browser Fetch Request
-            fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Cache-Control': 'no-cache'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.return) {
-                    console.log("OTP Sent Successfully from Desktop via Fast2SMS!");
-                    showToast("Verification code (OTP) successfully sent to phone!", "success");
-                } else {
-                    console.error("Fast2SMS API Return False Details:", data.message);
-                    showToast("Fast2SMS returned API Warning: " + data.message, "error");
-                }
-            })
-            .catch(err => {
-                console.warn("Desktop Browser CORS / Network block handled. Falling back to active screen simulator: ", err);
-                showToast("Desktop SMS Bypass Activated. Screen Notification loaded!", "success");
-            });
-        }
-
-        // Rescue banner trigger function
-        function triggerSmsRescueFallback(otpCode) {
-            const banner = document.getElementById('mock-sms-notification');
-            const placeholder = document.getElementById('mock-sms-otp');
-            placeholder.innerText = otpCode;
-            banner.classList.remove('hidden');
-            banner.style.display = 'block';
-        }
-
-        function dismissMockSms() {
-            document.getElementById('mock-sms-notification').style.display = 'none';
-        }
-
-        function copyMockOtp() {
-            const code = document.getElementById('mock-sms-otp').innerText;
-            const dummy = document.createElement("input");
-            document.body.appendChild(dummy);
-            dummy.value = code;
-            dummy.select();
-            document.execCommand("copy");
-            document.body.removeChild(dummy);
-            showToast("OTP code copied! Paste in verification input box.", "success");
-            dismissMockSms();
         }
 
         // Switch between Sign-In and Sign-Up state modes
@@ -821,120 +752,72 @@
             const authTitle = document.getElementById('auth-title');
             const authSubtitle = document.getElementById('auth-subtitle');
             const authBtnLabel = document.getElementById('auth-btn-label');
-            const passwordGroup = document.getElementById('password-group');
-            const otpGroup = document.getElementById('otp-group');
-            const resendBtn = document.getElementById('otp-resend-btn');
 
             if (state === 'login') {
-                btnSignIn.className = "py-2 text-xs font-bold rounded-lg transition duration-200 bg-white text-primary shadow-sm";
-                btnSignUp.className = "py-2 text-xs font-bold rounded-lg transition duration-200 text-gray-500 hover:text-primary";
-                authTitle.innerText = "Sign In to Dazeen";
-                authSubtitle.innerText = "Enter your 10-digit mobile and password to verify your account.";
-                authBtnLabel.innerText = "Sign In";
-                passwordGroup.classList.remove('hidden');
-                otpGroup.classList.add('hidden');
-                resendBtn.classList.add('hidden');
+                if (btnSignIn) btnSignIn.className = "py-2 text-xs font-bold rounded-lg transition duration-200 bg-white text-primary shadow-sm";
+                if (btnSignUp) btnSignUp.className = "py-2 text-xs font-bold rounded-lg transition duration-200 text-gray-500 hover:text-primary";
+                if (authTitle) authTitle.innerText = "Sign In to Dazeen";
+                if (authSubtitle) authSubtitle.innerText = "Enter your registered email and password to access your account.";
+                if (authBtnLabel) authBtnLabel.innerText = "Sign In";
             } else {
-                btnSignUp.className = "py-2 text-xs font-bold rounded-lg transition duration-200 bg-white text-primary shadow-sm";
-                btnSignIn.className = "py-2 text-xs font-bold rounded-lg transition duration-200 text-gray-500 hover:text-primary";
-                authTitle.innerText = "Create Account";
-                authSubtitle.innerText = "Register via 10-Digit Mobile Phone OTP and setup password.";
-                authBtnLabel.innerText = "Get Verification OTP";
-                passwordGroup.classList.add('hidden');
-                otpGroup.classList.add('hidden');
-                resendBtn.classList.add('hidden');
+                if (btnSignUp) btnSignUp.className = "py-2 text-xs font-bold rounded-lg transition duration-200 bg-white text-primary shadow-sm";
+                if (btnSignIn) btnSignIn.className = "py-2 text-xs font-bold rounded-lg transition duration-200 text-gray-500 hover:text-primary";
+                if (authTitle) authTitle.innerText = "Create Account";
+                if (authSubtitle) authSubtitle.innerText = "Register directly with your email and set a private password.";
+                if (authBtnLabel) authBtnLabel.innerText = "Sign Up / Register";
             }
-        }
-
-
-        function triggerOtpRequest() {
-            const phone = document.getElementById('auth-phone').value.trim();
-            const mobileRegex = /^[6-9]\d{9}$/;
-            if (!mobileRegex.test(phone)) {
-                showToast("Please enter a valid 10-digit mobile phone number starting with 6-9!", "error");
-                return;
-            }
-            sendDesktopOTP(phone);
-            document.getElementById('otp-group').classList.remove('hidden');
-            document.getElementById('otp-resend-btn').classList.remove('hidden');
-            document.getElementById('auth-btn-label').innerText = "Verify OTP & Create Pass";
         }
 
         async function handleAuthSubmission() {
-            const phone = document.getElementById('auth-phone').value.trim();
+            const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value.trim();
-            const enteredOtp = document.getElementById('auth-otp').value.trim();
 
-            const mobileRegex = /^[6-9]\d{9}$/;
-            if (!mobileRegex.test(phone)) {
-                showToast("Kripya valid 10-digit mobile phone number enter karein!", "error");
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showToast("Sahi Email Address enter karein!", "error");
                 return;
             }
 
-            // Check accounts base
-            const localUsers = JSON.parse(localStorage.getItem('dazeen_registered_accounts')) || [];
+            if (password.length < 4) {
+                showToast("Password kam se kam 4 characters ka hona chahiye!", "error");
+                return;
+            }
+
+            // Fetch simulated/registered users database locally
+            const localUsers = JSON.parse(localStorage.getItem('dazeen_registered_accounts_email')) || [];
 
             if (authStateMode === 'signup') {
-                // SignUp process
-                const label = document.getElementById('auth-btn-label').innerText;
-                if (label === "GET VERIFICATION OTP") {
-                    // Trigger dynamic OTP flow
-                    triggerOtpRequest();
-                } else {
-                    // Verification verification step
-                    const requiredCode = window.currentOtp || "123456";
-                    if (enteredOtp !== requiredCode && enteredOtp !== "123456") {
-                        showToast("Incorrect OTP. Please enter valid 6-digit code!", "error");
-                        return;
-                    }
-
-                    // Verification success -> Show password setup field
-                    document.getElementById('password-group').classList.remove('hidden');
-                    document.getElementById('otp-group').classList.add('hidden');
-                    document.getElementById('auth-btn-label').innerText = "Set Password & Complete";
-                    window.currentOtpVerified = true;
-                    showToast("OTP verified! Please set a secure password for your account now.", "success");
+                const exists = localUsers.find(acc => acc.email === email);
+                if (exists) {
+                    showToast("Yeh email pehle se registered hai. Sign In karein!", "error");
+                    toggleAuthState('login');
+                    return;
                 }
 
-                if (label === "SET PASSWORD & COMPLETE") {
-                    if (password.length < 4) {
-                        showToast("Password must be at least 4 characters long!", "error");
-                        return;
-                    }
+                const newUser = {
+                    email: email,
+                    password: password,
+                    timestamp: Date.now()
+                };
+                localUsers.push(newUser);
+                localStorage.setItem('dazeen_registered_accounts_email', JSON.stringify(localUsers));
 
-                    const exists = localUsers.find(acc => acc.phone === phone);
-                    if (exists) {
-                        showToast("This mobile number is already registered. Sign In instead!", "error");
-                        toggleAuthState('login');
-                        return;
-                    }
-
-                    const newUser = {
-                        phone: phone,
-                        password: password,
-                        timestamp: Date.now()
-                    };
-                    localUsers.push(newUser);
-                    localStorage.setItem('dazeen_registered_accounts', JSON.stringify(localUsers));
-
-                    user = { phone: phone };
-                    localStorage.setItem('dazeen_user', JSON.stringify(user));
-                    showToast("Registration successful! Welcome to Dazeen Premium.", "success");
-                    syncAuthInterface();
-                    goToAddressPage();
-                }
+                user = { phone: email };
+                localStorage.setItem('dazeen_user', JSON.stringify(user));
+                showToast("Account successfully create ho gaya! Swagat hai.", "success");
+                syncAuthInterface();
+                goToAddressPage();
 
             } else {
-                // LogIn verification process
-                const account = localUsers.find(acc => acc.phone === phone && acc.password === password);
+                const account = localUsers.find(acc => acc.email === email && acc.password === password);
                 if (account) {
-                    user = { phone: phone };
+                    user = { phone: email };
                     localStorage.setItem('dazeen_user', JSON.stringify(user));
-                    showToast("Logged in successfully! Access verified.", "success");
+                    showToast("Successfully log in ho gaye.", "success");
                     syncAuthInterface();
                     goToAddressPage();
                 } else {
-                    showToast("Invalid password or mobile number. Please register if new!", "error");
+                    showToast("Galat email ya password! Kripya sahi credentials check karein.", "error");
                 }
             }
         }
@@ -981,6 +864,9 @@
                 You talk in a very friendly, natural, and localized mix of Hinglish and English (Hindi language words spelled in English alphabets like "bhai", "namaste", "aap").
                 Date seed roast is 100% caffeine-free, has zero acidity, is packed with fiber, heart-healthy minerals like Potassium, and active antioxidants.
                 
+                Also state with absolute pride: "Jaise aap order dete ho, waise hi fresh roast karke hum aapko banake dete hain!"
+                Standard delivery standard timeline takes 5-7 days.
+                
                 You can directly manage user actions in this e-commerce app! Append exactly one of these tags at the end of your response to run functions:
                 - If the user wants to add 250g Pack (ID 1) to cart: [ACTION:ADD:1]
                 - If the user wants to add 500g Pack (ID 2) to cart: [ACTION:ADD:2]
@@ -991,7 +877,7 @@
                 - If they want to shop / explore catalog: [ACTION:NAVIGATE:home]
                 
                 Current status context:
-                Current logged user mobile: ${user ? user.phone : "Not Logged In"}.
+                Current logged user mobile/email: ${user ? user.phone : "Not Logged In"}.
                 Current items in cart: ${cart.length} packs.
                 Latest products: 250g pack is ₹349, 500g value pack is ₹649.
                 Be very brief, cheerful, conversational, and direct!`;
@@ -1004,7 +890,7 @@
                 };
 
                 const apiKey = ""; // Runtime fallback
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -1015,7 +901,7 @@
                 const data = await response.json();
                 removeLoader(loaderId);
 
-                const rawResponseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Mafi chahta hu, processing me thodi asuvidha ho rahi hai. Me aapki aur kis prakar madad karu?";
+                const rawResponseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Mafi chahta hu supreme being, processing me thodi asuvidha ho rahi hai. Me aapki aur kis prakar madad karu?";
                 
                 const processedText = parseAndExecuteAiActions(rawResponseText);
                 appendChatBubble(processedText, 'ai');
@@ -1023,7 +909,7 @@
                 chatHistory.push({ role: 'model', parts: [{ text: rawResponseText }] });
 
             } catch (err) {
-                console.warn("Gemini service limits. Initiating quick simulated AI responses: ", err);
+                console.warn("Simulated fallback AI response active: ", err);
                 removeLoader(loaderId);
                 simulateAIResponse(messageText);
             }
@@ -1036,7 +922,7 @@
 
             if (text.includes("250g") || text.includes("250")) {
                 addToCart(1);
-                reply = "Haan ji! Maine 250g Premium Date Seed Roast Pack aapke cart me add kar diya hai! [ACTION:ADD:1]";
+                reply = "Haan ji! Maine 250g Premium Date Seed Roast Pack aapke cart me add kar diya hai! Jaise hi order confirm karenge, fresh roast hoke milega! [ACTION:ADD:1]";
             } else if (text.includes("500g") || text.includes("500") || text.includes("value")) {
                 addToCart(2);
                 reply = "Done! Maine 500g Value Pack directly cart me secure add kar diya hai! [ACTION:ADD:2]";
@@ -1047,7 +933,7 @@
             } else if (text.includes("order") || text.includes("buy")) {
                 reply = "Bilkul! Please checkout page par click karke order confirmation details fill kijiye.";
             } else {
-                reply = "Dazeen Date Seed Roast 100% natural and high wellness superfood drink h! Please choose products directly catalog se.";
+                reply = "Dazeen Date Seed Roast 100% natural and high wellness superfood drink h! Jaise aap order dete ho, vaise hi fresh hum banate hain.";
             }
             appendChatBubble(reply, 'ai');
         }
@@ -1145,7 +1031,10 @@
         // Core Page Navigation Routing
         function showPage(pageId) {
             document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
-            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+            const target = document.getElementById(`page-${pageId}`);
+            if (target) {
+                target.classList.remove('hidden');
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1396,7 +1285,7 @@
                 cart = [];
                 saveCart();
 
-                // Trigger full-screen celebration
+                // Trigger smooth full-screen celebration
                 showCelebrationPopup();
             } catch (err) {
                 console.error("Order pipeline error: ", err);
@@ -1571,26 +1460,34 @@
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
                             <span class="font-bold text-gray-900">${latest.orderId}</span>
-                            <span class="text-[9px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded font-extrabold">Early dispatch batch</span>
+                            <span class="text-[9px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded font-extrabold">Delivery: 5-7 Days</span>
                         </div>
                         
-                        <!-- Timeline Tracker -->
+                        <!-- Timeline Tracker (Only Placed, Dispatched, Out for Delivery, Delivered) -->
                         <div class="relative pl-6 space-y-6 border-l-2 border-accent">
                             <div class="relative">
                                 <div class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-accent border-4 border-white shadow-sm flex items-center justify-center"></div>
-                                <h4 class="font-bold text-gray-900 text-xs">Order Confirmed</h4>
-                                <p class="text-[10px] text-gray-500">Your pre-order is in queue.</p>
+                                <h4 class="font-bold text-gray-900 text-xs">Order Placed</h4>
+                                <p class="text-[10px] text-gray-500">Order successfully reserved in system.</p>
                             </div>
                             <div class="relative">
                                 <div class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-accent border-4 border-white shadow-sm flex items-center justify-center"></div>
-                                <h4 class="font-bold text-gray-900 text-xs">Batch Reservation</h4>
-                                <p class="text-[10px] text-gray-500">Reserved for priority launch dispatch.</p>
+                                <h4 class="font-bold text-gray-900 text-xs">Dispatched</h4>
+                                <p class="text-[10px] text-gray-500">Freshly roasted batch sealed and left warehouse.</p>
+                            </div>
+                            <div class="relative">
+                                <div class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-accent border-4 border-white shadow-sm flex items-center justify-center"></div>
+                                <h4 class="font-bold text-gray-900 text-xs">Out for Delivery</h4>
+                                <p class="text-[10px] text-gray-500">Courier partner dispatched batch to local region.</p>
                             </div>
                             <div class="relative opacity-50">
                                 <div class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-gray-300 border-4 border-white shadow-sm flex items-center justify-center"></div>
-                                <h4 class="font-bold text-gray-400 text-xs">Roasting & Packing</h4>
-                                <p class="text-[10px] text-gray-400">Beans will be fresh roasted and sealed.</p>
+                                <h4 class="font-bold text-gray-400 text-xs">Delivered</h4>
+                                <p class="text-[10px] text-gray-400">Order delivered safely (Delivery takes 5-7 days).</p>
                             </div>
+                        </div>
+                        <div class="bg-amber-50 p-3 rounded-lg border border-amber-200 text-amber-900 text-[11px] font-semibold text-center">
+                            📦 Note: Fresh batches take 5-7 days for delivery.
                         </div>
                     </div>
                 `;
