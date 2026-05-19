@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>dazeen - Premium Specialty Coffee Powder</title>
     <!-- Tailwind CSS for modern fluid designs -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -51,7 +51,18 @@
             animation: pulse-ring 2s infinite;
         }
 
-        /* */
+        /* Safari and iOS compatible glassmorphism backdrop-blur */
+        .glass-modal {
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+        }
+
+        /* Webkit smooth inertia scroll mechanics for iOS Safari */
+        .safari-scroll {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Animated verification blue tick reveal */
         @keyframes bluetick-pop {
             0% { transform: scale(0); opacity: 0; }
             70% { transform: scale(1.2); }
@@ -75,6 +86,19 @@
 
     <!-- BRAND HEADER NAVIGATION (DESKTOP) -->
     <header class="bg-[#1e110a] text-white sticky top-0 z-[45] shadow-xl border-b border-[#3d2417]">
+        <div class="px-4 py-3 flex flex-wrap items-center justify-between gap-4 max-w-7xl mx-auto">
+            
+            <!-- Left Brand Logo -->
+            <div class="flex items-center space-x-3">
+                <span onclick="showPage('home')" class="cursor-pointer flex items-center space-x-2 select-none">
+                    <span class="w-10 h-10 bg-[#d4a373] text-[#1e110a] rounded-full flex items-center justify-center font-extrabold shadow-md transform hover:rotate-12 transition-transform duration-300">
+                        <i class="fas fa-coffee text-lg"></i>
+                    </span>
+                    <div>
+                        <span class="serif-title text-2xl font-black tracking-wide text-[#faf7f2]">
+                            dazeen
+                        </span>
+                        <p class="text-[9px] text-stone-400 tracking-widest uppercase font-semibold">Specialty Roasters India</p>
                     </div>
                 </span>
             </div>
@@ -192,13 +216,13 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Basket Items List -->
                 <div id="cart-items-wrapper" class="lg:col-span-2 space-y-4">
-                    <div id="cart-items" class="bg-white p-6 rounded-xl shadow-sm border border-stone-200/60 space-y-4">
+                    <div id="cart-items" class="bg-white p-6 rounded-xl shadow-sm border border-stone-200/60 space-y-4 safari-scroll">
                         <!-- Loaded dynamically -->
                     </div>
                 </div>
 
                 <!-- Price Calculations & Promos -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200/60 h-fit space-y-5">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200/60 h-fit space-y-5 font-sans">
                     <h3 class="serif-title text-lg font-bold text-stone-900 border-b pb-3">Cart Summary</h3>
                     
                     <!-- Promo Code Input -->
@@ -260,7 +284,7 @@
             
             <form id="email-auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1">Email Address</label>
+                    <label class="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1">Email</label>
                     <div class="relative">
                         <span class="absolute left-3.5 top-3 text-stone-400">
                             <i class="fas fa-envelope"></i>
@@ -286,13 +310,6 @@
                     Sign In to Roastery
                 </button>
             </form>
-
-            <div class="bg-amber-50 text-[#8c502b] p-3 rounded-xl text-[11px] flex items-start gap-2 border border-amber-100">
-                <i class="fas fa-info-circle mt-0.5 text-sm shrink-0"></i>
-                <div>
-                    <span class="font-bold">Instant Sandbox Authentication:</span> Use any email (e.g., <span class="underline">coffee@dazeen.com</span>) and any password to register or login instantly.
-                </div>
-            </div>
         </section>
 
         <!-- ADDRESS DETAILS & PLACE COFFEE ORDER -->
@@ -394,7 +411,7 @@
                     <span><i class="fas fa-seedling mr-2 text-emerald-600"></i>Your Fresh Roasts History</span>
                     <span id="order-history-badge" class="bg-amber-100 text-[#8c502b] text-xs px-2.5 py-1 rounded-full font-bold">0 Bags</span>
                 </h3>
-                <div id="orders-list" class="space-y-6 divide-y divide-stone-100">
+                <div id="orders-list" class="space-y-6 divide-y divide-stone-100 safari-scroll">
                     <!-- Loaded dynamically -->
                 </div>
             </div>
@@ -403,8 +420,8 @@
     </main>
 
     <!-- PREMIUM FLOATING OVERLAY MODAL FOR PRODUCT DETAILS (z-index higher than sticky header/bottom-nav) -->
-    <div id="product-detail-modal" class="fixed inset-0 bg-[#1e110a]/80 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative border border-stone-200/60 flex flex-col">
+    <div id="product-detail-modal" class="fixed inset-0 bg-[#1e110a]/80 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4 overflow-y-auto glass-modal">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative border border-stone-200/60 flex flex-col safari-scroll">
             <!-- Close Trigger -->
             <button onclick="closeProductDetailsModal()" class="absolute top-4 right-4 bg-[#1e110a] text-white hover:bg-stone-800 rounded-full w-8 h-8 flex items-center justify-center z-[110] transition-colors shadow">
                 <i class="fas fa-times"></i>
@@ -418,7 +435,7 @@
     </div>
 
     <!-- ORDER CONFIRMATION & BLUE TICK ANIMATION DOCK -->
-    <div id="order-confirmation-modal" class="fixed inset-0 bg-[#1e110a]/90 backdrop-blur-md z-[200] hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div id="order-confirmation-modal" class="fixed inset-0 bg-[#1e110a]/90 backdrop-blur-md z-[200] hidden flex items-center justify-center p-4 overflow-y-auto glass-modal">
         <div class="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl relative border border-stone-200/60 overflow-hidden">
             
             <!-- Confirmed Animation Area -->
@@ -503,6 +520,24 @@
 
     <!-- THE CORE COFFEE LOGIC ENGINE -->
     <script>
+        // Safari local storage access quota restriction fallback protector
+        function secureLocalStorageSet(key, val) {
+            try {
+                localStorage.setItem(key, JSON.stringify(val));
+            } catch(e) {
+                console.warn("Storage quota exceeded or disabled in Safari Private mode. Fallback initiated.", e);
+            }
+        }
+
+        function secureLocalStorageGet(key) {
+            try {
+                const item = localStorage.getItem(key);
+                return item ? JSON.parse(item) : null;
+            } catch(e) {
+                return null;
+            }
+        }
+
         const products = [
             {
                 id: 1,
@@ -536,9 +571,9 @@
             }
         ];
 
-        let cart = JSON.parse(localStorage.getItem('dazeen_coffee_cart')) || [];
-        let user = JSON.parse(localStorage.getItem('dazeen_coffee_user')) || null; 
-        let orders = JSON.parse(localStorage.getItem('dazeen_coffee_orders')) || [];
+        let cart = secureLocalStorageGet('dazeen_coffee_cart') || [];
+        let user = secureLocalStorageGet('dazeen_coffee_user') || null; 
+        let orders = secureLocalStorageGet('dazeen_coffee_orders') || [];
         
         let selectedCategory = 'All';
         let activeDiscountPercentage = 0;
@@ -887,7 +922,7 @@
         }
 
         function saveCart() {
-            localStorage.setItem('dazeen_coffee_cart', JSON.stringify(cart));
+            secureLocalStorageSet('dazeen_coffee_cart', cart);
             updateCartCount();
         }
 
@@ -940,7 +975,7 @@
                 <div class="flex flex-wrap items-center justify-between gap-4 border-b border-stone-100 pb-4 last:border-0 last:pb-0">
                     <div class="flex items-center space-x-4">
                         <img src="${item.image}" class="w-16 h-16 object-cover rounded-xl p-1 bg-stone-50 border shrink-0" onerror="this.src='https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=400'">
-                        <div class="space-y-1 max-w-md">
+                        <div class="space-y-1 max-w-md font-sans">
                             <h4 class="serif-title font-bold text-sm text-stone-900 line-clamp-2 leading-tight">${item.title}</h4>
                             <p class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded w-fit"><i class="fas fa-check"></i> Fresh Batch Roast Checked</p>
                             
@@ -1077,7 +1112,7 @@
                 name: email.split('@')[0]
             };
             
-            localStorage.setItem('dazeen_coffee_user', JSON.stringify(user));
+            secureLocalStorageSet('dazeen_coffee_user', user);
             updateHeaderUI();
 
             if (currentAuthMode === 'signin') {
@@ -1173,7 +1208,7 @@
                 });
 
                 orders.unshift(currentOrder);
-                localStorage.setItem('dazeen_coffee_orders', JSON.stringify(orders));
+                secureLocalStorageSet('dazeen_coffee_orders', orders);
 
                 // Clear states
                 cart = [];
@@ -1186,7 +1221,7 @@
                 console.error("Connection dispatch block error:", err);
                 // Fail-safe offline backup trace
                 orders.unshift(currentOrder);
-                localStorage.setItem('dazeen_coffee_orders', JSON.stringify(orders));
+                secureLocalStorageSet('dazeen_coffee_orders', orders);
                 cart = [];
                 saveCart();
             }
@@ -1205,7 +1240,7 @@
 
             const productsContainer = document.getElementById('conf-products');
             productsContainer.innerHTML = order.items.map(item => `
-                <div class="flex justify-between py-1.5 text-xs text-stone-800">
+                <div class="flex justify-between py-1.5 text-xs text-stone-800 font-sans">
                     <span class="font-semibold truncate max-w-[280px]">${item.title}</span>
                     <span class="text-stone-500 font-bold shrink-0 ml-2">Qty x${item.qty}</span>
                 </div>
@@ -1282,7 +1317,7 @@
             ];
 
             return `
-                <div class="py-4 px-3 bg-stone-50 rounded-xl border border-stone-200/60 mt-3">
+                <div class="py-4 px-3 bg-stone-50 rounded-xl border border-stone-200/60 mt-3 font-sans">
                     <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-3"><i class="fas fa-microchip text-[#d4a373] mr-1"></i> Farm-to-cup Live Stage</p>
                     <div class="grid grid-cols-4 relative">
                         ${statuses.map((s, idx) => {
@@ -1321,7 +1356,7 @@
 
             if(orders.length === 0) {
                 ordersContainer.innerHTML = `
-                    <div class="text-center py-10 space-y-2">
+                    <div class="text-center py-10 space-y-2 font-sans">
                         <i class="fas fa-box text-4xl text-stone-200"></i>
                         <p class="text-sm text-stone-500 font-medium">You haven't ordered any roast bags yet.</p>
                         <span onclick="showPage('home')" class="text-xs text-stone-500 hover:text-stone-900 underline cursor-pointer">Explore Blends Now</span>
@@ -1329,7 +1364,7 @@
                 `;
             } else {
                 ordersContainer.innerHTML = orders.map((order, index) => `
-                    <div class="py-6 space-y-4">
+                    <div class="py-6 space-y-4 font-sans">
                         <div class="flex flex-wrap items-center justify-between gap-3 text-xs bg-stone-50 p-3.5 rounded-xl border border-stone-200/60">
                             <div class="space-y-0.5">
                                 <p class="text-stone-400 uppercase tracking-wider font-bold text-[9px]">Receipt Batch Reference</p>
@@ -1401,7 +1436,7 @@
             }
 
             order.status = next;
-            localStorage.setItem('dazeen_coffee_orders', JSON.stringify(orders));
+            secureLocalStorageSet('dazeen_coffee_orders', orders);
             goToProfile();
             showToast(`Roast timeline status advanced to: ${next}!`, "success");
         }
