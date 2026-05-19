@@ -53,12 +53,12 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col relative pb-12 text-stone-800">
+<body class="min-h-screen flex flex-col relative pb-28 md:pb-12 text-stone-800">
 
     <!-- DYNAMIC ARABICA TOAST NOTIFICATION DOCK -->
     <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
 
-    <!-- BRAND HEADER NAVIGATION -->
+    <!-- BRAND HEADER NAVIGATION (DESKTOP) -->
     <header class="bg-[#1e110a] text-white sticky top-0 z-50 shadow-xl border-b border-[#3d2417]">
         <div class="px-4 py-3 flex flex-wrap items-center justify-between gap-4 max-w-7xl mx-auto">
             
@@ -89,12 +89,12 @@
                 <div id="autocomplete-dropdown" class="absolute left-0 right-0 mt-1 bg-white text-stone-900 rounded-md shadow-2xl border border-stone-200 hidden z-50 max-h-60 overflow-y-auto"></div>
             </div>
 
-            <!-- Navigation Buttons -->
-            <div class="flex items-center space-x-5 text-sm">
+            <!-- Navigation Buttons (Hidden or simplified on mobile bottom-nav) -->
+            <div class="hidden md:flex items-center space-x-5 text-sm">
                 <!-- Bean Profile / Account -->
                 <div onclick="goToProfile()" class="cursor-pointer hover:text-[#d4a373] transition-colors py-1 flex items-center space-x-2">
                     <i class="fas fa-user-circle text-lg text-[#d4a373]"></i>
-                    <div class="hidden sm:block text-left">
+                    <div class="text-left">
                         <p class="text-[10px] text-stone-400 leading-none">Hello, Coffee Lover</p>
                         <p class="font-bold text-xs mt-0.5" id="nav-user-label">Sign In</p>
                     </div>
@@ -106,7 +106,7 @@
                         <i class="fas fa-shopping-bag text-lg text-[#d4a373]"></i>
                         <span id="cart-count" class="absolute -top-2 -right-3 bg-red-500 text-white font-black rounded-full text-[10px] min-w-[18px] h-[18px] px-1 flex items-center justify-center border-2 border-[#1e110a] shadow hidden">0</span>
                     </div>
-                    <span class="font-bold text-xs text-[#faf7f2] hidden md:inline">My Mug</span>
+                    <span class="font-bold text-xs text-[#faf7f2]">My Mug</span>
                 </div>
             </div>
         </div>
@@ -125,9 +125,29 @@
         </div>
     </header>
 
+    <!-- PREMIUM MOBILE BOTTOM NAVIGATION BAR -->
+    <div class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-[#1e110a]/95 backdrop-blur-md border border-[#3d2417] py-2.5 px-4 rounded-full shadow-2xl z-50 flex items-center justify-around md:hidden">
+        <button onclick="showPage('home')" class="mobile-nav-btn flex flex-col items-center justify-center text-[#d4a373] transition-all">
+            <i class="fas fa-coffee text-lg mb-0.5"></i>
+            <span class="text-[9px] font-bold tracking-wide uppercase">Shop</span>
+        </button>
+        <button onclick="goToCart()" class="mobile-nav-btn flex flex-col items-center justify-center text-stone-400 hover:text-white relative transition-all">
+            <i class="fas fa-shopping-bag text-lg mb-0.5"></i>
+            <span id="mobile-cart-badge" class="absolute top-0 right-1 bg-red-500 text-white font-black rounded-full text-[8px] min-w-[15px] h-[15px] flex items-center justify-center border border-[#1e110a] hidden">0</span>
+            <span class="text-[9px] font-bold tracking-wide uppercase">My Mug</span>
+        </button>
+        <button onclick="goToProfile()" class="mobile-nav-btn flex flex-col items-center justify-center text-stone-400 hover:text-white transition-all">
+            <i class="fas fa-clipboard-list text-lg mb-0.5"></i>
+            <span class="text-[9px] font-bold tracking-wide uppercase">Orders</span>
+        </button>
+        <button onclick="goToProfile()" class="mobile-nav-btn flex flex-col items-center justify-center text-stone-400 hover:text-white transition-all">
+            <i class="fas fa-user-circle text-lg mb-0.5"></i>
+            <span class="text-[9px] font-bold tracking-wide uppercase">Account</span>
+        </button>
+    </div>
+
     <!-- COFFEE BEAN BANNER / CAROUSEL -->
     <div id="hero-carousel" class="relative w-full overflow-hidden bg-gradient-to-b from-[#1e110a] to-[#faf7f2] h-[220px] md:h-[300px] flex items-center justify-center text-center">
-        <!-- Coffee aesthetic background vectors overlayed -->
         <div class="absolute inset-0 opacity-20 pointer-events-none bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1506370822625-61419d147fc5?auto=format&fit=crop&q=80&w=1200');"></div>
         
         <div class="relative z-10 px-4 space-y-3 max-w-2xl">
@@ -248,41 +268,57 @@
             </div>
         </section>
 
-        <!-- OTP SIGN IN SCREEN -->
+        <!-- EMAIL / PASSWORD AUTH SCREEN (UPDATED) -->
         <section id="page-login" class="page-view hidden max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl border border-stone-200/60 mt-10 space-y-6">
             <div class="text-center">
                 <span class="w-12 h-12 bg-[#1e110a] text-[#d4a373] rounded-full flex items-center justify-center font-extrabold shadow-md mx-auto mb-2">
                     <i class="fas fa-coffee"></i>
                 </span>
-                <h2 class="serif-title text-2xl font-bold text-[#1e110a]">Dazeen Members Log</h2>
-                <p class="text-xs text-stone-500 mt-1">Get special member prices and trace farm-to-cup coffee sourcing.</p>
-            </div>
-            
-            <!-- Phone step -->
-            <div id="auth-phone-step" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1.5">10-Digit Phone Number</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2.5 text-stone-400 text-sm font-semibold">+91</span>
-                        <input type="tel" id="login-phone" maxlength="10" placeholder="9876543210" class="w-full border-2 border-stone-200 pl-12 pr-4 py-2 rounded-lg focus:outline-none focus:border-[#d4a373] font-semibold text-lg tracking-wider transition-colors">
-                    </div>
-                </div>
-                <button onclick="sendOTP()" class="w-full bg-[#1e110a] hover:bg-[#3d2417] text-[#faf7f2] py-2.5 rounded-lg shadow font-semibold text-sm transition-all">Request OTP</button>
+                <h2 id="auth-title" class="serif-title text-2xl font-bold text-[#1e110a]">Connoisseur Login</h2>
+                <p id="auth-subtitle" class="text-xs text-stone-500 mt-1">Unlock artisan discounts and track special estate roasts.</p>
             </div>
 
-            <!-- OTP input step -->
-            <div id="auth-otp-step" class="space-y-4 hidden border-t border-stone-100 pt-4">
-                <div class="bg-amber-50 text-[#8c502b] p-3 rounded-lg text-xs flex items-start gap-2 border border-amber-100">
-                    <i class="fas fa-info-circle mt-0.5 text-base"></i>
-                    <div>
-                        <span class="font-bold">Live SMS Simulator:</span> Check our visual simulator panel in the bottom-right of your window, or enter the mock passcode <span class="font-bold">123456</span> to bypass.
+            <!-- TAB TOGGLES FOR SIGN IN VS SIGN UP -->
+            <div class="flex border-b border-stone-100">
+                <button onclick="toggleAuthTab('signin')" id="tab-signin" class="flex-1 pb-2 text-center text-sm font-bold border-b-2 border-[#1e110a] text-[#1e110a]">Sign In</button>
+                <button onclick="toggleAuthTab('signup')" id="tab-signup" class="flex-1 pb-2 text-center text-sm font-semibold border-b-2 border-transparent text-stone-400">Create Account</button>
+            </div>
+            
+            <form id="email-auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1">Email Address</label>
+                    <div class="relative">
+                        <span class="absolute left-3.5 top-3 text-stone-400">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                        <input type="email" id="auth-email" required placeholder="name@domain.com" class="w-full border-2 border-stone-100 pl-10 pr-4 py-2.5 rounded-xl focus:outline-none focus:border-[#d4a373] text-sm transition-colors">
                     </div>
                 </div>
+
                 <div>
-                    <label class="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1.5">Enter 6-Digit OTP</label>
-                    <input type="text" id="login-otp" maxlength="6" placeholder="______" class="w-full border-2 border-stone-200 p-2.5 rounded-lg focus:outline-none focus:border-[#d4a373] text-center font-bold text-2xl tracking-[0.5em] transition-all">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold text-stone-600 uppercase tracking-wider">Password</label>
+                        <a href="#" onclick="showToast('Password reset link simulated to your inbox!', 'info')" class="text-[10px] text-[#a47e5c] hover:underline font-semibold">Forgot?</a>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute left-3.5 top-3 text-stone-400">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" id="auth-password" required minlength="6" placeholder="••••••••" class="w-full border-2 border-stone-100 pl-10 pr-4 py-2.5 rounded-xl focus:outline-none focus:border-[#d4a373] text-sm transition-colors">
+                    </div>
+                    <p class="text-[9px] text-stone-400 mt-1">Must be at least 6 characters long.</p>
                 </div>
-                <button onclick="verifyOTP()" class="w-full bg-[#d4a373] hover:bg-[#c68b59] text-[#1e110a] py-2.5 rounded-lg shadow font-bold text-sm transition-all">Authenticate Member</button>
+
+                <button type="submit" id="auth-submit-btn" class="w-full bg-[#1e110a] hover:bg-[#3d2417] text-[#faf7f2] py-3 rounded-xl shadow-md font-bold text-xs tracking-wider uppercase transition-all">
+                    Sign In to Roastery
+                </button>
+            </form>
+
+            <div class="bg-amber-50 text-[#8c502b] p-3 rounded-xl text-[11px] flex items-start gap-2 border border-amber-100">
+                <i class="fas fa-info-circle mt-0.5 text-sm shrink-0"></i>
+                <div>
+                    <span class="font-bold">Instant Sandbox Authentication:</span> Use any email (e.g., <span class="underline">coffee@dazeen.com</span>) and any password to register or login instantly.
+                </div>
             </div>
         </section>
 
@@ -299,8 +335,8 @@
                         <input type="text" name="name" id="addr-name" placeholder="Rajesh Kumar" required class="w-full border border-stone-200 p-2.5 rounded-lg focus:outline-none focus:border-[#d4a373] text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-stone-600 uppercase mb-1.5">Contact Number</label>
-                        <input type="text" id="addr-contact" required disabled class="w-full border bg-stone-50 p-2.5 rounded-lg text-sm text-stone-400 font-semibold cursor-not-allowed">
+                        <label class="block text-xs font-bold text-stone-600 uppercase mb-1.5">Contact Number (For Courier)</label>
+                        <input type="tel" name="phone" id="addr-contact" placeholder="9876543210" required class="w-full border border-stone-200 p-2.5 rounded-lg focus:outline-none focus:border-[#d4a373] text-sm font-semibold">
                     </div>
                 </div>
 
@@ -352,7 +388,7 @@
                 </div>
                 
                 <!-- Formspree payload helpers -->
-                <input type="hidden" name="user_phone" id="form-phone">
+                <input type="hidden" name="user_email" id="form-email">
                 <input type="hidden" name="ordered_items" id="form-items">
                 <input type="hidden" name="total_amount" id="form-total">
                 <input type="hidden" name="selected_payment_mode" id="form-pay-mode" value="UPI">
@@ -372,7 +408,7 @@
                     </div>
                     <div>
                         <h2 class="serif-title text-xl font-bold" id="profile-display-name">Dazeen Coffee Connoisseur</h2>
-                        <p class="text-xs text-stone-300">Registered Mug Number: <span id="profile-phone" class="font-bold text-[#d4a373]"></span></p>
+                        <p class="text-xs text-stone-300">Registered Email: <span id="profile-email" class="font-bold text-[#d4a373]"></span></p>
                     </div>
                 </div>
                 <button onclick="logout()" class="bg-white/10 hover:bg-white/20 text-white font-semibold text-xs py-2 px-5 rounded-lg transition-colors border border-white/20">
@@ -414,35 +450,6 @@
             <p class="text-stone-500 text-[10px]">© 2026 Dazeen Coffee Solutions Pvt Ltd. Under DLT Authorized Template Header "DAZEEN". All Rights Reserved.</p>
         </div>
     </footer>
-
-    <!-- FLOATING LIVE SMS PORTAL -->
-    <div id="sms-sandbox" class="fixed bottom-4 right-4 z-[9999] w-72 bg-[#1c1c1e] rounded-2xl shadow-2xl border-2 border-stone-700/80 text-white overflow-hidden hidden transition-all duration-300">
-        <!-- Phone Simulator Header -->
-        <div class="bg-[#2c2c2e] px-3.5 py-2.5 flex items-center justify-between border-b border-stone-800">
-            <div class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-orange-500 live-indicator"></span>
-                <span class="text-[11px] uppercase tracking-widest font-bold text-[#d4a373]">SMS SANDBOX (DAZEEN)</span>
-            </div>
-            <button onclick="toggleSandboxMinimize()" class="hover:bg-white/10 p-1 rounded text-stone-400 hover:text-white transition-colors">
-                <i class="fas fa-minus text-xs"></i>
-            </button>
-        </div>
-        <!-- Virtual Phone Messages Panel -->
-        <div id="sandbox-content" class="p-4 space-y-3 max-h-60 overflow-y-auto">
-            <p class="text-[10px] text-stone-400 text-center">Simulated Mobile Inbox For Fast2SMS Bypasses</p>
-            <div id="sandbox-messages" class="space-y-2">
-                <div class="bg-[#2c2c2e] p-2.5 rounded-xl border border-stone-800 text-xs text-stone-400">
-                    No OTP verification code requested yet. Initiate shipping checkout above to test fast bypass routing.
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toggle trigger button -->
-    <button id="sandbox-trigger" onclick="toggleSandbox()" class="fixed bottom-4 right-4 z-[9998] bg-[#1e110a] text-[#d4a373] border-2 border-[#d4a373] py-2 px-4 rounded-full shadow-2xl font-bold text-xs flex items-center space-x-2 hover:scale-105 transition-all">
-        <i class="fas fa-sms text-base"></i>
-        <span>Live SMS Console</span>
-    </button>
 
 
     <!-- THE CORE COFFEE LOGIC ENGINE -->
@@ -575,16 +582,15 @@
         let user = JSON.parse(localStorage.getItem('dazeen_coffee_user')) || null; 
         let orders = JSON.parse(localStorage.getItem('dazeen_coffee_orders')) || [];
         
-        let generatedOTP = null;
         let selectedCategory = 'All';
         let activeDiscountPercentage = 0;
         let currentOpenProduct = null;
+        let currentAuthMode = 'signin'; // 'signin' or 'signup'
 
         // On document initialization
         document.addEventListener("DOMContentLoaded", () => {
             renderProducts();
             updateCartCount();
-            setupAddresses();
             updateHeaderUI();
             showPage('home');
 
@@ -597,7 +603,7 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             
-            const baseClass = "p-4 rounded-xl shadow-2xl border flex items-center justify-between pointer-events-auto transition-all duration-300 transform translate-x-12 opacity-0 text-xs font-semibold";
+            const baseClass = "p-4 rounded-xl shadow-2xl border flex items-center justify-between pointer-events-auto transition-all duration-300 transform translate-x-12 opacity-0 text-xs font-semibold z-[9999]";
             let typeClass = "";
             let icon = "";
 
@@ -641,7 +647,9 @@
         function updateHeaderUI() {
             const label = document.getElementById('nav-user-label');
             if (user) {
-                label.innerText = `Acc: +91 ${user.phone}`;
+                // Derived name
+                const displayName = user.email.split('@')[0];
+                label.innerText = `Acc: ${displayName}`;
             } else {
                 label.innerText = "Join / Sign In";
             }
@@ -658,6 +666,26 @@
                 carousel.classList.remove('hidden');
             } else {
                 carousel.classList.add('hidden');
+            }
+
+            // Sync active state in mobile bottom bar
+            const mobileButtons = document.querySelectorAll('.mobile-nav-btn');
+            mobileButtons.forEach(btn => {
+                btn.classList.add('text-stone-400');
+                btn.classList.remove('text-[#d4a373]');
+            });
+
+            if (pageId === 'home') {
+                mobileButtons[0].classList.add('text-[#d4a373]');
+                mobileButtons[0].classList.remove('text-stone-400');
+            } else if (pageId === 'cart') {
+                mobileButtons[1].classList.add('text-[#d4a373]');
+                mobileButtons[1].classList.remove('text-stone-400');
+            } else if (pageId === 'profile') {
+                mobileButtons[2].classList.add('text-[#d4a373]');
+                mobileButtons[2].classList.remove('text-stone-400');
+                mobileButtons[3].classList.add('text-[#d4a373]');
+                mobileButtons[3].classList.remove('text-stone-400');
             }
         }
 
@@ -746,7 +774,7 @@
                                 <option value="Whole Beans">Whole Beans</option>
                             </select>
                         </div>
-                        <button onclick="quickAddToCart(${p.id})" class="w-full bg-[#1e110a] hover:bg-[#3d2417] text-[#d4a373] py-2 rounded-xl font-bold shadow-sm text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all">
+                        <button onclick="quickAddToCart(${p.id})" class="w-full bg-[#1e110a] hover:bg-[#3d2417] text-[#d4a373] py-2.5 rounded-xl font-bold shadow-sm text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all">
                             <i class="fas fa-shopping-bag text-xs"></i> Add to Mug
                         </button>
                     </div>
@@ -782,7 +810,6 @@
             } else if (sortBy === 'price-high') {
                 sorted.sort((a, b) => b.price - a.price);
             } else if (sortBy === 'roast') {
-                // Sorting arbitrarily by darkness
                 const hierarchy = { "Light-Medium Roast": 1, "Medium Roast": 2, "Medium-Dark Roast": 3, "Dark Roast": 4, "Extra Dark Roast": 5 };
                 sorted.sort((a, b) => (hierarchy[b.roastLevel] || 0) - (hierarchy[a.roastLevel] || 0));
             }
@@ -971,12 +998,23 @@
 
         function updateCartCount() {
             const count = cart.reduce((acc, item) => acc + item.qty, 0);
+            
+            // Header Desktop Badge
             const badge = document.getElementById('cart-count');
             if(count > 0) {
                 badge.innerText = count;
                 badge.classList.remove('hidden');
             } else {
                 badge.classList.add('hidden');
+            }
+
+            // Bottom Mobile Badge
+            const mobBadge = document.getElementById('mobile-cart-badge');
+            if(count > 0) {
+                mobBadge.innerText = count;
+                mobBadge.classList.remove('hidden');
+            } else {
+                mobBadge.classList.add('hidden');
             }
         }
 
@@ -1104,114 +1142,78 @@
             }
             
             if (!user) {
-                document.getElementById('auth-phone-step').classList.remove('hidden');
-                document.getElementById('auth-otp-step').classList.add('hidden');
                 showPage('login');
-                showToast("A quick member validation is required to secure freshness delivery.", "warning");
+                showToast("A quick account validation is required to secure freshness delivery.", "warning");
             } else {
                 goToAddressPage();
             }
         }
 
-        // TELEPATHIC INBOX SIMULATION ENGINE
-        function toggleSandbox() {
-            const sandbox = document.getElementById('sms-sandbox');
-            sandbox.classList.toggle('hidden');
-        }
-
-        function toggleSandboxMinimize() {
-            const content = document.getElementById('sandbox-content');
-            content.classList.toggle('hidden');
-        }
-
-        function appendSMS(otp, phone) {
-            const inbox = document.getElementById('sandbox-messages');
-            const messageObj = document.createElement('div');
-            messageObj.className = "bg-[#2c2c2e] p-2.5 rounded-xl border border-stone-800 text-xs text-stone-200 mt-2 hover:bg-[#3a3a3c] transition-colors";
-            messageObj.innerHTML = `
-                <div class="flex justify-between items-center text-[10px] text-stone-500 font-bold mb-1">
-                    <span>Sender: DAZEEN</span>
-                    <span>Just Now</span>
-                </div>
-                <p>Your Dazeen Coffee verification OTP is <span class="text-[#d4a373] font-black text-sm tracking-widest underline">${otp}</span>. Roast profile details saved. Active for 10 mins.</p>
-            `;
-            inbox.insertBefore(messageObj, inbox.firstChild);
+        // NEW EMAIL & PASSWORD AUTH TAB HANDLING
+        function toggleAuthTab(tab) {
+            currentAuthMode = tab;
+            const btnSubmit = document.getElementById('auth-submit-btn');
+            const title = document.getElementById('auth-title');
+            const subtitle = document.getElementById('auth-subtitle');
             
-            const sandbox = document.getElementById('sms-sandbox');
-            sandbox.classList.remove('hidden');
-            const content = document.getElementById('sandbox-content');
-            content.classList.remove('hidden');
+            const tabSignin = document.getElementById('tab-signin');
+            const tabSignup = document.getElementById('tab-signup');
+
+            if (tab === 'signin') {
+                tabSignin.className = "flex-1 pb-2 text-center text-sm font-bold border-b-2 border-[#1e110a] text-[#1e110a]";
+                tabSignup.className = "flex-1 pb-2 text-center text-sm font-semibold border-b-2 border-transparent text-stone-400";
+                title.innerText = "Connoisseur Login";
+                subtitle.innerText = "Unlock artisan discounts and track special estate roasts.";
+                btnSubmit.innerText = "Sign In to Roastery";
+            } else {
+                tabSignup.className = "flex-1 pb-2 text-center text-sm font-bold border-b-2 border-[#1e110a] text-[#1e110a]";
+                tabSignin.className = "flex-1 pb-2 text-center text-sm font-semibold border-b-2 border-transparent text-stone-400";
+                title.innerText = "Join the Roastery";
+                subtitle.innerText = "Register to earn custom roast batches and free shipping.";
+                btnSubmit.innerText = "Create Account";
+            }
         }
 
-        async function sendOTP() {
-            const phone = document.getElementById('login-phone').value.trim();
-            if(!phone || phone.length !== 10) {
-                showToast("Please enter a valid 10-digit phone number!", "error");
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+
+            if (!email || !password) {
+                showToast("Please enter a valid email and password!", "error");
                 return;
             }
 
-            generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-            console.log("Dazeen Real-time Generated OTP:", generatedOTP);
-
-            appendSMS(generatedOTP, phone);
-
-            const payload = {
-                "route" : "dlt",
-                "sender_id" : "DAZEEN",
-                "message" : "214505", 
-                "variables_values" : `${generatedOTP}|`,
-                "flash" : 0,
-                "numbers" : phone
+            // Create user object instantly
+            user = { 
+                email: email,
+                name: email.split('@')[0]
             };
+            
+            localStorage.setItem('dazeen_coffee_user', JSON.stringify(user));
+            updateHeaderUI();
 
-            try {
-                // Call external gateway with authorization headers
-                await fetch("https://www.fast2sms.com/dev/bulkV2", {
-                    method: "POST",
-                    headers: {
-                        "authorization": "14eYp2D6nfUcWLTyxmVtq97JaAzHbi3FjX8sGuvZElRdKoOCrkuyLcNgESHKsbtYhz1DrinmqpxoZTvP",
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(payload)
-                });
-                
-                document.getElementById('auth-phone-step').classList.add('hidden');
-                document.getElementById('auth-otp-step').classList.remove('hidden');
-                showToast(`OTP Sent successfully via live DAZEEN gateway to +91 ${phone}!`, "success");
-
-            } catch (error) {
-                console.warn("Fast2SMS API gateway check skipped. Direct Sandbox updated:", error);
-                document.getElementById('auth-phone-step').classList.add('hidden');
-                document.getElementById('auth-otp-step').classList.remove('hidden');
-                showToast(`Gateway bypass routing active. Mock SMS Sandbox received OTP: ${generatedOTP}`, "warning");
-            }
-        }
-
-        function verifyOTP() {
-            const inputOtp = document.getElementById('login-otp').value.trim();
-            const phone = document.getElementById('login-phone').value.trim();
-
-            if (inputOtp === generatedOTP || inputOtp === "123456") { 
-                user = { phone: phone };
-                localStorage.setItem('dazeen_coffee_user', JSON.stringify(user));
-                updateHeaderUI();
+            if (currentAuthMode === 'signin') {
                 showToast("Successfully authenticated safe session!", "success");
+            } else {
+                showToast(`Connoisseur account created for ${user.name}!`, "success");
+            }
+
+            // Redirect back or continue checkout
+            if (cart.length > 0) {
                 goToAddressPage();
             } else {
-                showToast("Incorrect OTP entered. Check the bottom-right SMS Sandbox panel.", "error");
-            }
-        }
-
-        function setupAddresses() {
-            if (user) {
-                document.getElementById('addr-contact').value = `+91 ${user.phone}`;
+                showPage('home');
             }
         }
 
         // CALCULATE ADDRESS PREPARATION
         function goToAddressPage() {
-            setupAddresses();
-            document.getElementById('form-phone').value = user.phone;
+            if (!user) {
+                showPage('login');
+                return;
+            }
+            document.getElementById('form-email').value = user.email;
             
             const rawTotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
             const discountValue = activeDiscountPercentage > 0 ? (rawTotal * (activeDiscountPercentage / 100)) : 0;
@@ -1336,11 +1338,14 @@
         // HISTORIC LIST OF CHERRIES & PRINTABLE DETAILS
         function goToProfile() {
             if (!user) {
-                checkoutProcess(); 
+                showPage('login');
+                showToast("Please authenticate to view account logs.", "warning");
                 return;
             }
 
-            document.getElementById('profile-phone').innerText = `+91 ${user.phone}`;
+            document.getElementById('profile-email').innerText = user.email;
+            document.getElementById('profile-display-name').innerText = user.email.split('@')[0];
+            
             const ordersContainer = document.getElementById('orders-list');
             document.getElementById('order-history-badge').innerText = `${orders.length} Bags`;
 
@@ -1448,6 +1453,7 @@
 ========================================
 Batch Code:  ${order.orderId}
 Roast Date:  ${order.date}
+Purchaser:   ${user ? user.email : 'Guest'}
 Payment:     ${order.paymentMode} Secure Verified
 Delivery:    FREE Premium Air-sealed Courier
 
