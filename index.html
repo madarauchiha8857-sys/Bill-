@@ -3,295 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dazeen Premium - Pure Organic Date Seed Roast</title>
+    <title>Dazeen Premium | Organic Date Seed Roast</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <script>
-        tailwind.config = {
-            theme: { extend: { colors: { primary: '#1b3322', accent: '#d4af37', amberDark: '#5c3a21' } } }
+        window.tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1b3322',
+                        accent: '#d4af37',
+                        accentHover: '#c19a2e',
+                    }
+                }
+            }
         }
     </script>
-    
+
     <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 4px; }
-        .toast-slide { animation: slideIn 0.3s ease-out forwards; }
-        @keyframes slideIn { from { transform: translateY(100%) translateX(50%); opacity: 0; } to { transform: translateY(0) translateX(0); opacity: 1; } }
-        @keyframes popScale { 0% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes driveAcross { 0% { transform: translateX(-150px); } 100% { transform: translateX(360px); } }
-        @keyframes splashLogoPop { 0% { transform: scale(0) rotate(-45deg); opacity: 0; } 70% { transform: scale(1.2) rotate(10deg); opacity: 1; } 100% { transform: scale(1); rotate(0); opacity: 1; } }
-        .page-transition { animation: pageFadeIn 0.3s ease-out forwards; }
-        @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .accordion-active .accordion-content { max-height: 500px; padding-top: 1rem; }
+        .cart-drawer { transition: transform 0.3s ease-in-out; }
+        .cart-open { transform: translateX(0); }
+        .cart-closed { transform: translateX(100%); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="bg-[#faf8f5] font-sans min-h-screen flex flex-col text-gray-800 antialiased overflow-x-hidden pb-24 md:pb-0">
+<body class="bg-[#faf8f5] font-sans text-gray-900">
 
-    <!-- SPLASH SCREEN -->
-    <div id="splash-screen" class="fixed inset-0 bg-primary z-[300] flex flex-col items-center justify-center transition-all duration-700">
-        <div class="flex items-center space-x-4">
-            <div id="splash-logo" class="bg-accent p-4 rounded-2xl text-primary font-black shadow-lg" style="animation: splashLogoPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;">
-                <i class="fas fa-seedling text-4xl"></i>
+    <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div onclick="showPage('home')" class="cursor-pointer flex items-center space-x-2">
+                <div class="bg-primary p-1.5 rounded-lg text-accent"><i class="fas fa-seedling"></i></div>
+                <span class="text-xl font-black text-primary">DAZEEN</span>
             </div>
-            <div id="splash-text-container" class="overflow-hidden whitespace-nowrap transition-all duration-1000 ease-out" style="width: 0; opacity: 0;">
-                <span class="text-3xl font-black tracking-wider text-accent block">DAZEEN</span>
-                <span class="text-white text-xs font-light tracking-widest block -mt-1.5">PREMIUM</span>
-            </div>
-        </div>
-    </div>
-
-    <div id="toast-container" class="fixed bottom-24 md:bottom-5 right-5 z-[100] flex flex-col space-y-2 pointer-events-none max-w-sm w-full p-4"></div>
-
-    <!-- FLIPKART CELEBRATION -->
-    <div id="success-celebration-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl p-6 max-w-md w-full text-center" id="celebration-card">
-            <canvas id="confetti-canvas" class="absolute inset-0 w-full h-full"></canvas>
-            <div id="celebration-tick-wrapper" class="py-8"><div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto"><svg class="w-12 h-12 text-emerald-600" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path></svg></div></div>
-            <div id="celebration-details-block" class="space-y-4">
-                <h4 class="text-lg font-black text-gray-950">Dhanyawad!</h4>
-                <p class="text-sm">Order ID: <span id="celebration-order-id"></span></p>
-                <div id="celebration-items-list" class="text-xs"></div>
-            </div>
-            <button onclick="dismissCelebration()" class="w-full bg-primary text-accent font-bold py-3 rounded-xl mt-4">Continue</button>
-        </div>
-    </div>
-
-    <!-- NAVIGATION -->
-    <nav class="bg-primary text-white sticky top-0 z-50 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div onclick="showPage('home')" class="cursor-pointer flex items-center space-x-2">
-                    <div class="bg-accent p-2 rounded-lg text-primary font-black"><i class="fas fa-seedling text-lg"></i></div>
-                    <span class="text-2xl font-extrabold tracking-wider text-accent">DAZEEN <span class="text-white text-xs font-light tracking-widest block -mt-1.5">PREMIUM</span></span>
-                </div>
-                <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                    <button id="nav-home" onclick="showPage('home')" class="hover:text-accent">Shop</button>
-                    <button id="nav-orders" onclick="goToOrders()" class="hover:text-accent">Orders</button>
-                    <button id="nav-profile" onclick="goToProfile()" class="hover:text-accent">Account</button>
-                    <button id="nav-cart" onclick="goToCart()" class="hover:text-accent relative">Cart <span id="cart-count" class="hidden absolute -top-1 -right-3 bg-accent text-primary px-1.5 rounded-full text-[10px]">0</span></button>
-                </div>
+            
+            <div class="flex items-center space-x-4">
+                <input type="text" id="search-bar" onkeyup="filterProducts()" placeholder="Search blends..." class="hidden md:block bg-gray-50 border border-gray-200 rounded-full px-4 py-1.5 text-xs outline-none focus:ring-1 focus:ring-primary w-40">
+                <button onclick="toggleCart()" class="relative p-2 hover:bg-gray-100 rounded-full">
+                    <i class="fas fa-shopping-bag text-lg text-primary"></i>
+                    <span id="cart-count" class="absolute top-0 right-0 bg-accent text-primary text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full hidden">0</span>
+                </button>
             </div>
         </div>
     </nav>
 
-    <!-- MOBILE NAVIGATION -->
-    <div class="fixed bottom-0 left-0 right-0 bg-[#132217] border-t border-emerald-900 z-50 md:hidden flex justify-around items-center py-3">
-        <button id="mobile-nav-home" onclick="showPage('home')" class="text-gray-300 text-xs font-bold"><i class="fas fa-coffee block text-lg mb-1"></i>Shop</button>
-        <button id="mobile-nav-cart" onclick="goToCart()" class="text-gray-300 text-xs font-bold"><i class="fas fa-shopping-basket block text-lg mb-1"></i>Cart</button>
-        <button id="mobile-nav-orders" onclick="goToOrders()" class="text-gray-300 text-xs font-bold"><i class="fas fa-box block text-lg mb-1"></i>Orders</button>
-        <button id="mobile-nav-profile" onclick="goToProfile()" class="text-gray-300 text-xs font-bold"><i class="fas fa-user-circle block text-lg mb-1"></i>Profile</button>
+    <div id="cart-drawer" class="cart-drawer fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-2xl z-50 p-6 cart-closed flex flex-col">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-lg font-black">Your Cart</h2>
+            <button onclick="toggleCart()" class="text-gray-500"><i class="fas fa-times text-xl"></i></button>
+        </div>
+        <div id="cart-items" class="flex-grow overflow-y-auto hide-scrollbar space-y-4"></div>
+        <div class="border-t pt-4 mt-4 space-y-3">
+            <div class="flex justify-between font-bold"><span>Total</span><span id="cart-total">₹0</span></div>
+            <button onclick="checkout()" class="w-full bg-primary text-white py-3 rounded-xl font-bold hover:bg-emerald-950">Secure Checkout</button>
+        </div>
     </div>
 
-    <div id="fresh-banner" class="bg-[#d4af37]/10 border-b border-[#d4af37]/30 text-[#5c3a21] py-2 px-4 text-center text-[10px] font-bold">✨ Fresh roasted to order!</div>
-
-    <header id="hero-banner" class="bg-primary text-white py-10 px-4 text-center shrink-0">
-        <h1 class="text-3xl font-black text-accent">Dazeen Date Seed Roast</h1>
-        <p class="text-sm mt-2 text-gray-300">100% Caffeine-Free Wellness Blend</p>
-    </header>
-
-    <main class="flex-grow container mx-auto p-4 max-w-6xl mb-12">
-        <section id="page-home" class="page-view space-y-8">
-            <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-        </section>
-
-        <!-- Product Details -->
-        <section id="page-product-detail" class="page-view hidden space-y-6 page-transition">
-            <button onclick="showPage('home')" class="text-xs font-bold bg-white border px-4 py-2 rounded-xl">← Back to Shop</button>
-            <div class="bg-white p-6 rounded-2xl shadow grid md:grid-cols-2 gap-8">
-                <img id="detail-img" class="w-full h-80 object-cover rounded-xl">
-                <div class="space-y-4">
-                    <h2 id="detail-title" class="text-2xl font-black"></h2>
-                    <p id="detail-price" class="text-xl font-bold text-amber-900"></p>
-                    <p id="detail-desc" class="text-sm text-gray-600 leading-relaxed"></p>
-                    <div class="flex items-center gap-4">
-                        <label class="text-xs font-bold">Quantity:</label>
-                        <input type="number" id="detail-qty-val" value="1" min="1" class="border p-2 w-16 rounded">
-                    </div>
-                    <button id="detail-add-cart-btn" class="w-full bg-accent text-white p-3 rounded-lg font-bold">Add to Cart</button>
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <div id="page-home" class="page-view">
+            <div class="mb-8">
+                <h1 class="text-3xl font-black mb-2">Fresh Roasted Blends</h1>
+                <div class="flex space-x-2">
+                    <button onclick="setCategory('all')" class="px-4 py-1.5 bg-primary text-white rounded-full text-xs font-bold">All</button>
+                    <button onclick="setCategory('coffee')" class="px-4 py-1.5 bg-gray-200 text-gray-700 rounded-full text-xs font-bold hover:bg-gray-300">Coffee</button>
                 </div>
             </div>
-            
-            <!-- Reviews integrated in detail view -->
-            <div class="bg-white p-6 rounded-2xl shadow">
-                <h3 class="font-bold mb-4">Customer Reviews</h3>
-                <div id="reviews-list-container" class="space-y-4"></div>
-                <form onsubmit="handleReviewSubmit(event)" class="mt-6 border-t pt-4">
-                    <input type="text" id="review-name" placeholder="Name" required class="block w-full border p-2 mb-2 rounded">
-                    <textarea id="review-comment" placeholder="Write review..." required class="block w-full border p-2 mb-2 rounded"></textarea>
-                    <button type="submit" class="bg-primary text-white px-4 py-2 rounded">Submit Review</button>
-                </form>
-            </div>
-        </section>
-
-        <section id="page-login" class="page-view hidden max-w-md mx-auto bg-white p-8 rounded-2xl shadow mt-10">
-            <h2 class="text-xl font-bold mb-4" id="auth-title">Sign In</h2>
-            <input type="email" id="auth-email" placeholder="Email" class="w-full border p-2 mb-4 rounded">
-            <input type="password" id="auth-password" placeholder="Password" class="w-full border p-2 mb-4 rounded">
-            <button onclick="handleAuthSubmission()" class="w-full bg-primary text-white p-3 rounded" id="auth-btn-label">Sign In</button>
-        </section>
-
-        <section id="page-address" class="page-view hidden max-w-lg mx-auto p-6 bg-white rounded-2xl shadow mt-6">
-            <form id="address-form" class="space-y-3">
-                <input type="text" id="addr-name" placeholder="Full Name" required class="w-full border p-2 rounded">
-                <input type="tel" id="addr-phone" placeholder="Phone" required class="w-full border p-2 rounded">
-                <input type="text" id="addr-flat" placeholder="Flat/House" required class="w-full border p-2 rounded">
-                <input type="text" id="addr-area" placeholder="Area" required class="w-full border p-2 rounded">
-                <input type="text" id="addr-pincode" placeholder="Pincode" required class="w-full border p-2 rounded">
-                <input type="text" id="addr-city" placeholder="City" required class="w-full border p-2 rounded">
-                <input type="text" id="addr-state" placeholder="State" required class="w-full border p-2 rounded">
-                <label><input type="checkbox" id="save-address-chk"> Save address</label>
-                <button type="submit" id="submit-order-btn" class="w-full bg-accent text-white p-3 rounded font-bold">Place Order</button>
-            </form>
-        </section>
-
-        <section id="page-profile" class="page-view hidden max-w-xl mx-auto bg-white p-8 rounded-2xl shadow mt-6">
-            <h2 class="text-xl font-bold mb-4">Account</h2>
-            <p id="profile-phone" class="mb-4"></p>
-            <button onclick="logout()" class="bg-rose-600 text-white px-4 py-2 rounded">Log Out</button>
-        </section>
-
-        <section id="page-orders" class="page-view hidden space-y-4 mt-6">
-            <h2 class="text-xl font-bold">Orders</h2>
-            <div id="orders-list"></div>
-        </section>
-
-        <section id="page-support" class="page-view hidden max-w-lg mx-auto bg-white p-8 rounded-2xl shadow mt-6 text-center">
-            <h2 class="text-xl font-bold mb-4">DZN Support</h2>
-            <p class="mb-4">Need help? Contact us at:</p>
-            <a href="mailto:support@dazeen.in" class="text-accent font-bold text-lg">support@dazeen.in</a>
-        </section>
+            <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
     </main>
 
     <script>
         const products = [
-            { id: 1, title: "Dazeen 100g", price: 170, rating: "4.7", image: "dazeen100G.jpeg", desc: "Pure roast." },
-            { id: 2, title: "Dazeen 250g", price: 290, rating: "4.8", image: "dazeen250gf.jpeg", desc: "Signature blend." }
+            { id: 1, title: "100g Classic Roast", price: 170, category: "coffee", image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&q=80" },
+            { id: 2, title: "250g Premium Blend", price: 290, category: "coffee", image: "https://images.unsplash.com/photo-1498804103079-a6351b050096?w=400&q=80" },
+            { id: 3, title: "Date Seed Powder", price: 150, category: "wellness", image: "https://images.unsplash.com/photo-1585499180255-081498c19920?w=400&q=80" }
         ];
 
-        let cart = JSON.parse(localStorage.getItem('dazeen_cart')) || [];
-        let user = JSON.parse(localStorage.getItem('dazeen_user')) || null;
-        let orders = JSON.parse(localStorage.getItem('dazeen_orders_store')) || [];
-
-        function showToast(m, t='success') {
-            const c = document.getElementById('toast-container');
-            const d = document.createElement('div');
-            d.className = `p-4 mb-2 rounded text-white ${t==='success'?'bg-green-600':'bg-red-600'}`;
-            d.innerText = m;
-            c.appendChild(d);
-            setTimeout(() => d.remove(), 3000);
-        }
-
-        function showPage(pageId) {
-            document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
-            document.getElementById(`page-${pageId}`).classList.remove('hidden');
-            
-            const hb = document.getElementById('hero-banner');
-            const fb = document.getElementById('fresh-banner');
-            if(pageId === 'home') { hb?.classList.remove('hidden'); fb?.classList.remove('hidden'); }
-            else { hb?.classList.add('hidden'); fb?.classList.add('hidden'); }
-            window.scrollTo(0,0);
-        }
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let activeCategory = 'all';
 
         function renderProducts() {
-            const container = document.getElementById('product-list');
-            container.innerHTML = products.map(p => `
-                <div class="bg-white p-4 rounded shadow border">
-                    <img src="${p.image}" class="w-full h-40 object-cover rounded">
-                    <h3 class="font-bold mt-2">${p.title}</h3>
-                    <button onclick="openProductDetail(${p.id})" class="mt-2 w-full bg-gray-100 p-2 rounded">More Details</button>
+            const list = document.getElementById('product-list');
+            const filtered = activeCategory === 'all' ? products : products.filter(p => p.category === activeCategory);
+            list.innerHTML = filtered.map(p => `
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 group">
+                    <div class="overflow-hidden rounded-xl mb-4">
+                        <img src="${p.image}" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <h3 class="font-bold text-sm">${p.title}</h3>
+                    <p class="text-primary font-black my-2">₹${p.price}</p>
+                    <button onclick="addToCart(${p.id})" class="w-full bg-gray-900 text-white py-2 rounded-lg font-bold text-xs hover:bg-primary transition">Add to Cart</button>
                 </div>
             `).join('');
         }
 
-        function openProductDetail(id) {
-            const p = products.find(x => x.id === id);
-            activeViewingProductId = id;
-            document.getElementById('detail-img').src = p.image;
-            document.getElementById('detail-title').innerText = p.title;
-            document.getElementById('detail-price').innerText = "₹" + p.price;
-            document.getElementById('detail-desc').innerText = p.desc;
-            document.getElementById('detail-add-cart-btn').onclick = () => {
-                const qty = parseInt(document.getElementById('detail-qty-val').value);
-                cart.push({...p, qty});
-                localStorage.setItem('dazeen_cart', JSON.stringify(cart));
-                showToast("Added!");
-                updateCartCount();
-            };
-            loadReviews(id);
-            showPage('product-detail');
+        function toggleCart() {
+            const drawer = document.getElementById('cart-drawer');
+            drawer.classList.toggle('cart-open');
+            drawer.classList.toggle('cart-closed');
         }
 
-        function toggleAuthState(s) {
-            authStateMode = s;
-            document.getElementById('auth-title').innerText = s === 'login' ? 'Sign In' : 'Register';
-            document.getElementById('auth-btn-label').innerText = s === 'login' ? 'Sign In' : 'Register';
+        function addToCart(id) {
+            const p = products.find(i => i.id === id);
+            const exists = cart.find(i => i.id === id);
+            if (exists) exists.qty++;
+            else cart.push({...p, qty: 1});
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
         }
 
-        async function handleAuthSubmission() {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-password').value;
-            const users = JSON.parse(localStorage.getItem('dazeen_users')) || [];
-            if (authStateMode === 'signup') {
-                users.push({email, pass});
-                localStorage.setItem('dazeen_users', JSON.stringify(users));
-                user = {phone: email};
-                localStorage.setItem('dazeen_user', JSON.stringify(user));
-                goToAddressPage();
-            } else {
-                const u = users.find(x => x.email === email && x.pass === pass);
-                if(u) { user = {phone: email}; localStorage.setItem('dazeen_user', JSON.stringify(user)); goToAddressPage(); }
-                else showToast("Fail", "error");
-            }
+        function updateCart() {
+            const list = document.getElementById('cart-items');
+            const total = document.getElementById('cart-total');
+            const count = document.getElementById('cart-count');
+            
+            let sum = 0;
+            list.innerHTML = cart.map(item => {
+                sum += item.price * item.qty;
+                return `
+                    <div class="flex items-center space-x-4">
+                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-lg">
+                        <div>
+                            <p class="text-xs font-bold">${item.title}</p>
+                            <p class="text-xs text-gray-500">₹${item.price} x ${item.qty}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            total.innerText = `₹${sum}`;
+            count.innerText = cart.reduce((a, b) => a + b.qty, 0);
+            count.classList.toggle('hidden', cart.length === 0);
         }
 
-        function handleOrderSubmit(e) {
-            e.preventDefault();
-            const orderId = "DAZ-" + Math.floor(Math.random()*9000);
-            orders.unshift({orderId, items: cart, total: 100});
-            localStorage.setItem('dazeen_orders_store', JSON.stringify(orders));
-            cart = [];
-            showToast("Success");
-            showPage('orders');
+        function setCategory(cat) {
+            activeCategory = cat;
+            renderProducts();
         }
 
-        function loadReviews(pid) {
-            const list = document.getElementById('reviews-list-container');
-            const revs = JSON.parse(localStorage.getItem('rev_'+pid)) || [];
-            list.innerHTML = revs.map(r => `<div class="border-b p-2">${r.name}: ${r.comment}</div>`).join('');
+        function filterProducts() {
+            const query = document.getElementById('search-bar').value.toLowerCase();
+            const list = document.getElementById('product-list');
+            const filtered = products.filter(p => p.title.toLowerCase().includes(query));
+            list.innerHTML = filtered.map(p => `
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                    <img src="${p.image}" class="w-full h-48 object-cover rounded-xl mb-4">
+                    <h3 class="font-bold text-sm">${p.title}</h3>
+                    <p class="text-primary font-black my-2">₹${p.price}</p>
+                    <button onclick="addToCart(${p.id})" class="w-full bg-primary text-white py-2 rounded-lg font-bold text-xs">Add</button>
+                </div>
+            `).join('');
         }
 
-        function handleReviewSubmit(e) {
-            e.preventDefault();
-            const name = document.getElementById('review-name').value;
-            const comment = document.getElementById('review-comment').value;
-            const revs = JSON.parse(localStorage.getItem('rev_'+activeViewingProductId)) || [];
-            revs.push({name, comment});
-            localStorage.setItem('rev_'+activeViewingProductId, JSON.stringify(revs));
-            loadReviews(activeViewingProductId);
+        function checkout() {
+            alert('Proceeding to secure checkout...');
         }
 
-        function logout() { localStorage.removeItem('dazeen_user'); user=null; showPage('home'); }
-        function goToOrders() { showPage('orders'); }
-        function goToProfile() { showPage('profile'); }
-        function updateCartCount() { document.getElementById('cart-count').innerText = cart.length; document.getElementById('cart-count').classList.remove('hidden'); }
+        function showPage(page) { /* Simple navigation handle */ }
 
-        // Pincode Logic
-        document.getElementById('addr-pincode').addEventListener('input', function(e) {
-            if(e.target.value.length === 6) {
-                fetch(`https://api.postalpincode.in/pincode/${e.target.value}`)
-                .then(res => res.json())
-                .then(data => {
-                    if(data[0].Status === 'Success') {
-                        document.getElementById('addr-city').value = data[0].PostOffice[0].Name;
-                        document.getElementById('addr-state').value = data[0].PostOffice[0].State;
-                    }
-                });
-            }
-        });
+        renderProducts();
+        updateCart();
     </script>
 </body>
 </html>
