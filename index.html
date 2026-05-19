@@ -410,6 +410,31 @@
                     <span onclick="setCarouselSlide(3)" class="carousel-dot w-2 h-2 rounded-full bg-gray-200 cursor-pointer transition"></span>
                 </div>
             </div>
+
+            <!-- SCROLL-CONTROLLED OUR STORY, MISSION & VISION SECTION -->
+            <div id="scroll-story-section" class="bg-primary text-white rounded-3xl p-6 md:p-12 shadow-xl border border-accent/20 space-y-8 relative overflow-hidden my-8">
+                <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                <div class="relative z-10 max-w-3xl mx-auto space-y-8">
+                    <!-- Story Block -->
+                    <div class="space-y-3">
+                        <span class="text-accent text-[10px] md:text-xs font-black uppercase tracking-widest block">Our Story</span>
+                        <h3 class="text-lg md:text-2xl font-black text-gray-100">Born in Pune, brewed for the world</h3>
+                        <p id="typed-story" class="text-xs md:text-sm text-gray-300 font-light leading-relaxed min-h-[140px] md:min-h-[90px]"></p>
+                    </div>
+
+                    <!-- Mission Block -->
+                    <div class="space-y-3">
+                        <span class="text-accent text-[10px] md:text-xs font-black uppercase tracking-widest block">Our Mission</span>
+                        <p id="typed-mission" class="text-xs md:text-sm text-gray-300 font-medium italic leading-relaxed min-h-[50px] md:min-h-[30px]"></p>
+                    </div>
+
+                    <!-- Vision Block -->
+                    <div class="space-y-3">
+                        <span class="text-accent text-[10px] md:text-xs font-black uppercase tracking-widest block">Our Vision</span>
+                        <p id="typed-vision" class="text-xs md:text-sm text-gray-300 font-medium italic leading-relaxed min-h-[50px] md:min-h-[30px]"></p>
+                    </div>
+                </div>
+            </div>
         </section>
 
 
@@ -1194,6 +1219,64 @@
         }
 
 
+        // ================= STREAMING_CHUNK: Setting up scroll-linked typewriter effect... =================
+        window.addEventListener('scroll', handleScrollTypewriter);
+
+        function handleScrollTypewriter() {
+            const section = document.getElementById('scroll-story-section');
+            if (!section || section.getBoundingClientRect().height === 0) return;
+
+            const rect = section.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+
+            // Trigger window calculation bounds
+            const startThreshold = viewportHeight * 0.95; // start typing when top is near bottom of screen
+            const endThreshold = viewportHeight * 0.15;   // fully typed when top is near top of screen
+
+            let progress = (startThreshold - rect.top) / (startThreshold - endThreshold);
+            progress = Math.max(0, Math.min(1, progress));
+
+            const storyStr = "Dazeen was born from a simple realization: India loves coffee, but the caffeine dependency and health issues that come with it are often ignored. We discovered the ancient, healthy practice of roasting date seeds and decided to bring this handcrafted, superfood beverage to modern kitchens. Our journey started in Pune.";
+            const missionStr = '"To provide a premium, 100% caffeine-free alternative to traditional coffee without compromise."';
+            const visionStr = '"To become India\'s leading brand in healthy alternative beverages, making caffeine-free living premium."';
+
+            const len1 = storyStr.length;
+            const len2 = missionStr.length;
+            const len3 = visionStr.length;
+            const totalLen = len1 + len2 + len3;
+
+            const charsToShow = Math.floor(progress * totalLen);
+
+            const storyEl = document.getElementById('typed-story');
+            const missionEl = document.getElementById('typed-mission');
+            const visionEl = document.getElementById('typed-vision');
+
+            if (!storyEl || !missionEl || !visionEl) return;
+
+            if (charsToShow <= len1) {
+                storyEl.innerHTML = storyStr.substring(0, charsToShow) + '<span class="inline-block w-1.5 h-4 ml-1 bg-accent animate-pulse">|</span>';
+                missionEl.innerHTML = '';
+                visionEl.innerHTML = '';
+            } else if (charsToShow <= len1 + len2) {
+                storyEl.innerHTML = storyStr;
+                missionEl.innerHTML = missionStr.substring(0, charsToShow - len1) + '<span class="inline-block w-1.5 h-4 ml-1 bg-accent animate-pulse">|</span>';
+                visionEl.innerHTML = '';
+            } else {
+                storyEl.innerHTML = storyStr;
+                missionEl.innerHTML = missionStr;
+                visionEl.innerHTML = visionStr.substring(0, charsToShow - len1 - len2) + '<span class="inline-block w-1.5 h-4 ml-1 bg-accent animate-pulse">|</span>';
+            }
+
+            // If fully typed, hide trailing cursors
+            if (charsToShow >= totalLen) {
+                visionEl.innerHTML = visionStr; 
+            }
+            if (charsToShow <= 0) {
+                storyEl.innerHTML = '';
+            }
+        }
+
+
         // ================= REVIEWS & FEEDBACK WALL SYSTEM =================
         function setStarRating(stars) {
             selectedStarRating = stars;
@@ -1637,7 +1720,7 @@
 
         function checkoutProcess() {
             if (cart.length === 0) {
-                showToast("Please add at least one xpack to your basket first!", 'error');
+                showToast("Please add at least one pack to your basket first!", 'error');
                 return;
             }
             if (!user) {
@@ -1648,7 +1731,7 @@
             }
         }
 
-        // PRE-FILL ADDRESS FROM AUTOSAVED VAULT STORAGE IF EXISTS (WITH STATE FIELD)
+        // PRE-FILL ADDRESS FROM AUTOSAVED VAULT STORAGE IF EXISTS
         function goToAddressPage() {
             document.getElementById('form-phone').value = user.phone;
             document.getElementById('form-total').value = document.getElementById('cart-total').innerText;
@@ -1700,7 +1783,7 @@
             const totalAmt = parseInt(document.getElementById('form-total').value);
             const orderedItemsStr = cart.map(item => `${item.title} (x${item.qty})`).join(', ');
 
-            // 1. Prepare dynamic Formspree Payload including mobile phone number and state
+            // 1. Prepare Formspree Payload 
             const formData = new FormData();
             formData.append("Customer Name", nameVal);
             formData.append("Customer Email", user ? user.phone : "Unregistered");
@@ -1727,7 +1810,7 @@
                     console.warn("Formspree response warning: sandbox pipeline activated.");
                 }
 
-                // AUTOSAVE LOGIC PROCESS (WITH NEW STATE METADATA FIELD)
+                // AUTOSAVE LOGIC PROCESS
                 const shouldSave = document.getElementById('save-address-chk').checked;
                 if (shouldSave) {
                     const savedAddressObj = {
@@ -1851,7 +1934,7 @@
 
             cart = [{ ...product, qty: qty }];
             saveCart();
-            showToast(`Securely set cart to ${qty}x ${product.title} and moving to checkout!`, 'success');
+            showToast("Instant checkout initiated! Moving to delivery details.", "success");
             
             if (!user) {
                 toggleAuthState('signup');
@@ -2034,7 +2117,7 @@
             } else {
                 ordersContainer.innerHTML = currentUserOrders.map(order => `
                     <div class="py-4 text-xs text-gray-800 space-y-3 animate-[pageFadeIn_0.3s_forwards]">
-                        <div class="flex flex-col sm:flex-row justify-between font-bold text-gray-950 gap-1">
+                        <div class="flex flex-col sm:flex-row justify-between font-bold text-gray-900 gap-1">
                             <span>Order Ref: <span class="text-amber-900">${order.orderId}</span></span>
                             <span class="text-gray-400 font-normal">Order Date: ${order.date}</span>
                         </div>
