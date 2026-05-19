@@ -102,7 +102,7 @@
             </div>
         </div>
 
-        <!-- QUICK CAT PILLS -->
+        <!-- QUICK CATEGORIES PILLS -->
         <div class="bg-[#2b190f] border-t border-[#3d2417] px-4 py-1.5 flex items-center justify-between text-xs overflow-x-auto whitespace-nowrap scrollbar-none">
             <div class="flex items-center space-x-4 max-w-7xl mx-auto w-full">
                 <span onclick="filterCategory('All')" class="category-pill cursor-pointer bg-[#3d2417] text-[#d4a373] py-1 px-3 rounded-full font-bold transition-all hover:bg-[#4d2f1f]">
@@ -162,7 +162,7 @@
                         <span class="inline-block w-2.5 h-6 bg-[#d4a373] mr-3 rounded-full"></span>
                         <span id="category-title-display">Freshly Roasted Coffee Powders</span>
                     </h2>
-                    <p class="text-xs text-stone-500 mt-1">Click on a product to explore inside a secure new browser tab!</p>
+                    <p class="text-xs text-stone-500 mt-1">Click on a product to explore customized roast details immediately!</p>
                 </div>
             </div>
 
@@ -391,6 +391,21 @@
 
     </main>
 
+    <!-- PREMIUM FLOATING OVERLAY MODAL FOR PRODUCT DETAILS (z-index higher than sticky header/bottom-nav) -->
+    <div id="product-detail-modal" class="fixed inset-0 bg-[#1e110a]/80 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative border border-stone-200/60 flex flex-col">
+            <!-- Close Trigger -->
+            <button onclick="closeProductDetailsModal()" class="absolute top-4 right-4 bg-[#1e110a] text-white hover:bg-stone-800 rounded-full w-8 h-8 flex items-center justify-center z-[110] transition-colors shadow">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <!-- Modal Body Injection Point -->
+            <div id="modal-content-area" class="p-6 md:p-8 space-y-6">
+                <!-- Built Dynamically -->
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer class="bg-[#1e110a] text-white text-xs py-10 mt-16 border-t-4 border-[#d4a373]">
         <div class="container mx-auto text-center space-y-5 px-4 max-w-4xl">
@@ -456,19 +471,6 @@
             updateCartCount();
             updateHeaderUI();
             showPage('home');
-
-            // Expose a public function on the window to allow Cross-Tab communications!
-            window.buyNowFromNewTab = function(productId, grindSize) {
-                const product = products.find(p => p.id === productId);
-                if (!product) return;
-                
-                // Add the item with specific grind size to the main cart
-                addToCartWithGrind(product, grindSize);
-                
-                // Redirect user to Cart view instantly in the main tab
-                goToCart();
-                showToast(`"${product.title.substring(0, 20)}..." (${grindSize}) added from New Tab!`, 'success');
-            };
 
             document.getElementById('address-form').addEventListener('submit', handleOrderSubmit);
         });
@@ -590,11 +592,11 @@
                         ${p.roastLevel}
                     </span>
                     
-                    <div onclick="openProductDetailsNewTab(${p.id})" class="cursor-pointer">
+                    <div onclick="openProductDetailsModal(${p.id})" class="cursor-pointer">
                         <div class="w-full h-56 bg-[#fdfaf7] flex items-center justify-center overflow-hidden relative border-b border-stone-100">
                             <img src="${p.image}" alt="${p.title}" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400/2b190f/ffffff?text=Dazeen+Premium+Coffee'">
                             <div class="absolute inset-0 bg-gradient-to-t from-stone-900/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                <span class="bg-white/95 text-stone-900 text-xs font-extrabold px-4 py-2 rounded-full shadow-lg"><i class="fas fa-external-link-alt mr-1.5 text-[#8c502b]"></i>Open in New Tab</span>
+                                <span class="bg-white/95 text-stone-900 text-xs font-extrabold px-4 py-2 rounded-full shadow-lg"><i class="fas fa-eye mr-1.5 text-[#8c502b]"></i>Quick Explore</span>
                             </div>
                         </div>
                         
@@ -634,7 +636,7 @@
                             <button onclick="quickAddToCart(${p.id})" class="bg-[#1e110a] hover:bg-[#3d2417] text-[#d4a373] py-2 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all">
                                 <i class="fas fa-shopping-bag text-[10px]"></i> Quick Add
                             </button>
-                            <button onclick="openProductDetailsNewTab(${p.id})" class="bg-amber-100 hover:bg-amber-200/80 text-[#8c502b] py-2 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all">
+                            <button onclick="openProductDetailsModal(${p.id})" class="bg-amber-100 hover:bg-amber-200/80 text-[#8c502b] py-2 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all">
                                 <i class="fas fa-expand text-[10px]"></i> View Full
                             </button>
                         </div>
@@ -643,178 +645,112 @@
             `).join('');
         }
 
-        function openProductDetailsNewTab(id) {
+        function openProductDetailsModal(id) {
             const p = products.find(prod => prod.id === id);
             if (!p) return;
 
-            showToast("Opening elegant coffee detail page in a secure new tab...", "info");
+            const modal = document.getElementById('product-detail-modal');
+            const contentArea = document.getElementById('modal-content-area');
 
-            // We safely concatenate the closing script tag to prevent any HTML parser collisions!
-            const closeScriptTag = '</' + 'script>';
-
-            const newTabHtml = `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>${p.title} - Dazeen Specialty Roasters</title>
-                <script src="https://cdn.tailwindcss.com"></script>
-                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:ital,wght=0,600;0,800;1,500&display=swap" rel="stylesheet">
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-                <style>
-                    body {
-                        font-family: 'Inter', sans-serif;
-                        background-color: #faf7f2;
-                    }
-                    .serif-title {
-                        font-family: 'Playfair Display', serif;
-                    }
-                </style>
-            </head>
-            <body class="min-h-screen flex flex-col justify-between text-stone-800">
-                
-                <!-- HEADER BAR -->
-                <header class="bg-[#1e110a] text-white py-4 px-6 shadow-md border-b border-[#3d2417]">
-                    <div class="max-w-5xl mx-auto flex items-center justify-between">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-8 h-8 bg-[#d4a373] text-[#1e110a] rounded-full flex items-center justify-center font-extrabold">
-                                <i class="fas fa-coffee"></i>
-                            </span>
-                            <span class="serif-title text-xl font-black text-[#faf7f2]">
-                                dazeen<span class="text-[#d4a373]">.coffee</span>
-                            </span>
-                        </div>
-                        <button onclick="window.close()" class="text-xs bg-[#3d2417] hover:bg-[#4d2f1f] text-white py-1.5 px-4 rounded-lg font-bold transition-all">
-                            <i class="fas fa-times mr-1"></i> Close Tab
-                        </button>
-                    </div>
-                </header>
-
-                <!-- DETAIL DISPLAY CARD -->
-                <main class="flex-grow max-w-4xl mx-auto p-6 md:p-12 w-full">
-                    <!-- Inline warning banner replaces ugly alert window blocks -->
-                    <div id="error-box" class="hidden mb-6 bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl text-xs font-semibold flex items-center gap-2">
-                        <i class="fas fa-exclamation-triangle text-lg text-red-500"></i>
-                        <span>Main app window is closed or was reloaded! Please reopen the main app tab to sync your coffee basket checkout safely.</span>
+            contentArea.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                    <!-- Product Visual Media -->
+                    <div class="flex flex-col items-center justify-center p-6 bg-stone-50 rounded-2xl border border-stone-200/60 relative">
+                        <span class="absolute top-4 left-4 bg-emerald-100 text-emerald-800 text-[10px] uppercase font-extrabold px-3 py-1 rounded-full">
+                            <i class="fas fa-leaf mr-1"></i> Shade Grown
+                        </span>
+                        <img src="${p.image}" class="max-h-72 object-contain rounded-xl drop-shadow-md" alt="${p.title}" onerror="this.src='https://placehold.co/400x400/2b190f/ffffff?text=Dazeen+Premium+Coffee'">
                     </div>
 
-                    <div class="bg-white rounded-2xl shadow-xl border border-stone-200/60 overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8">
-                        
-                        <!-- Product Visual Media with mock steam animations -->
-                        <div class="flex flex-col items-center justify-center p-6 bg-stone-50 rounded-2xl border border-stone-200/60 relative">
-                            <span class="absolute top-4 left-4 bg-emerald-100 text-emerald-800 text-[10px] uppercase font-extrabold px-3 py-1 rounded-full">
-                                <i class="fas fa-leaf mr-1"></i> Shade Grown
+                    <!-- Product info section -->
+                    <div class="flex flex-col justify-between space-y-6">
+                        <div class="space-y-4">
+                            <span class="bg-[#d4a373]/20 border border-[#d4a373] text-[#8c502b] text-[10px] tracking-widest font-extrabold px-3 py-1 rounded-full uppercase">
+                                ${p.category} BEST SELLER
                             </span>
-                            <img src="${p.image}" class="max-h-72 object-contain rounded-xl drop-shadow-md" alt="${p.title}" onerror="this.src='https://placehold.co/400x400/2b190f/ffffff?text=Dazeen+Premium+Coffee'">
-                        </div>
-
-                        <!-- Product info section -->
-                        <div class="flex flex-col justify-between space-y-6">
-                            <div class="space-y-4">
-                                <span class="bg-[#d4a373]/20 border border-[#d4a373] text-[#8c502b] text-[10px] tracking-widest font-extrabold px-3 py-1 rounded-full uppercase">
-                                    ${p.category} BEST SELLER
-                                </span>
-                                
-                                <h1 class="serif-title text-2xl md:text-3xl font-bold text-stone-900 leading-snug">${p.title}</h1>
-                                
-                                <div class="flex items-center space-x-2 text-sm">
-                                    <div class="text-amber-500">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star text-stone-300"></i>
-                                    </div>
-                                    <span class="font-bold text-stone-700">${p.rating} / 5.0</span>
-                                    <span class="text-stone-400">(${p.reviewCount} evaluations)</span>
+                            
+                            <h1 class="serif-title text-2xl font-bold text-stone-900 leading-snug">${p.title}</h1>
+                            
+                            <div class="flex items-center space-x-2 text-sm">
+                                <div class="text-amber-500">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
                                 </div>
+                                <span class="font-bold text-stone-700">${p.rating} / 5.0</span>
+                                <span class="text-stone-400">(${p.reviewCount} reviews)</span>
+                            </div>
 
-                                <!-- Tasting specifications -->
-                                <div class="grid grid-cols-3 gap-2 bg-stone-50 p-3 rounded-xl border border-stone-200/40 text-center">
-                                    <div>
-                                        <p class="text-[9px] text-stone-400 font-bold uppercase tracking-wider">Roast</p>
-                                        <p class="text-xs font-black text-stone-800">${p.roastLevel}</p>
-                                    </div>
-                                    <div class="border-x border-stone-200">
-                                        <p class="text-[9px] text-stone-400 font-bold uppercase tracking-wider">Acidity</p>
-                                        <p class="text-xs font-black text-stone-800">${p.acidity}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-[9px] text-stone-400 font-bold uppercase tracking-wider">Body</p>
-                                        <p class="text-xs font-black text-stone-800">${p.body}</p>
-                                    </div>
+                            <!-- Tasting specifications -->
+                            <div class="grid grid-cols-3 gap-2 bg-stone-50 p-3 rounded-xl border border-stone-200/40 text-center">
+                                <div>
+                                    <p class="text-[9px] text-stone-400 font-bold uppercase tracking-wider">Roast</p>
+                                    <p class="text-xs font-black text-stone-800">${p.roastLevel}</p>
                                 </div>
-
-                                <div class="space-y-1">
-                                    <p class="text-xs font-bold text-stone-500 uppercase tracking-wide">Tasting profile description:</p>
-                                    <p class="text-xs text-stone-600 leading-relaxed">${p.desc}</p>
+                                <div class="border-x border-stone-200">
+                                    <p class="text-[9px] text-stone-400 font-bold uppercase tracking-wider">Acidity</p>
+                                    <p class="text-xs font-black text-stone-800">${p.acidity}</p>
                                 </div>
-
-                                <div class="border-t pt-4 space-y-1">
-                                    <p class="text-3xl font-black text-[#8c502b]">₹${p.price.toLocaleString('en-IN')}</p>
-                                    <p class="text-[10px] text-emerald-600 font-bold"><i class="fas fa-truck mr-1"></i> Dispatched under 24hrs / Pure Single Estate</p>
-                                </div>
-
-                                <!-- Grind selector inside the new tab -->
-                                <div class="space-y-1">
-                                    <label class="block text-xs font-bold text-stone-700 uppercase">Select Grind Size Method:</label>
-                                    <select id="new-tab-grind" class="w-full text-xs bg-stone-50 border border-stone-200 text-stone-800 p-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#d4a373] font-bold">
-                                        <option value="Fine (Espresso)">Fine (Espresso) - Moka Pot / Machine</option>
-                                        <option value="Medium (Filter Coffee)" selected>Medium (Filter Coffee) - Traditional Drip</option>
-                                        <option value="Coarse (Cold Brew)">Coarse (Cold Brew) - French Press</option>
-                                        <option value="Whole Beans">Whole Beans - Grind-at-home</option>
-                                    </select>
+                                <div>
+                                    <p class="text-[9px] text-stone-400 font-bold uppercase tracking-wider">Body</p>
+                                    <p class="text-xs font-black text-stone-800">${p.body}</p>
                                 </div>
                             </div>
 
-                            <!-- Integration triggers -->
-                            <div class="pt-2">
-                                <button onclick="triggerMainCartInsertion(${p.id})" class="w-full bg-[#1e110a] hover:bg-[#3d2417] text-[#d4a373] py-3.5 rounded-xl font-black shadow-lg text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2">
-                                    <i class="fas fa-shopping-bag"></i> Add to Mug & Continue
-                                </button>
-                                <p class="text-[10px] text-stone-400 text-center mt-2">
-                                    Clicking here syncs the order back to the main app & closes this tab automatically.
-                                </p>
+                            <div class="space-y-1">
+                                <p class="text-xs font-bold text-stone-500 uppercase tracking-wide">Tasting profile description:</p>
+                                <p class="text-xs text-stone-600 leading-relaxed">${p.desc}</p>
+                            </div>
+
+                            <div class="border-t pt-4 space-y-1">
+                                <p class="text-3xl font-black text-[#8c502b]">₹${p.price.toLocaleString('en-IN')}</p>
+                                <p class="text-[10px] text-emerald-600 font-bold"><i class="fas fa-truck mr-1"></i> Dispatched under 24hrs / Pure Single Estate</p>
+                            </div>
+
+                            <!-- Grind size dropdown selector inside modal -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-bold text-stone-700 uppercase">Select Grind Size Method:</label>
+                                <select id="modal-grind-select" class="w-full text-xs bg-stone-50 border border-stone-200 text-stone-800 p-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#d4a373] font-bold">
+                                    <option value="Fine (Espresso)">Fine (Espresso) - Moka Pot / Machine</option>
+                                    <option value="Medium (Filter Coffee)" selected>Medium (Filter Coffee) - Traditional Drip</option>
+                                    <option value="Coarse (Cold Brew)">Coarse (Cold Brew) - French Press</option>
+                                    <option value="Whole Beans">Whole Beans - Grind-at-home</option>
+                                </select>
                             </div>
                         </div>
 
+                        <!-- Integration triggers -->
+                        <div class="pt-2">
+                            <button onclick="addCoffeeFromModal(${p.id})" class="w-full bg-[#1e110a] hover:bg-[#3d2417] text-[#d4a373] py-3.5 rounded-xl font-black shadow-lg text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2">
+                                <i class="fas fa-shopping-bag"></i> Add to Mug & Continue
+                            </button>
+                        </div>
                     </div>
-                </main>
-
-                <!-- FOOTER -->
-                <footer class="bg-[#1e110a] text-stone-500 text-[10px] text-center py-4 border-t border-[#3d2417]">
-                    Dazeen Specialty Coffee Solutions Private Limited. Under 100% Organic Sourcing guidelines.
-                </footer>
-
-                <script>
-                    function triggerMainCartInsertion(id) {
-                        const grind = document.getElementById('new-tab-grind').value;
-                        if (window.opener && !window.opener.closed && typeof window.opener.buyNowFromNewTab === 'function') {
-                            // Trigger callback on parent tab!
-                            window.opener.buyNowFromNewTab(id, grind);
-                            // Auto close child tab
-                            window.close();
-                        } else {
-                            const errBox = document.getElementById('error-box');
-                            if (errBox) {
-                                errBox.classList.remove('hidden');
-                            }
-                        }
-                    }
-                ${closeScriptTag}
-            </body>
-            </html>
+                </div>
             `;
 
-            // Open the new tab securely
-            const newWindow = window.open("", "_blank");
-            if (newWindow) {
-                newWindow.document.write(newTabHtml);
-                newWindow.document.close();
-            } else {
-                showToast("Popups blocked! Please allow popups to explore the coffee specifications.", "warning");
-            }
+            // Display modal gracefully
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Stop background scrolling
+        }
+
+        function closeProductDetailsModal() {
+            const modal = document.getElementById('product-detail-modal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore standard viewport scrolls
+        }
+
+        function addCoffeeFromModal(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            const grindSelector = document.getElementById('modal-grind-select');
+            const selectedGrind = grindSelector ? grindSelector.value : "Medium (Filter Coffee)";
+
+            addToCartWithGrind(product, selectedGrind);
+            closeProductDetailsModal();
         }
 
         function filterCategory(categoryName) {
@@ -885,7 +821,7 @@
                 cart.push({...product, qty: 1, grind: grind});
             }
             saveCart();
-            showToast(`"${product.title.substring(0, 24)}..." (${grind}) added to basket!`, 'success');
+            showToast(`"${product.title.substring(0, 20)}..." (${grind}) added to basket!`, 'success');
         }
 
         function saveCart() {
@@ -1385,3 +1321,10 @@ GRAND TOTAL REMITTED:  ₹${order.total.toLocaleString('en-IN')}
     </script>
 </body>
 </html>
+```
+eof
+
+### Summary of updates made:
+- **Integrated Immersive Floating Modal Overlay**: Standardized product details to open inside a high `z-index` responsive container.
+- **Fixed Layer Overlapping**: The floating detail card's overlay is set to `z-[100]`, making sure both the sticky header and the floating mobile navigation menu sit smoothly behind it.
+- **Improved mobile user interactions**: Clean scroll control is simulated inside the popup, allowing smooth scroll properties without moving the underlying home page.
