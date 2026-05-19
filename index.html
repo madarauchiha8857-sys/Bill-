@@ -81,8 +81,13 @@
             0% { transform: translateX(-150px); }
             100% { transform: translateX(360px); }
         }
-        #mobile-menu-drawer {
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Smooth Scale and Fade in animation for New Product Detail View */
+        .page-transition {
+            animation: pageFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes pageFadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         /* Smooth scale bounce transitions for modern UI popups */
         .smooth-celebration-card {
@@ -90,11 +95,11 @@
         }
     </style>
 </head>
-<body class="bg-[#faf8f5] font-sans min-h-screen flex flex-col text-gray-800 antialiased overflow-x-hidden">
+<body class="bg-[#faf8f5] font-sans min-h-screen flex flex-col text-gray-800 antialiased overflow-x-hidden pb-16 md:pb-0">
 
     
-    <!-- CUSTOM TOAST CONTAINER (Replaces Alert systems) -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-[100] flex flex-col space-y-2 pointer-events-none max-w-sm w-full p-4"></div>
+    <!-- CUSTOM TOAST CONTAINER (Replaces raw Alerts) -->
+    <div id="toast-container" class="fixed bottom-20 md:bottom-5 right-5 z-[100] flex flex-col space-y-2 pointer-events-none max-w-sm w-full p-4"></div>
 
 
     <!-- FLIPKART STYLE CELEBRATION OVERLAY -->
@@ -135,7 +140,7 @@
     </div>
 
 
-    <!-- NAVIGATION BAR -->
+    <!-- NAVIGATION BAR (Desktop Top Bar) -->
     <nav class="bg-primary text-white sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -147,71 +152,46 @@
                     <span class="text-2xl font-extrabold tracking-wider text-accent">DAZEEN <span class="text-white text-xs font-light tracking-widest block -mt-1.5">PREMIUM</span></span>
                 </div>
 
-                <!-- Desktop Navigation Links (Hidden on Mobile) -->
+                <!-- Desktop Navigation Links (Visible on Tablet & PC) -->
                 <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                    <button onclick="showPage('home')" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 focus:outline-none">
-                        <i class="fas fa-coffee text-base"></i>
+                    <button id="nav-home" onclick="showPage('home')" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 focus:outline-none">
+                        <i class="fas fa-coffee text-base text-accent"></i>
                         <span>Shop</span>
                     </button>
-                    <button onclick="goToProfile()" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 focus:outline-none">
-                        <i class="fas fa-user text-base"></i>
+                    <button id="nav-profile" onclick="goToProfile()" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 focus:outline-none">
+                        <i class="fas fa-user text-base text-accent"></i>
                         <span>Profile & History</span>
                     </button>
-                    <button onclick="goToCart()" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 relative focus:outline-none bg-emerald-950 px-4 py-2 rounded-full border border-emerald-800">
+                    <button id="nav-cart" onclick="goToCart()" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 relative focus:outline-none bg-emerald-950 px-4 py-2 rounded-full border border-emerald-800">
                         <i class="fas fa-shopping-basket text-base text-accent"></i>
                         <span>Cart</span>
                         <span id="cart-count" class="bg-accent text-primary font-extrabold rounded-full text-xs px-2 py-0.5 ml-1.5 hidden">0</span>
                     </button>
                 </div>
-
-                <!-- Mobile Hamburger Button -->
-                <button id="hamburger-btn" onclick="toggleMobileMenu()" class="md:hidden text-white focus:outline-none p-2 rounded-lg hover:bg-emerald-950 transition">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
             </div>
         </div>
     </nav>
 
 
-    <!-- MOBILE NAVIGATION SLIDEOUT DRAWER -->
-    <div id="mobile-menu-drawer" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] transform -translate-x-full md:hidden">
-        <div class="bg-[#132217] w-3/4 max-w-sm h-full p-6 text-white flex flex-col justify-between shadow-2xl border-r border-accent/20">
-            <div class="space-y-8">
-                <div class="flex items-center justify-between border-b border-emerald-900 pb-4">
-                    <div class="flex items-center space-x-2">
-                        <div class="bg-accent p-1.5 rounded text-primary text-sm font-black"><i class="fas fa-seedling"></i></div>
-                        <span class="text-xl font-bold text-accent">DAZEEN MENU</span>
-                    </div>
-                    <button onclick="toggleMobileMenu()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
-                </div>
-
-                <div class="flex flex-col space-y-4 text-sm font-semibold">
-                    <button onclick="mobileNavigate('home')" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-950 text-left transition text-gray-200 hover:text-white">
-                        <i class="fas fa-coffee text-accent text-lg w-6"></i>
-                        <span>Shop Catalog</span>
-                    </button>
-                    <button onclick="mobileNavigate('profile')" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-950 text-left transition text-gray-200 hover:text-white">
-                        <i class="fas fa-user-circle text-accent text-lg w-6"></i>
-                        <span>Profile & History</span>
-                    </button>
-                    <button onclick="mobileNavigate('cart')" class="flex items-center justify-between p-3 rounded-xl hover:bg-emerald-950 transition text-gray-200 hover:text-white">
-                        <span class="flex items-center space-x-3 text-left">
-                            <i class="fas fa-shopping-basket text-accent text-lg w-6"></i>
-                            <span>Shopping Cart</span>
-                        </span>
-                        <span id="cart-count-drawer" class="bg-accent text-primary font-black text-xs px-2 py-0.5 rounded-full hidden">0</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Drawer Footer -->
-            <div class="border-t border-emerald-900 pt-4" id="drawer-footer-auth">
-                <button onclick="logout()" class="w-full flex items-center justify-center space-x-2 bg-rose-950 hover:bg-rose-900 text-rose-200 p-3 rounded-xl text-xs font-bold transition">
-                    <i class="fas fa-arrow-right-from-bracket"></i>
-                    <span>Sign Out Account</span>
-                </button>
-            </div>
-        </div>
+    <!-- MOBILE BOTTOM NAVIGATION (Smooth Hamburger Alternative) -->
+    <div class="fixed bottom-0 left-0 right-0 bg-[#132217] border-t border-emerald-900 z-50 md:hidden flex justify-around items-center py-2 shadow-xl">
+        <button onclick="showPage('home')" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/4">
+            <i class="fas fa-coffee text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Shop</span>
+        </button>
+        <button onclick="goToCart()" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/4 relative">
+            <i class="fas fa-shopping-basket text-lg"></i>
+            <span id="cart-count-mobile" class="absolute -top-1.5 right-6 bg-accent text-primary font-black text-[9px] px-1.5 rounded-full hidden">0</span>
+            <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Cart</span>
+        </button>
+        <button onclick="goToProfile()" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/4">
+            <i class="fas fa-user-circle text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Profile</span>
+        </button>
+        <button onclick="logout()" class="flex flex-col items-center justify-center text-rose-300 hover:text-rose-400 focus:outline-none w-1/4">
+            <i class="fas fa-sign-out-alt text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Logout</span>
+        </button>
     </div>
 
 
@@ -286,6 +266,98 @@
                         </div>
                         <h4 class="font-extrabold text-xs text-gray-900">Smooth Digestive Flow</h4>
                         <p class="text-[11px] text-gray-500 leading-relaxed">Completely non-acidic. Perfect for sensitive stomachs or acid reflux issues.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- PRODUCT DETAIL VIEW (Masterpiece Animating Full Page) -->
+        <section id="page-product-detail" class="page-view hidden space-y-6 page-transition">
+            <div class="flex items-center space-x-2">
+                <button onclick="showPage('home')" class="text-xs font-bold text-primary hover:text-accent bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm flex items-center space-x-2 transition duration-150">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Shop</span>
+                </button>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                <!-- Product Left Hero Image Presentation -->
+                <div class="space-y-4">
+                    <div class="relative overflow-hidden rounded-2xl shadow-md border border-gray-100">
+                        <img id="detail-img" src="" alt="Product Detail" class="w-full h-64 md:h-96 object-cover rounded-2xl">
+                        <span class="absolute top-4 left-4 bg-primary text-accent text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-wider shadow">
+                            🎯 Fresh roasted to order
+                        </span>
+                    </div>
+                    
+                    <!-- Unique Quality Badges -->
+                    <div class="grid grid-cols-3 gap-2 text-center text-[10px] uppercase font-bold text-gray-600">
+                        <div class="bg-[#faf8f5] p-3 rounded-xl border border-gray-100">
+                            <i class="fas fa-certificate text-accent text-sm block mb-1"></i>
+                            <span>Organic Date</span>
+                        </div>
+                        <div class="bg-[#faf8f5] p-3 rounded-xl border border-gray-100">
+                            <i class="fas fa-fire-burner text-accent text-sm block mb-1"></i>
+                            <span>Slow Roasted</span>
+                        </div>
+                        <div class="bg-[#faf8f5] p-3 rounded-xl border border-gray-100">
+                            <i class="fas fa-shield-heart text-accent text-sm block mb-1"></i>
+                            <span>Zero Acidity</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Right Detailed Specs and Buy Interface -->
+                <div class="space-y-6 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <span class="text-accent text-[11px] font-extrabold tracking-widest uppercase block">Premium Blend Spec Sheet</span>
+                        <h2 id="detail-title" class="text-2xl md:text-3xl font-black text-gray-950 leading-tight"></h2>
+                        
+                        <div class="flex items-center space-x-3 text-xs text-yellow-600 font-bold">
+                            <span id="detail-rating" class="bg-yellow-50 px-2 py-0.5 rounded border border-yellow-200"></span>
+                            <span class="text-gray-300">|</span>
+                            <span class="text-emerald-700">Verified Fresh Batch</span>
+                        </div>
+
+                        <div class="flex items-baseline space-x-3 pt-2">
+                            <span id="detail-price" class="text-3xl font-black text-amber-900"></span>
+                            <span id="detail-strike-price" class="text-sm text-gray-400 line-through"></span>
+                        </div>
+
+                        <div class="border-t border-gray-100 pt-4 space-y-2">
+                            <h4 class="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Taste & Aroma Profile</h4>
+                            <p id="detail-desc" class="text-xs text-gray-600 leading-relaxed"></p>
+                        </div>
+
+                        <!-- Nutritional Fact Card -->
+                        <div class="bg-gray-50/70 p-4 rounded-xl border border-gray-200 space-y-3">
+                            <h4 class="text-[10px] font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fas fa-heart-pulse text-accent"></i> Nutritional facts (Per 100g serving)
+                            </h4>
+                            <div class="grid grid-cols-3 gap-3 text-center text-[10px] text-gray-700 font-semibold">
+                                <div class="bg-white p-2 rounded-lg border"><strong>0%</strong> <span class="block text-gray-400 font-medium">Caffeine</span></div>
+                                <div class="bg-white p-2 rounded-lg border"><strong>6.2g</strong> <span class="block text-gray-400 font-medium">Dietary Fiber</span></div>
+                                <div class="bg-white p-2 rounded-lg border"><strong>780mg</strong> <span class="block text-gray-400 font-medium">Potassium</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Direct Ordering Trigger Deck -->
+                    <div class="space-y-3 pt-6 border-t border-gray-100">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button id="detail-add-cart-btn" class="bg-white border-2 border-primary hover:bg-gray-50 text-primary py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition duration-150 flex items-center justify-center space-x-1.5">
+                                <i class="fas fa-shopping-basket"></i>
+                                <span>Add to Cart</span>
+                            </button>
+                            <button id="detail-buy-now-btn" class="bg-accent hover:bg-accentHover text-primary py-3 rounded-xl font-black text-xs uppercase tracking-wider transition duration-150 shadow-md flex items-center justify-center space-x-1.5">
+                                <i class="fas fa-bolt"></i>
+                                <span>Instant Buy Now</span>
+                            </button>
+                        </div>
+                        <p class="text-[9px] text-gray-400 text-center">
+                            ⚡ Pre-launch batch dispatch starts directly from our roasting units. Delivery takes 5-7 days.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -454,29 +526,58 @@
         </section>
 
 
-        <!-- TERMS & RETURN POLICY PAGE -->
-        <section id="page-terms" class="page-view hidden max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+        <!-- TERMS & CONDITIONS PAGE (ALAG ALAG PAGE #1) -->
+        <section id="page-terms" class="page-view hidden max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6 page-transition">
             <div class="border-b pb-4 flex justify-between items-center">
                 <div>
-                    <h2 class="text-xl md:text-2xl font-extrabold text-gray-900">Return Policy & Service Terms</h2>
-                    <p class="text-xs text-gray-500">How we prepare, ship, and protect your purchases.</p>
+                    <h2 class="text-xl md:text-2xl font-extrabold text-gray-900">Terms & Conditions</h2>
+                    <p class="text-xs text-gray-500">Service usage terms & pre-launch sale parameters.</p>
+                </div>
+                <button onclick="showPage('home')" class="text-primary hover:text-accent font-bold text-xs bg-gray-50 px-3 py-1.5 rounded-lg border">← Continue Shopping</button>
+            </div>
+            
+            <div class="space-y-4 text-xs text-gray-600 leading-relaxed">
+                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">1. Batch Processing & Small Batches</h3>
+                <p>We work exclusively with fresh handcrafted operations. Once you order, the raw organic date seeds enter customized slow roasting schedules. No items are pre-packed or held on shelves indefinitely.</p>
+
+                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">2. Secure Customer Account Usage</h3>
+                <p>Account database records are generated locally on client screen protocols. Your password remains locally processed for transaction retrieval and dispatch tracking.</p>
+
+                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">3. Cash on Delivery verification</h3>
+                <p>Cash on Delivery coordinates are subjected to active communications. Duplicate orders or incorrect shipping information can lead to order suspension prior to roasting.</p>
+            </div>
+        </section>
+
+
+        <!-- RETURN POLICY PAGE (ALAG ALAG PAGE #2) -->
+        <section id="page-returns" class="page-view hidden max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6 page-transition">
+            <div class="border-b pb-4 flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-extrabold text-gray-900">Return & Refund Policy</h2>
+                    <p class="text-xs text-gray-500">How we manage custom food batch returns safely.</p>
                 </div>
                 <button onclick="showPage('home')" class="text-primary hover:text-accent font-bold text-xs bg-gray-50 px-3 py-1.5 rounded-lg border">← Continue Shopping</button>
             </div>
             
             <div class="space-y-4 text-xs text-gray-600 leading-relaxed">
                 <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-amber-950 font-semibold mb-2">
-                    📢 Note: Humare products stock-held nahi hote! Jaise hi aap order place karte hain, vaise hi raw premium date seeds roast, packaging aur fresh delivery cycle me move hote hain!
+                    ⚠️ <strong>Refund Rules Check:</strong> Humare date seed roasts specialized pre-ordered items hote hain jo directly aapke order par hi fresh grind hote hain.
                 </div>
 
-                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">1. Live 5-7 Days Delivery Policy</h3>
-                <p>Kyunki hum fresh batch roast karke dispatch karte hain, complete preparation aur courier processing me pure safe transition ke sath total <strong>5 to 7 days</strong> ka samay lagta hai. Standard deliveries safe-sealed package me aapke pincode tak smoothly dispatch ki jati hain.</p>
-                
-                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">2. Return & Full Refund Protection</h3>
-                <p>Hum customer satisfaction ko primary priorities me rakhte hain. Humare date seed roast super-fresh roast hone ke karan aam taur par non-returnable hain, lekin yadi aapko damaged packing, moisture defect ya koi quality discrepancy milti hai toh hum immediate bina sawal uthaye <strong>100% replacement ya direct credit refund</strong> offer karte hain. Apne order status dashboard se hume query submit karein.</p>
-                
-                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">3. Conditions of Premium Sale</h3>
-                <p>Cash on Delivery Orders fully verified customer communication coordinates par verified kiye jate hain. Bulk requests ya commercial supply ke liye please direct business desk par write-up karein.</p>
+                <div class="bg-rose-50 p-4 rounded-xl border border-rose-200 text-rose-950 font-bold text-xs">
+                    🔴 Refund and Return strictly tabhi process hoga agar aapko:
+                    <ul class="list-disc list-inside mt-2 font-semibold">
+                        <li>Wrong Order deliver kiya gaya ho</li>
+                        <li>Package damaged/kharab condition me mila ho</li>
+                    </ul>
+                    Other wise koi bhi general return ya refund support nahi hoga. Kisi bhi exceptions me directly **Customer Care Support Desk** se sampark karein!
+                </div>
+
+                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">1. Return Claim Submission Timeline</h3>
+                <p>Yadi product wrong ya kharab condition me mila hai, to delivery ke 48 hours ke bhitar order status menu se hamare system par photo updates ke sath request submit karein. Verify hote hi refund process ho jayega.</p>
+
+                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">2. Contact Customer Care Support</h3>
+                <p>Aap hume email par, WhatsApp support, ya is floating interactive AI Pal widget ke madhyam se 24/7 direct contact kar sakte hain. General feedback ya personal preferences ke returns allowed nahi hain.</p>
             </div>
         </section>
 
@@ -520,7 +621,7 @@
 
 
     <!-- CHATBOT INTERACTIVE INTERFACE (DAZEEN AI PAL) -->
-    <div id="chatbot-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div id="chatbot-widget" class="fixed bottom-20 md:bottom-6 right-6 z-50 flex flex-col items-end">
         <!-- Collapsed trigger badge -->
         <button onclick="toggleChatWindow()" class="bg-primary hover:bg-emerald-900 text-accent hover:text-white p-3 md:p-4 rounded-full shadow-2xl transition duration-300 transform hover:scale-110 flex items-center justify-center border-2 border-accent/40 relative">
             <span class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-[9px] px-1 animate-pulse">1</span>
@@ -581,42 +682,6 @@
     </div>
 
 
-    <!-- PREMIUM PRODUCT DETAILS MODAL -->
-    <div id="product-detail-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-100">
-            <!-- Header bar -->
-            <div class="bg-primary p-4 text-white flex justify-between items-center">
-                <h3 class="font-extrabold text-xs uppercase tracking-wider text-accent">Detailed Pack Specifications</h3>
-                <button onclick="closeDetailModal()" class="text-white hover:text-accent transition duration-150 focus:outline-none text-lg">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <!-- Body content -->
-            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto custom-scrollbar">
-                <div class="flex gap-4 items-center">
-                    <img id="modal-product-img" src="" alt="Dazeen Roast Pack" class="w-20 h-20 object-cover rounded-xl shadow-sm border border-gray-200">
-                    <div>
-                        <h4 id="modal-product-title" class="font-bold text-gray-900 text-sm leading-tight"></h4>
-                        <p id="modal-product-price" class="text-amber-900 font-extrabold text-base mt-0.5"></p>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <h5 class="text-[10px] font-bold text-gray-600 uppercase">Product Description</h5>
-                    <p id="modal-product-desc" class="text-xs text-gray-600 leading-relaxed"></p>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-xl border space-y-2">
-                    <h5 class="text-[10px] font-bold text-gray-700 uppercase">Nutritional Values (Per 100g)</h5>
-                    <div class="grid grid-cols-3 gap-2 text-center text-[10px]">
-                        <div class="bg-white p-2 rounded border"><strong>0%</strong><span class="block text-gray-500">Caffeine</span></div>
-                        <div class="bg-white p-2 rounded border"><strong>6.2g</strong><span class="block text-gray-500">Dietary Fiber</span></div>
-                        <div class="bg-white p-2 rounded border"><strong>780mg</strong><span class="block text-gray-500">Potassium</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
     <!-- FOOTER -->
     <footer class="bg-primary text-gray-300 text-[11px] py-8 mt-12 border-t border-emerald-950">
         <div class="container mx-auto px-4 max-w-6xl space-y-6">
@@ -628,7 +693,8 @@
                 <div class="flex justify-center space-x-6 uppercase font-bold text-[9px]">
                     <a href="#page-home" onclick="showPage('home')" class="hover:text-accent transition">Shop</a>
                     <a href="#page-profile" onclick="goToProfile()" class="hover:text-accent transition">Dashboard</a>
-                    <a href="#page-terms" onclick="showPage('terms')" class="hover:text-accent transition">Return Policy & Terms</a>
+                    <a href="#page-terms" onclick="showPage('terms')" class="hover:text-accent transition">Terms & Conditions</a>
+                    <a href="#page-returns" onclick="showPage('returns')" class="hover:text-accent transition">Return Policy</a>
                 </div>
                 <div class="text-center md:text-right text-gray-400">
                     <p class="text-[9px]">Secure Checkout Process Guaranteed</p>
@@ -642,7 +708,8 @@
             
             <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-gray-400 text-[10px]">
                 <div class="space-x-4">
-                    <a href="#page-terms" onclick="showPage('terms')" class="hover:underline hover:text-white">Conditions of Sale & Returns Policy</a>
+                    <a href="#page-terms" onclick="showPage('terms')" class="hover:underline hover:text-white">Conditions of Sale</a>
+                    <a href="#page-returns" onclick="showPage('returns')" class="hover:underline hover:text-white">Returns & Refund Policy</a>
                 </div>
                 <p>Dazeen Premium - Mera Apna Store App</p>
             </div>
@@ -715,25 +782,6 @@
             document.getElementById('address-form').addEventListener('submit', handleOrderSubmit);
             syncAuthInterface();
         });
-
-        // Toggle mobile hamburger menu drawer with smooth transitions
-        function toggleMobileMenu() {
-            const drawer = document.getElementById('mobile-menu-drawer');
-            if (drawer.classList.contains('-translate-x-full')) {
-                drawer.classList.remove('-translate-x-full');
-                drawer.classList.add('translate-x-0');
-            } else {
-                drawer.classList.remove('translate-x-0');
-                drawer.classList.add('-translate-x-full');
-            }
-        }
-
-        function mobileNavigate(pageId) {
-            toggleMobileMenu();
-            if (pageId === 'home') showPage('home');
-            else if (pageId === 'cart') goToCart();
-            else if (pageId === 'profile') goToProfile();
-        }
 
         function syncAuthInterface() {
             const footerAuth = document.getElementById('drawer-footer-auth');
@@ -1030,11 +1078,28 @@
 
         // Core Page Navigation Routing
         function showPage(pageId) {
+            // Un-highlight all desktop navigation headers
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('text-accent', 'border-accent'));
+
             document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
             const target = document.getElementById(`page-${pageId}`);
             if (target) {
                 target.classList.remove('hidden');
             }
+
+            // Sync Nav Highlights
+            const desktopHomeBtn = document.getElementById('nav-home');
+            const desktopProfileBtn = document.getElementById('nav-profile');
+            const desktopCartBtn = document.getElementById('nav-cart');
+
+            if (pageId === 'home') {
+                desktopHomeBtn?.classList.add('text-accent');
+            } else if (pageId === 'profile') {
+                desktopProfileBtn?.classList.add('text-accent');
+            } else if (pageId === 'cart') {
+                desktopCartBtn?.classList.add('text-accent');
+            }
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1043,7 +1108,7 @@
             container.innerHTML = products.map(p => `
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 flex flex-col justify-between hover:shadow-lg transition duration-300 transform hover:-translate-y-1">
                     <div class="space-y-4">
-                        <div class="relative overflow-hidden rounded-xl group cursor-pointer" onclick="openProductDetailModal(${p.id})">
+                        <div class="relative overflow-hidden rounded-xl group cursor-pointer" onclick="openProductDetailPage(${p.id})">
                             <img src="${p.image}" alt="${p.title}" class="w-full h-48 md:h-56 object-cover rounded-xl transition duration-500 group-hover:scale-105" onerror="this.src='https://placehold.co/600x400/1b3322/ffffff?text=Date+Seed+Roast'">
                             <span class="absolute top-3 left-3 bg-primary text-accent text-[9px] font-extrabold px-3 py-1 rounded-full shadow-md uppercase tracking-wide">
                                 <i class="fas fa-star text-xs"></i> Organic Best
@@ -1051,13 +1116,13 @@
                         </div>
                         
                         <div class="space-y-2">
-                            <h3 class="font-extrabold text-base md:text-lg text-gray-900 leading-tight hover:text-primary cursor-pointer" onclick="openProductDetailModal(${p.id})">${p.title}</h3>
+                            <h3 class="font-extrabold text-base md:text-lg text-gray-900 leading-tight hover:text-primary cursor-pointer" onclick="openProductDetailPage(${p.id})">${p.title}</h3>
                             <div class="flex items-center space-x-2 text-xs text-yellow-600 font-semibold">
                                 <span class="bg-yellow-50 px-2 py-0.5 rounded border border-yellow-200 text-[10px]">
                                     <i class="fas fa-star text-yellow-500"></i> ${p.rating.split(' ')[0]}
                                 </span>
                                 <span class="text-gray-300">|</span>
-                                <span onclick="openProductDetailModal(${p.id})" class="hover:underline cursor-pointer text-gray-500 text-[10px]">${p.rating.split('(')[1].replace(')', '')}</span>
+                                <span onclick="openProductDetailPage(${p.id})" class="hover:underline cursor-pointer text-gray-500 text-[10px]">${p.rating.split('(')[1].replace(')', '')}</span>
                             </div>
                             <div class="flex items-baseline space-x-2">
                                 <span class="text-xl md:text-2xl font-black text-amber-900">₹${p.price}</span>
@@ -1072,7 +1137,7 @@
                     </div>
                     
                     <div class="grid grid-cols-2 gap-3 mt-5">
-                        <button onclick="openProductDetailModal(${p.id})" class="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl font-bold text-xs transition">
+                        <button onclick="openProductDetailPage(${p.id})" class="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl font-bold text-xs transition">
                             More Details
                         </button>
                         <button onclick="addToCart(${p.id})" class="bg-accent hover:bg-accentHover text-primary py-2.5 rounded-xl font-bold shadow text-xs transition duration-150 flex items-center justify-center space-x-1">
@@ -1082,6 +1147,31 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        // Beautiful Full Page Animated Product Details Function
+        function openProductDetailPage(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            // Fill Product Detail Page Elements
+            document.getElementById('detail-img').src = product.image;
+            document.getElementById('detail-title').innerText = product.title;
+            document.getElementById('detail-price').innerText = `₹${product.price}`;
+            document.getElementById('detail-strike-price').innerText = `₹${product.price + 150}`;
+            document.getElementById('detail-desc').innerText = product.desc;
+            document.getElementById('detail-rating').innerHTML = `<i class="fas fa-star text-yellow-500"></i> ${product.rating.split(' ')[0]}`;
+
+            // Attach dynamic checkout button event triggers
+            document.getElementById('detail-add-cart-btn').onclick = () => {
+                addToCart(product.id);
+            };
+            document.getElementById('detail-buy-now-btn').onclick = () => {
+                executeDirectAiOrder(product.id);
+            };
+
+            // Navigate securely to the detail page
+            showPage('product-detail');
         }
 
 
@@ -1106,20 +1196,20 @@
             const count = cart.reduce((acc, item) => acc + item.qty, 0);
             
             const badgeDesktop = document.getElementById('cart-count');
-            const badgeDrawer = document.getElementById('cart-count-drawer');
+            const badgeMobile = document.getElementById('cart-count-mobile');
 
             if(count > 0) {
                 if(badgeDesktop) {
                     badgeDesktop.innerText = count;
                     badgeDesktop.classList.remove('hidden');
                 }
-                if(badgeDrawer) {
-                    badgeDrawer.innerText = count;
-                    badgeDrawer.classList.remove('hidden');
+                if(badgeMobile) {
+                    badgeMobile.innerText = count;
+                    badgeMobile.classList.remove('hidden');
                 }
             } else {
                 badgeDesktop?.classList.add('hidden');
-                badgeDrawer?.classList.add('hidden');
+                badgeMobile?.classList.add('hidden');
             }
         }
 
@@ -1159,10 +1249,10 @@
                 subtotal += item.price * item.qty;
                 return `
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-100 pb-4 last:border-0 last:pb-0 gap-4">
-                        <div class="flex items-center space-x-4">
-                            <img src="${item.image}" class="w-14 h-14 object-cover rounded-xl border" onerror="this.src='https://placehold.co/100x100/1b3322/ffffff?text=Date+Seed+Roast'">
+                        <div class="flex items-center space-x-4 flex-grow">
+                            <img src="${item.image}" class="w-14 h-14 object-cover rounded-xl border shrink-0" onerror="this.src='https://placehold.co/100x100/1b3322/ffffff?text=Date+Seed+Roast'">
                             <div class="space-y-1">
-                                <h4 class="font-bold text-xs text-gray-900 leading-snug">${item.title}</h4>
+                                <h4 class="font-bold text-xs text-gray-900 leading-snug cursor-pointer hover:text-primary" onclick="openProductDetailPage(${item.id})">${item.title}</h4>
                                 <div class="flex items-center space-x-3 text-[10px]">
                                     <span class="text-amber-900 font-extrabold">₹${item.price}</span>
                                     <span class="text-gray-300">|</span>
@@ -1175,7 +1265,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex sm:flex-col justify-between sm:justify-start items-center sm:items-end w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-50">
+                        <div class="flex sm:flex-col justify-between sm:justify-start items-center sm:items-end w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-50 shrink-0">
                             <button onclick="removeFromCart(${item.id})" class="text-[10px] text-rose-500 hover:text-rose-700 font-bold flex items-center gap-1">
                                 <i class="fas fa-trash-can"></i> Remove
                             </button>
@@ -1442,7 +1532,7 @@
                         </div>
                         <div class="space-y-1">
                             ${order.items.map(i => `
-                                <div class="flex justify-between items-center py-1">
+                                <div class="flex justify-between items-center py-1 cursor-pointer hover:underline text-primary font-medium" onclick="openProductDetailPage(${i.id})">
                                     <span>• ${i.title}</span>
                                     <span class="font-bold text-gray-950">Qty ${i.qty}</span>
                                 </div>
@@ -1495,25 +1585,13 @@
             showPage('profile');
         }
 
+        // Proper Logout Sequence
         function logout() {
             localStorage.removeItem('dazeen_user');
             user = null;
             showPage('home');
             syncAuthInterface();
             showToast("Logged out successfully from account.", 'info');
-        }
-
-        function openProductDetailModal(id) {
-            const product = products.find(p => p.id === id);
-            document.getElementById('modal-product-img').src = product.image;
-            document.getElementById('modal-product-title').innerText = product.title;
-            document.getElementById('modal-product-price').innerText = `₹${product.price}`;
-            document.getElementById('modal-product-desc').innerText = product.desc;
-            document.getElementById('product-detail-modal').classList.remove('hidden');
-        }
-
-        function closeDetailModal() {
-            document.getElementById('product-detail-modal').classList.add('hidden');
         }
     </script>
 </body>
