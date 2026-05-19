@@ -175,12 +175,15 @@
                     </div>
                 </div>
 
-                <!-- Stage 4: Dynamic Product Recommendation -->
+                <!-- Stage 4: Dynamic Product Recommendation (Updated with Photo) -->
                 <div id="celebration-recommendation" class="bg-amber-50 border border-accent/30 rounded-xl p-3 text-left flex items-center justify-between gap-3">
-                    <div class="space-y-0.5">
-                        <span class="text-[8px] uppercase font-extrabold text-amber-900 tracking-wider">Recommended Blend Add-on</span>
-                        <h5 id="rec-title" class="font-extrabold text-[11px] text-gray-900">250g Premium Roast Pack</h5>
-                        <p class="text-[10px] text-gray-500">Upgrade to our larger best-seller blend for maximum freshness.</p>
+                    <div class="flex items-center space-x-3">
+                        <img id="rec-img" src="dazeen250gf.jpeg" class="w-12 h-12 object-cover rounded-lg border border-accent/20" onerror="this.src='https://placehold.co/100x100/1b3322/ffffff?text=Dazeen'">
+                        <div class="space-y-0.5">
+                            <span class="text-[8px] uppercase font-extrabold text-amber-900 tracking-wider">Recommended Blend Add-on</span>
+                            <h5 id="rec-title" class="font-extrabold text-[11px] text-gray-900">250g Premium Roast Pack</h5>
+                            <p id="rec-desc" class="text-[10px] text-gray-500">Upgrade to our larger best-seller blend for maximum freshness.</p>
+                        </div>
                     </div>
                     <button onclick="addRecommendationToCart()" class="bg-primary hover:bg-emerald-950 text-accent font-bold py-1.5 px-3 rounded-lg text-[10px] transition shrink-0 whitespace-nowrap">
                         + Add Pack
@@ -743,14 +746,19 @@
                         <input type="text" name="area" id="addr-area" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none" placeholder="Colony / sector / major road">
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <!-- UPDATED METADATA: 3-column Layout for Auto-Fill Pincode, City and State -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Pincode</label>
-                            <input type="text" name="pincode" id="addr-pincode" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs font-bold tracking-wider focus:ring-1 focus:ring-accent focus:outline-none" placeholder="6-digit PIN">
+                            <input type="text" name="pincode" id="addr-pincode" maxlength="6" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs font-bold tracking-wider focus:ring-1 focus:ring-accent focus:outline-none" placeholder="6-digit PIN">
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">City / Town</label>
                             <input type="text" name="city" id="addr-city" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none" placeholder="Enter City">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">State</label>
+                            <input type="text" name="state" id="addr-state" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none" placeholder="Enter State">
                         </div>
                     </div>
 
@@ -968,6 +976,32 @@
             document.getElementById('address-form').addEventListener('submit', handleOrderSubmit);
             syncAuthInterface();
             startCarouselAutoPlay(); // Dynamic sliding carousel sequences
+
+            // PINCODE AUTO-FILL LISTENER
+            document.getElementById('addr-pincode').addEventListener('input', function(e) {
+                const pincode = e.target.value.trim();
+                if (pincode.length === 6 && /^\d+$/.test(pincode)) {
+                    showToast("Detecting your location based on pincode...", "info");
+                    fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data[0] && data[0].Status === "Success") {
+                                const postOffice = data[0].PostOffice[0];
+                                const city = postOffice.District || postOffice.Division || postOffice.Block || "";
+                                const state = postOffice.State || "";
+                                
+                                document.getElementById('addr-city').value = city;
+                                document.getElementById('addr-state').value = state;
+                                showToast(`Location auto-detected: ${city}, ${state}`, "success");
+                            } else {
+                                showToast("Pincode details not found. Please enter manually.", "error");
+                            }
+                        })
+                        .catch(err => {
+                            console.warn("Pincode API dispatch failed. Offline mode active:", err);
+                        });
+                }
+            });
         });
 
         // Dynamic opening splash sequence
@@ -1603,7 +1637,7 @@
 
         function checkoutProcess() {
             if (cart.length === 0) {
-                showToast("Please add at least one pack to your basket first!", 'error');
+                showToast("Please add at least one xpack to your basket first!", 'error');
                 return;
             }
             if (!user) {
@@ -1614,7 +1648,7 @@
             }
         }
 
-        // PRE-FILL ADDRESS FROM AUTOSAVED VAULT STORAGE IF EXISTS
+        // PRE-FILL ADDRESS FROM AUTOSAVED VAULT STORAGE IF EXISTS (WITH STATE FIELD)
         function goToAddressPage() {
             document.getElementById('form-phone').value = user.phone;
             document.getElementById('form-total').value = document.getElementById('cart-total').innerText;
@@ -1629,6 +1663,7 @@
                 document.getElementById('addr-area').value = savedAddressObj.area || '';
                 document.getElementById('addr-pincode').value = savedAddressObj.pincode || '';
                 document.getElementById('addr-city').value = savedAddressObj.city || '';
+                document.getElementById('addr-state').value = savedAddressObj.state || '';
                 document.getElementById('save-address-chk').checked = true;
                 showToast("Saved address filled automatically!", "info");
             } else {
@@ -1638,6 +1673,7 @@
                 document.getElementById('addr-area').value = '';
                 document.getElementById('addr-pincode').value = '';
                 document.getElementById('addr-city').value = '';
+                document.getElementById('addr-state').value = '';
                 document.getElementById('save-address-chk').checked = false;
             }
 
@@ -1660,10 +1696,11 @@
             const areaVal = document.getElementById('addr-area').value.trim();
             const pinVal = document.getElementById('addr-pincode').value.trim();
             const cityVal = document.getElementById('addr-city').value.trim();
+            const stateVal = document.getElementById('addr-state').value.trim();
             const totalAmt = parseInt(document.getElementById('form-total').value);
             const orderedItemsStr = cart.map(item => `${item.title} (x${item.qty})`).join(', ');
 
-            // 1. Prepare dynamic Formspree Payload including mobile phone number
+            // 1. Prepare dynamic Formspree Payload including mobile phone number and state
             const formData = new FormData();
             formData.append("Customer Name", nameVal);
             formData.append("Customer Email", user ? user.phone : "Unregistered");
@@ -1672,6 +1709,7 @@
             formData.append("Address Area/Street", areaVal);
             formData.append("Pincode", pinVal);
             formData.append("City", cityVal);
+            formData.append("State", stateVal);
             formData.append("Total COD Amount", `₹${totalAmt}`);
             formData.append("Ordered Items", orderedItemsStr);
 
@@ -1689,7 +1727,7 @@
                     console.warn("Formspree response warning: sandbox pipeline activated.");
                 }
 
-                // AUTOSAVE LOGIC PROCESS
+                // AUTOSAVE LOGIC PROCESS (WITH NEW STATE METADATA FIELD)
                 const shouldSave = document.getElementById('save-address-chk').checked;
                 if (shouldSave) {
                     const savedAddressObj = {
@@ -1698,7 +1736,8 @@
                         flat: flatVal,
                         area: areaVal,
                         pincode: pinVal,
-                        city: cityVal
+                        city: cityVal,
+                        state: stateVal
                     };
                     localStorage.setItem(`dazeen_saved_address_${user.phone}`, JSON.stringify(savedAddressObj));
                 } else {
@@ -1706,7 +1745,7 @@
                 }
 
                 const generatedOrderId = "DAZ-" + Math.floor(Math.random() * 900000 + 100000);
-                const addressDetails = `${flatVal}, ${areaVal}, ${cityVal}`;
+                const addressDetails = `${flatVal}, ${areaVal}, ${cityVal}, ${stateVal}`;
                 
                 const currentOrder = {
                     orderId: generatedOrderId,
@@ -1736,14 +1775,22 @@
                     </div>
                 `).join('');
 
-                // Configure dynamic recommendation based on what they bought
+                // DYNAMIC RECOMMENDATIONS LOGIC ACCORDING TO ORDER COMPOSITION
                 const recTitle = document.getElementById('rec-title');
+                const recImg = document.getElementById('rec-img');
+                const recDesc = document.getElementById('rec-desc');
+                
+                // If they ordered 100g Pack (ID: 1), recommend 250g Pack (ID: 2). Otherwise, suggest 100g Pack (ID: 1).
                 const purchased100g = currentOrder.items.some(i => i.id === 1);
                 if (purchased100g) {
-                    recTitle.innerText = "250g Premium Roast Pack";
+                    recTitle.innerText = "Dazeen Premium Date Seed Roast - 250g Pack";
+                    recImg.src = "dazeen250gf.jpeg";
+                    recDesc.innerText = "Our signature best-selling size. Roast blend optimized for chocolatey extracts.";
                     window.currentRecommendationId = 2;
                 } else {
-                    recTitle.innerText = "100g Premium Roast Pack";
+                    recTitle.innerText = "Dazeen Premium Date Seed Roast - 100g Pack";
+                    recImg.src = "dazeen100G.jpeg";
+                    recDesc.innerText = "Perfect compact travel pocket blend taster. Pure, hand-roasted and organic.";
                     window.currentRecommendationId = 1;
                 }
 
@@ -1759,7 +1806,7 @@
                 
                 // Safe Fallback so checkout flow never breaks
                 const generatedOrderId = "DAZ-" + Math.floor(Math.random() * 900000 + 100000);
-                const addressDetails = `${flatVal}, ${areaVal}, ${cityVal}`;
+                const addressDetails = `${flatVal}, ${areaVal}, ${cityVal}, ${stateVal}`;
                 const currentOrder = {
                     orderId: generatedOrderId,
                     timestamp: Date.now(),
