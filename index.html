@@ -229,6 +229,18 @@
             <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 <!-- Built dynamically via Javascript -->
             </div>
+
+            <!-- Dazeen Story & Vision Section -->
+            <div id="story-section" class="py-16 px-6 bg-white rounded-2xl shadow-sm border border-stone-200/60 mt-12 mb-8">
+                <div class="max-w-3xl mx-auto space-y-6">
+                    <div class="h-auto min-h-[400px]">
+                        <h3 class="text-[#d4a373] text-xs font-bold uppercase tracking-[0.2em] mb-4">Discover Dazeen</h3>
+                        <div id="story-display" class="serif-title text-xl md:text-2xl text-stone-900 leading-relaxed whitespace-pre-line font-medium italic">
+                            <!-- Typing effect triggers here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- CART PAGE -->
@@ -544,24 +556,62 @@
 
     <!-- THE CORE COFFEE LOGIC ENGINE -->
     <script>
-        // Safari local storage access quota restriction fallback protector
-        function secureLocalStorageSet(key, val) {
-            try {
-                localStorage.setItem(key, JSON.stringify(val));
-            } catch(e) {
-                console.warn("Storage quota exceeded or disabled in Safari Private mode. Fallback initiated.", e);
-            }
+        // Story Content
+        const storyContent = `OUR STORY
+
+Born in Pune, brewed for the world.
+
+Dazeen was born from a simple realization: India loves coffee, but the caffeine dependency and health issues that come with it are often ignored. We discovered the ancient, healthy practice of roasting date seeds and decided to bring this handcrafted, superfood beverage to modern kitchens. Our journey started in Pune.
+
+OUR MISSION
+
+"To provide a premium, 100% caffeine-free alternative to traditional coffee without compromise."
+
+OUR VISION
+
+"To become India's leading brand in healthy alternative beverages, making caffeine-free living premium."`;
+
+        const displayEl = document.getElementById('story-display');
+        let storyInterval = null;
+        let isTyping = false;
+
+        // Typewriter Animation Logic
+        function typeStory() {
+            if (isTyping) return;
+            isTyping = true;
+            let i = 0;
+            displayEl.innerHTML = "";
+            storyInterval = setInterval(() => {
+                if (i < storyContent.length) {
+                    displayEl.textContent += storyContent.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(storyInterval);
+                    isTyping = false;
+                }
+            }, 30); // Typing speed
         }
 
-        function secureLocalStorageGet(key) {
-            try {
-                const item = localStorage.getItem(key);
-                return item ? JSON.parse(item) : null;
-            } catch(e) {
-                return null;
-            }
+        function eraseStory() {
+            clearInterval(storyInterval);
+            displayEl.textContent = "";
+            isTyping = false;
         }
 
+        // Intersection Observer to detect scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    typeStory();
+                } else {
+                    eraseStory();
+                }
+            });
+        }, { threshold: 0.3 });
+
+        observer.observe(document.getElementById('story-section'));
+
+        // Existing logic continues below...
         const products = [
             {
                 id: 1,
