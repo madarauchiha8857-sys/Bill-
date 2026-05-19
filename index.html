@@ -507,7 +507,7 @@
 
                         <div class="border-t border-gray-100 pt-4 space-y-2">
                             <h4 class="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Taste & Aroma Profile</h4>
-                            <p id="detail-desc" class="text-xs text-gray-600 leading-relaxed"></p>
+                            <p id="detail-desc" class="text-xs text-gray-600 leading-relaxed" style="white-space: pre-line;"></p>
                         </div>
 
                         <!-- Nutritional Fact Card -->
@@ -519,6 +519,17 @@
                                 <div class="bg-white p-2 rounded-lg border"><strong>0%</strong> <span class="block text-gray-400 font-medium">Caffeine</span></div>
                                 <div class="bg-white p-2 rounded-lg border"><strong>6.2g</strong> <span class="block text-gray-400 font-medium">Dietary Fiber</span></div>
                                 <div class="bg-white p-2 rounded-lg border"><strong>780mg</strong> <span class="block text-gray-400 font-medium">Potassium</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Shivhind Roastery & Manufactured Address Card -->
+                        <div class="bg-emerald-50/40 p-4 rounded-xl border border-primary/10 space-y-2">
+                            <h4 class="text-[10px] font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fas fa-industry text-accent"></i> Manufactured & Marketed By
+                            </h4>
+                            <div class="text-[11px] text-gray-700 leading-relaxed font-medium">
+                                <strong class="text-primary font-bold text-xs">Shivhind Associats</strong><br>
+                                Gat No 202/2, Ground Floor, Balasaheb Khandale primises, Baramati Daund Road, Kurkumbh Midc Bank of Maharashtra Back Side, Pune
                             </div>
                         </div>
                     </div>
@@ -546,7 +557,7 @@
                             </button>
                         </div>
                         <p class="text-[9px] text-gray-400 text-center">
-                            ⚡ Pre-launch batch dispatch starts directly from our roasting units. Delivery takes 5-7 days.
+                            ⚡ Pre-launch batch dispatch starts directly from our Pune roasting units. Delivery takes 5-7 days.
                         </p>
                     </div>
                 </div>
@@ -778,12 +789,12 @@
                             <input type="text" name="pincode" id="addr-pincode" maxlength="6" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs font-bold tracking-wider focus:ring-1 focus:ring-accent focus:outline-none" placeholder="6-digit PIN">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">City / Town</label>
-                            <input type="text" name="city" id="addr-city" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none" placeholder="Enter City">
+                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Exact Village / City</label>
+                            <input type="text" name="city" id="addr-city" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none" placeholder="Village or City">
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">State</label>
-                            <input type="text" name="state" id="addr-state" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none" placeholder="Enter State">
+                            <input type="text" name="state" id="addr-state" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none" placeholder="State">
                         </div>
                     </div>
 
@@ -933,7 +944,26 @@
                 rating: "4.7 out of 5 stars (98 reviews)",
                 image: "dazeen100G.jpeg",
                 images: ["dazeen100G.jpeg"],
-                desc: "Perfect pocket-friendly taster pack. Authentic fine-ground caffeine-free seed roast crafted cleanly for delicate filter extractions or boiling.",
+                desc: `Dazeen – Dates Seed Coffee
+
+Experience a new way of coffee with Dazeen, a premium caffeine-free brew made from finely roasted date seeds.
+
+Crafted for the modern generation, Dazeen delivers a rich aroma, smooth texture, and a satisfying coffee-like taste — without caffeine.
+
+Whether you're a fitness enthusiast, a health-conscious individual, or simply looking to switch to a cleaner lifestyle, Dazeen fits perfectly into your daily routine.
+
+Why Dazeen?
+• 100% Natural & Caffeine-Free
+• Smooth, Rich Coffee-Like Taste
+• No Chemicals or Preservatives
+• Light on the Stomach
+• Perfect for Daily Use
+
+Enjoy it hot or cold — black, with milk, or as a refreshing cold coffee.
+
+Make the smarter switch. Choose clean energy. Choose Dazeen.
+
+By Shivhind – ESTD 2026`,
                 terms: "Prepared and roasted fresh immediate upon receipt!"
             },
             {
@@ -943,7 +973,26 @@
                 rating: "4.8 out of 5 stars (142 reviews)",
                 image: "dazeen250gf.jpeg",
                 images: ["dazeen250gf.jpeg", "dazeen250gb.jpeg"],
-                desc: "Our high-demand signature standard pack. Hand-roasted beautifully in mini-convection drums to unlock balanced profiles of unsweetened cocoa.",
+                desc: `Dazeen – Dates Seed Coffee
+
+Experience a new way of coffee with Dazeen, a premium caffeine-free brew made from finely roasted date seeds.
+
+Crafted for the modern generation, Dazeen delivers a rich aroma, smooth texture, and a satisfying coffee-like taste — without caffeine.
+
+Whether you're a fitness enthusiast, a health-conscious individual, or simply looking to switch to a cleaner lifestyle, Dazeen fits perfectly into your daily routine.
+
+Why Dazeen?
+• 100% Natural & Caffeine-Free
+• Smooth, Rich Coffee-Like Taste
+• No Chemicals or Preservatives
+• Light on the Stomach
+• Perfect for Daily Use
+
+Enjoy it hot or cold — black, with milk, or as a refreshing cold coffee.
+
+Make the smarter switch. Choose clean energy. Choose Dazeen.
+
+By Shivhind – ESTD 2026`,
                 terms: "Convection batch roasting schedule locks freshness!"
             }
         ];
@@ -1012,7 +1061,7 @@
                         .then(data => {
                             if (data[0] && data[0].Status === "Success") {
                                 const postOffice = data[0].PostOffice[0];
-                                const city = postOffice.District || postOffice.Division || postOffice.Block || "";
+                                const city = postOffice.Name || postOffice.Block || postOffice.District || "";
                                 const state = postOffice.State || "";
                                 
                                 document.getElementById('addr-city').value = city;
@@ -1335,7 +1384,7 @@
                 return;
             }
 
-            const storedReviews = JSON.parse(localStorage.getItem(`dazeen_wall_reviews_p${activeViewingProductId}`)) || [];
+            const storedReviews = JSON.parse(localStorage.getItem(`dazeen_registered_reviews_p${activeViewingProductId}`)) || [];
 
             const newReview = {
                 name: name,
@@ -1345,7 +1394,7 @@
             };
 
             storedReviews.unshift(newReview);
-            localStorage.setItem(`dazeen_wall_reviews_p${activeViewingProductId}`, JSON.stringify(storedReviews));
+            localStorage.setItem(`dazeen_registered_reviews_p${activeViewingProductId}`, JSON.stringify(storedReviews));
 
             // Reset inputs
             document.getElementById('review-name').value = '';
@@ -1783,7 +1832,7 @@
             const totalAmt = parseInt(document.getElementById('form-total').value);
             const orderedItemsStr = cart.map(item => `${item.title} (x${item.qty})`).join(', ');
 
-            // 1. Prepare Formspree Payload 
+            // Prepare Formspree Payload including mobile phone number and state
             const formData = new FormData();
             formData.append("Customer Name", nameVal);
             formData.append("Customer Email", user ? user.phone : "Unregistered");
@@ -1810,7 +1859,7 @@
                     console.warn("Formspree response warning: sandbox pipeline activated.");
                 }
 
-                // AUTOSAVE LOGIC PROCESS
+                // AUTOSAVE LOGIC PROCESS (WITH STATE METADATA FIELD)
                 const shouldSave = document.getElementById('save-address-chk').checked;
                 if (shouldSave) {
                     const savedAddressObj = {
@@ -1858,7 +1907,7 @@
                     </div>
                 `).join('');
 
-                // DYNAMIC RECOMMENDATIONS LOGIC ACCORDING TO ORDER COMPOSITION
+                // Configure dynamic recommendation based on what they bought
                 const recTitle = document.getElementById('rec-title');
                 const recImg = document.getElementById('rec-img');
                 const recDesc = document.getElementById('rec-desc');
@@ -1934,7 +1983,7 @@
 
             cart = [{ ...product, qty: qty }];
             saveCart();
-            showToast("Instant checkout initiated! Moving to delivery details.", "success");
+            showToast(`Securely set cart to ${qty}x ${product.title} and moving to checkout!`, 'success');
             
             if (!user) {
                 toggleAuthState('signup');
@@ -2117,7 +2166,7 @@
             } else {
                 ordersContainer.innerHTML = currentUserOrders.map(order => `
                     <div class="py-4 text-xs text-gray-800 space-y-3 animate-[pageFadeIn_0.3s_forwards]">
-                        <div class="flex flex-col sm:flex-row justify-between font-bold text-gray-900 gap-1">
+                        <div class="flex flex-col sm:flex-row justify-between font-bold text-gray-950 gap-1">
                             <span>Order Ref: <span class="text-amber-900">${order.orderId}</span></span>
                             <span class="text-gray-400 font-normal">Order Date: ${order.date}</span>
                         </div>
