@@ -54,6 +54,21 @@
             from { transform: translateY(100%) translateX(50%); opacity: 0; }
             to { transform: translateY(0) translateX(0); opacity: 1; }
         }
+        .chat-wave span {
+            animation: chatBob 1.2s infinite ease-in-out;
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #d4af37;
+            margin: 0 2px;
+        }
+        .chat-wave span:nth-child(2) { animation-delay: 0.2s; }
+        .chat-wave span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes chatBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
         @keyframes drawCheck {
             to { stroke-dashoffset: 0; }
         }
@@ -87,7 +102,7 @@
         }
     </style>
 </head>
-<body class="bg-[#faf8f5] font-sans min-h-screen flex flex-col text-gray-800 antialiased overflow-x-hidden pb-20 md:pb-0">
+<body class="bg-[#faf8f5] font-sans min-h-screen flex flex-col text-gray-800 antialiased overflow-x-hidden pb-24 md:pb-0">
 
     
     <!-- CUSTOM TOAST CONTAINER (Replaces raw Alerts) -->
@@ -183,13 +198,17 @@
                         <i class="fas fa-coffee text-base"></i>
                         <span>Shop</span>
                     </button>
-                    <button id="nav-profile" onclick="goToProfile()" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 focus:outline-none">
-                        <i class="fas fa-user text-base"></i>
-                        <span>Profile & History</span>
+                    <button id="nav-orders" onclick="goToOrders()" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 focus:outline-none">
+                        <i class="fas fa-box text-base"></i>
+                        <span>Orders & Tracking</span>
                     </button>
                     <button id="nav-support" onclick="showPage('support')" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 focus:outline-none">
                         <i class="fas fa-headset text-base"></i>
                         <span>DZN Support</span>
+                    </button>
+                    <button id="nav-profile" onclick="goToProfile()" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 focus:outline-none">
+                        <i class="fas fa-user-circle text-base"></i>
+                        <span>My Account</span>
                     </button>
                     <button id="nav-cart" onclick="goToCart()" class="hover:text-accent transition duration-150 flex items-center space-x-1.5 relative focus:outline-none bg-emerald-950 px-4 py-2 rounded-full border border-emerald-800">
                         <i class="fas fa-shopping-basket text-base text-accent"></i>
@@ -202,28 +221,28 @@
     </nav>
 
 
-    <!-- MOBILE BOTTOM NAVIGATION (Smooth Hamburger Alternative) -->
-    <div class="fixed bottom-0 left-0 right-0 bg-[#132217] border-t border-emerald-900 z-50 md:hidden flex justify-around items-center py-2 shadow-xl">
-        <button onclick="showPage('home')" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/5">
+    <!-- MOBILE BOTTOM NAVIGATION (Logout Removed, Clean 5 Tabs layout) -->
+    <div class="fixed bottom-0 left-0 right-0 bg-[#132217] border-t border-emerald-900 z-50 md:hidden flex justify-around items-center py-2.5 shadow-2xl">
+        <button id="mobile-nav-home" onclick="showPage('home')" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/5">
             <i class="fas fa-coffee text-base"></i>
             <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Shop</span>
         </button>
-        <button onclick="goToCart()" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/5 relative">
+        <button id="mobile-nav-cart" onclick="goToCart()" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/5 relative">
             <i class="fas fa-shopping-basket text-base"></i>
             <span id="cart-count-mobile" class="absolute -top-1 right-5 bg-accent text-primary font-black text-[8px] px-1.5 rounded-full hidden">0</span>
             <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Cart</span>
         </button>
-        <button onclick="goToProfile()" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/5">
-            <i class="fas fa-user-circle text-base"></i>
-            <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Profile</span>
+        <button id="mobile-nav-orders" onclick="goToOrders()" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/5">
+            <i class="fas fa-box text-base"></i>
+            <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Orders</span>
         </button>
-        <button onclick="showPage('support')" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/5">
+        <button id="mobile-nav-support" onclick="showPage('support')" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/5">
             <i class="fas fa-headset text-base"></i>
             <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Support</span>
         </button>
-        <button onclick="logout()" class="flex flex-col items-center justify-center text-rose-300 hover:text-rose-400 focus:outline-none w-1/5">
-            <i class="fas fa-sign-out-alt text-base"></i>
-            <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Logout</span>
+        <button id="mobile-nav-profile" onclick="goToProfile()" class="flex flex-col items-center justify-center text-gray-300 hover:text-accent focus:outline-none w-1/5">
+            <i class="fas fa-user-circle text-base"></i>
+            <span class="text-[9px] font-bold uppercase tracking-wider mt-1">Profile</span>
         </button>
     </div>
 
@@ -235,7 +254,7 @@
 
 
     <!-- HERO INTRO BANNER -->
-    <header class="bg-gradient-to-r from-primary via-emerald-950 to-amberDark text-white py-10 md:py-16 px-4 relative overflow-hidden shadow-inner text-center">
+    <header class="bg-gradient-to-r from-primary via-emerald-950 to-amberDark text-white py-10 md:py-16 px-4 relative overflow-hidden shadow-inner text-center shrink-0">
         <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px]"></div>
         <div class="max-w-4xl mx-auto relative z-10 space-y-4">
             <span class="bg-accent/20 border border-accent/40 text-accent text-[10px] md:text-xs uppercase font-extrabold px-3 py-1 rounded-full tracking-wider inline-block">
@@ -696,46 +715,78 @@
         </section>
 
 
-        <!-- USER PROFILE PAGE -->
-        <section id="page-profile" class="page-view hidden space-y-6 max-w-4xl mx-auto">
-            <div class="bg-gradient-to-br from-primary to-emerald-950 p-6 rounded-2xl text-white shadow-md flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-                <div class="space-y-1">
-                    <span class="text-[10px] uppercase tracking-widest text-accent font-extrabold">Mera Dashboard</span>
-                    <h2 class="text-xl md:text-2xl font-black text-gray-100 flex items-center gap-2">
-                        <i class="fas fa-circle-user text-accent"></i> Verified Account Panel
-                    </h2>
-                    <p class="text-xs text-gray-300">Registered Email: <span id="profile-phone" class="font-bold text-accent">N/A</span></p>
+        <!-- DEDICATED USER PROFILE PAGE (No orders listed here) -->
+        <section id="page-profile" class="page-view hidden space-y-6 max-w-md mx-auto page-transition">
+            <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 space-y-6">
+                <div class="text-center space-y-2">
+                    <div class="bg-accent/15 w-16 h-16 rounded-full flex items-center justify-center mx-auto text-primary">
+                        <i class="fas fa-circle-user text-3xl text-[#1b3322]"></i>
+                    </div>
+                    <h2 class="text-xl md:text-2xl font-black text-gray-900">My Account Profile</h2>
+                    <p class="text-xs text-gray-500">Manage your verified customer log credentials below.</p>
                 </div>
-                <button onclick="logout()" class="text-xs bg-white/10 hover:bg-white/20 border border-white/10 px-4 py-2 rounded-xl font-bold transition">
-                    <i class="fas fa-arrow-right-from-bracket mr-1.5"></i> Sign Out
+
+                <div class="border-t border-gray-100 pt-4 space-y-4">
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <span class="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Registered Account ID</span>
+                        <span id="profile-phone" class="font-extrabold text-sm text-[#1b3322]">supremebeing@domain.com</span>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center">
+                        <div>
+                            <span class="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Security Level</span>
+                            <span class="text-xs font-bold text-emerald-700">Encrypted Local Vault</span>
+                        </div>
+                        <i class="fas fa-shield-halved text-emerald-600 text-lg"></i>
+                    </div>
+                </div>
+
+                <!-- Primary Logout button is ONLY present here -->
+                <button onclick="logout()" class="w-full flex items-center justify-center space-x-2 bg-rose-950 hover:bg-rose-900 text-rose-200 p-3.5 rounded-xl text-xs font-bold transition shadow-sm uppercase tracking-wider">
+                    <i class="fas fa-arrow-right-from-bracket"></i>
+                    <span>Log Out Account</span>
                 </button>
             </div>
-            
+        </section>
+
+
+        <!-- DEDICATED ORDER HISTORY & TIMELINE TRACKING PAGE -->
+        <section id="page-orders" class="page-view hidden space-y-6 max-w-4xl mx-auto page-transition">
+            <div class="flex items-center space-x-2">
+                <button onclick="showPage('home')" class="text-xs font-bold text-primary hover:text-accent bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm flex items-center space-x-2 transition duration-150">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Return to Shop</span>
+                </button>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Order History Panel -->
-                <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                <!-- Past Order History Logs panel (Left 2-Col) -->
+                <div class="md:col-span-2 bg-white p-6 rounded-3xl shadow-xl border border-gray-100 space-y-4">
                     <h3 class="text-base font-extrabold text-gray-900 flex items-center gap-2">
-                        <i class="fas fa-box-archive text-accent"></i> Pichla Orders (Your Order Log)
+                        <i class="fas fa-box-archive text-accent"></i> Pichla Orders (Your Past Logs)
                     </h3>
+                    <p class="text-xs text-gray-500">Pichli baar aapne kya mangwaya tha uska complete detailed log niche dekh sakte hain.</p>
                     <div id="orders-list" class="space-y-4 divide-y divide-gray-100"></div>
                 </div>
 
-                <!-- Live Status Tracker -->
+                <!-- Live timeline Tracking panel (Right 1-Col) -->
                 <div class="space-y-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4 h-fit">
+                    <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 space-y-4 h-fit">
                         <h3 class="text-base font-extrabold text-gray-900 flex items-center gap-2">
                             <i class="fas fa-clock text-accent"></i> Live Dispatch Tracker
                         </h3>
+                        <p class="text-[10px] text-gray-500 leading-relaxed">Dynamic logistics progress for your latest verified roasted dates seed batch.</p>
                         <div id="live-tracker-container" class="space-y-4 text-xs"></div>
                     </div>
                 </div>
             </div>
         </section>
+        
     </main>
 
 
     <!-- FOOTER -->
-    <footer class="bg-primary text-gray-300 text-[11px] py-8 mt-12 border-t border-emerald-950">
+    <footer class="bg-primary text-gray-300 text-[11px] py-8 mt-12 border-t border-emerald-950 shrink-0">
         <div class="container mx-auto px-4 max-w-6xl space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-emerald-900 pb-6 text-center md:text-left">
                 <div class="space-y-1">
@@ -744,7 +795,8 @@
                 </div>
                 <div class="flex justify-center space-x-6 uppercase font-bold text-[9px]">
                     <a href="#page-home" onclick="showPage('home')" class="hover:text-accent transition">Shop</a>
-                    <a href="#page-profile" onclick="goToProfile()" class="hover:text-accent transition">Dashboard</a>
+                    <a href="#page-orders" onclick="goToOrders()" class="hover:text-accent transition">Orders</a>
+                    <a href="#page-profile" onclick="goToProfile()" class="hover:text-accent transition">My Profile</a>
                     <a href="#page-terms" onclick="showPage('terms')" class="hover:text-accent transition">Terms & Conditions</a>
                     <a href="#page-returns" onclick="showPage('returns')" class="hover:text-accent transition">Return Policy</a>
                 </div>
@@ -840,12 +892,7 @@
         });
 
         function syncAuthInterface() {
-            const footerAuth = document.getElementById('drawer-footer-auth');
-            if (user) {
-                if (footerAuth) footerAuth.style.display = 'block';
-            } else {
-                if (footerAuth) footerAuth.style.display = 'none';
-            }
+            // Keep for potential back-office sync
         }
 
         // Switch between Sign-In and Sign-Up state modes
@@ -909,7 +956,6 @@
                 user = { phone: email };
                 localStorage.setItem('dazeen_user', JSON.stringify(user));
                 showToast("Account successfully create ho gaya! Swagat hai.", "success");
-                syncAuthInterface();
                 goToAddressPage();
 
             } else {
@@ -918,7 +964,6 @@
                     user = { phone: email };
                     localStorage.setItem('dazeen_user', JSON.stringify(user));
                     showToast("Successfully log in ho gaye.", "success");
-                    syncAuthInterface();
                     goToAddressPage();
                 } else {
                     showToast("Galat email ya password! Kripya sahi credentials check karein.", "error");
@@ -987,7 +1032,7 @@
             
             bubble.innerHTML = `
                 ${avatar}
-                <div class="${sender === 'user' ? 'bg-[#d9fdd3] text-gray-950 rounded-2xl rounded-tr-none' : 'bg-white text-gray-950 rounded-2xl rounded-tl-none'} p-3 shadow-md border border-gray-100 leading-relaxed">
+                <div class="${sender === 'user' ? 'bg-[#d9fdd3] text-gray-950 rounded-2xl rounded-tr-none' : 'bg-white text-gray-950 rounded-2xl rounded-tl-none'} p-3 shadow-md border border-gray-100 leading-relaxed animate-[pageFadeIn_0.3s_ease-out_forwards]">
                     <span class="text-[8px] font-extrabold uppercase block mb-0.5 tracking-wider ${sender === 'user' ? 'text-right text-emerald-800' : 'text-primary'}">${sender === 'user' ? 'Supreme Being' : 'DZN Support'}</span>
                     <p class="text-[11px] font-medium whitespace-pre-line">${text}</p>
                 </div>
@@ -1050,10 +1095,12 @@
         }
 
 
-        // Core Page Navigation Routing
+        // Core Page Navigation Routing (Syncs Desktop Top Nav and Mobile Bottom Nav highlighters)
         function showPage(pageId) {
             // Un-highlight all desktop navigation headers
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('text-accent', 'border-accent'));
+            // Un-highlight all mobile bottom navigation button icons
+            document.querySelectorAll('.fixed.bottom-0 button').forEach(b => b.classList.remove('text-accent'));
 
             document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
             const target = document.getElementById(`page-${pageId}`);
@@ -1061,20 +1108,35 @@
                 target.classList.remove('hidden');
             }
 
-            // Sync Nav Highlights
+            // Sync Nav Highlights - Desktop Top Bar
             const desktopHomeBtn = document.getElementById('nav-home');
             const desktopProfileBtn = document.getElementById('nav-profile');
+            const desktopOrdersBtn = document.getElementById('nav-orders');
             const desktopSupportBtn = document.getElementById('nav-support');
             const desktopCartBtn = document.getElementById('nav-cart');
 
+            // Sync Nav Highlights - Mobile Bottom Bar
+            const mobileHomeBtn = document.getElementById('mobile-nav-home');
+            const mobileCartBtn = document.getElementById('mobile-nav-cart');
+            const mobileOrdersBtn = document.getElementById('mobile-nav-orders');
+            const mobileSupportBtn = document.getElementById('mobile-nav-support');
+            const mobileProfileBtn = document.getElementById('mobile-nav-profile');
+
             if (pageId === 'home') {
                 desktopHomeBtn?.classList.add('text-accent');
+                mobileHomeBtn?.classList.add('text-accent');
             } else if (pageId === 'profile') {
                 desktopProfileBtn?.classList.add('text-accent');
+                mobileProfileBtn?.classList.add('text-accent');
+            } else if (pageId === 'orders') {
+                desktopOrdersBtn?.classList.add('text-accent');
+                mobileOrdersBtn?.classList.add('text-accent');
             } else if (pageId === 'support') {
                 desktopSupportBtn?.classList.add('text-accent');
+                mobileSupportBtn?.classList.add('text-accent');
             } else if (pageId === 'cart') {
                 desktopCartBtn?.classList.add('text-accent');
+                mobileCartBtn?.classList.add('text-accent');
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1083,7 +1145,7 @@
         function renderProducts() {
             const container = document.getElementById('product-list');
             container.innerHTML = products.map(p => `
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 flex flex-col justify-between hover:shadow-lg transition duration-300 transform hover:-translate-y-1">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 flex flex-col justify-between hover:shadow-lg transition duration-300 transform hover:-translate-y-1 animate-[pageFadeIn_0.3s_ease-out_forwards]">
                     <div class="space-y-4">
                         <div class="relative overflow-hidden rounded-xl group cursor-pointer" onclick="openProductDetailPage(${p.id})">
                             <img src="${p.image}" alt="${p.title}" class="w-full h-48 md:h-56 object-cover rounded-xl transition duration-500 group-hover:scale-105" onerror="this.src='https://placehold.co/600x400/1b3322/ffffff?text=Date+Seed+Roast'">
@@ -1477,7 +1539,7 @@
 
             setTimeout(() => {
                 overlay.classList.add('hidden');
-                goToProfile();
+                goToOrders(); // Redirect user to the new dedicated Orders page directly
             }, 400);
         }
 
@@ -1551,15 +1613,24 @@
             draw();
         }
 
-
+        // Dedicated profile view handler
         function goToProfile() {
             if (!user) { 
                 toggleAuthState('login');
                 showPage('login'); 
                 return; 
             }
-
             document.getElementById('profile-phone').innerText = user.phone;
+            showPage('profile');
+        }
+
+        // Dedicated Orders history and dispatch tracking loader
+        function goToOrders() {
+            if (!user) { 
+                toggleAuthState('login');
+                showPage('login'); 
+                return; 
+            }
 
             const ordersContainer = document.getElementById('orders-list');
             const trackerContainer = document.getElementById('live-tracker-container');
@@ -1569,17 +1640,18 @@
 
             if(currentUserOrders.length === 0) {
                 ordersContainer.innerHTML = `
-                    <div class="text-center py-8 text-gray-500 space-y-2">
-                        <i class="fas fa-box text-xl text-gray-300"></i>
-                        <p class="text-xs">You haven't ordered any premium packs yet.</p>
+                    <div class="text-center py-12 text-gray-500 space-y-2 animate-[pageFadeIn_0.3s_forwards]">
+                        <i class="fas fa-box text-2xl text-gray-300"></i>
+                        <p class="text-xs font-semibold">Aapne abhi tak koi order nahi kiya hai.</p>
+                        <button onclick="showPage('home')" class="mt-2 bg-primary text-accent text-xs font-bold px-4 py-2 rounded-xl">Shop Now</button>
                     </div>
                 `;
                 trackerContainer.innerHTML = `
-                    <p class="text-gray-500 text-center py-4">No active dispatches found.</p>
+                    <p class="text-gray-500 text-center py-4 text-xs font-medium">Koi active order nahi hai.</p>
                 `;
             } else {
                 ordersContainer.innerHTML = currentUserOrders.map(order => `
-                    <div class="py-4 text-xs text-gray-800 space-y-3">
+                    <div class="py-4 text-xs text-gray-800 space-y-3 animate-[pageFadeIn_0.3s_forwards]">
                         <div class="flex flex-col sm:flex-row justify-between font-bold text-gray-950 gap-1">
                             <span>Order Ref: <span class="text-amber-900">${order.orderId}</span></span>
                             <span class="text-gray-400 font-normal">Order Date: ${order.date}</span>
@@ -1590,7 +1662,7 @@
                         </div>
                         <div class="space-y-1">
                             ${order.items.map(i => `
-                                <div class="flex justify-between items-center py-1 cursor-pointer hover:underline text-primary font-medium" onclick="openProductDetailPage(${i.id})">
+                                <div class="flex justify-between items-center py-1 cursor-pointer hover:underline text-primary font-medium text-[11px]" onclick="openProductDetailPage(${i.id})">
                                     <span>• ${i.title}</span>
                                     <span class="font-bold text-gray-950">Qty ${i.qty}</span>
                                 </div>
@@ -1605,10 +1677,10 @@
 
                 const latest = currentUserOrders[0];
                 trackerContainer.innerHTML = `
-                    <div class="space-y-4">
+                    <div class="space-y-4 animate-[pageFadeIn_0.3s_forwards]">
                         <div class="flex justify-between items-center">
-                            <span class="font-bold text-gray-900">${latest.orderId}</span>
-                            <span class="text-[9px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded font-extrabold">Delivery: 5-7 Days</span>
+                            <span class="font-bold text-gray-900 text-xs">${latest.orderId}</span>
+                            <span class="text-[9px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded font-extrabold">5-7 Days Delivery</span>
                         </div>
                         
                         <!-- Timeline Tracker (Only Placed, Dispatched, Out for Delivery, Delivered) -->
@@ -1640,7 +1712,7 @@
                     </div>
                 `;
             }
-            showPage('profile');
+            showPage('orders');
         }
 
         // Proper Logout Sequence
@@ -1648,7 +1720,6 @@
             localStorage.removeItem('dazeen_user');
             user = null;
             showPage('home');
-            syncAuthInterface();
             showToast("Logged out successfully from account.", 'info');
         }
     </script>
