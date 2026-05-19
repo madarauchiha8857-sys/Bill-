@@ -438,7 +438,7 @@
         </section>
 
 
-        <!-- PRODUCT DETAIL VIEW (Masterpiece Animating Full Page with Dynamic Image Slider) -->
+        <!-- PRODUCT DETAIL VIEW (Masterpiece Animating Full Page with Dynamic Image Slider and Integrated Reviews) -->
         <section id="page-product-detail" class="page-view hidden space-y-8 page-transition">
             <div class="flex items-center space-x-2">
                 <button onclick="showPage('home')" class="text-xs font-bold text-primary hover:text-accent bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm flex items-center space-x-2 transition duration-150">
@@ -495,9 +495,8 @@
                         <h2 id="detail-title" class="text-2xl md:text-3xl font-black text-gray-950 leading-tight"></h2>
                         
                         <div class="flex items-center space-x-3 text-xs text-yellow-600 font-bold">
-                            <span id="detail-rating" class="bg-yellow-50 px-2 py-0.5 rounded border border-yellow-200"></span>
-                            <span class="text-gray-300">|</span>
-                            <span class="text-emerald-700">Verified Fresh Batch</span>
+                            <!-- Dynamically generated average stars and review counts are loaded here -->
+                            <span id="detail-rating" class="flex items-center gap-1"></span>
                         </div>
 
                         <div class="flex items-baseline space-x-3 pt-2">
@@ -529,7 +528,7 @@
                             </h4>
                             <div class="text-[11px] text-gray-700 leading-relaxed font-medium">
                                 <strong class="text-primary font-bold text-xs">Shivhind Associats</strong><br>
-                                Gat No 202/2, Ground Floor, Balasaheb Khandale primises, Baramati Daund Road, Kurkumbh Midc Bank of Maharashtra Back Side, Pune
+                                Gat No 202/2, Ground Floor, Balasaheb Khandale premises, Baramati Daund Road, Kurkumbh Midc Bank of Maharashtra Back Side, Pune
                             </div>
                         </div>
                     </div>
@@ -563,7 +562,7 @@
                 </div>
             </div>
 
-            <!-- PRODUCT-SPECIFIC CUSTOMER REVIEW WALL (Moved inside Product Detail View) -->
+            <!-- PRODUCT-SPECIFIC CUSTOMER REVIEW WALL (Integrated strictly inside details page) -->
             <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 space-y-6">
                 <div class="border-b pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div>
@@ -579,7 +578,7 @@
 
                 <!-- Live product-specific reviews container -->
                 <div id="reviews-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Loaded dynamically via JS from localStorage -->
+                    <!-- Loaded dynamically via synced reviews state -->
                 </div>
 
                 <!-- Submit Review Form Block -->
@@ -801,7 +800,7 @@
                     <!-- AUTOSAVE ADDRESS CHECKBOX -->
                     <div class="flex items-center space-x-2.5 pt-2 border-t border-gray-100">
                         <input type="checkbox" id="save-address-chk" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-accent accent-primary cursor-pointer">
-                        <label for="save-address-chk" class="text-xs text-gray-700 font-extrabold cursor-pointer">Save these address details for future orders</label>
+                        <label for="save-address-chk" class="text-xs text-gray-700 font-extrabold cursor-pointer">Save this address details for future orders</label>
                     </div>
                     
                     <!-- Hidden elements for EmailJS / Forms database processing -->
@@ -934,12 +933,26 @@
     </footer>
 
 
-    <!-- APP BUSINESS LOGIC -->
-    <script>
+    <!-- FIRESTORE SYNC & APP CORE ENGINE MODULE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Configuration & Initialization
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'dazeen-store-preview';
+        
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+        let syncedReviews = [];
+
+        // Application Config
         const products = [
             {
                 id: 1,
-                title: "Dazeen Premium Date Seed Roast - 100g Pack",
+                title: "Dazeen Premium Dates Seed Coffee - 100g Pack",
                 price: 170,
                 rating: "4.7 out of 5 stars (98 reviews)",
                 image: "dazeen100G.jpeg",
@@ -968,7 +981,7 @@ By Shivhind – ESTD 2026`,
             },
             {
                 id: 2,
-                title: "Dazeen Premium Date Seed Roast - 250g Pack",
+                title: "Dazeen Premium Dates Seed Coffee - 250g Pack",
                 price: 290,
                 rating: "4.8 out of 5 stars (142 reviews)",
                 image: "dazeen250gf.jpeg",
@@ -1011,405 +1024,236 @@ By Shivhind – ESTD 2026`,
         let activeDetailImageIndex = 0;
         let activeDetailImages = [];
 
-        // Modernized Toast Alerts System
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast-slide flex items-center p-4 rounded-xl shadow-xl text-white pointer-events-auto transition duration-300 max-w-sm w-full font-medium ${
-                type === 'success' ? 'bg-primary border-l-4 border-accent text-white' : 
-                type === 'error' ? 'bg-rose-950 border-l-4 border-rose-500' : 'bg-amber-950 text-white'
-            }`;
-            
-            toast.innerHTML = `
-                <div class="mr-3">
-                    ${type === 'success' ? '<i class="fas fa-check-circle text-accent text-sm"></i>' : 
-                      type === 'error' ? '<i class="fas fa-triangle-exclamation text-rose-300 text-sm"></i>' : 
-                      '<i class="fas fa-info-circle text-amber-200 text-sm"></i>'}
-                </div>
-                <div class="text-[11px] font-bold flex-1">${message}</div>
-                <button class="ml-auto text-white/50 hover:text-white focus:outline-none text-xs" onclick="this.parentElement.remove()">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.classList.add('opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 6000);
-        }
+        // Story scrolling typewriter configuration
+        const storyText = "Dazeen was born from a simple realization: India loves coffee, but the caffeine dependency and health issues that come with it are often ignored. We discovered the ancient, healthy practice of roasting date seeds and decided to bring this handcrafted, superfood beverage to modern kitchens. Our journey started in Pune.";
+        const missionText = "To provide a premium, 100% caffeine-free alternative to traditional coffee without compromise.";
+        const visionText = "To become India's leading brand in healthy alternative beverages, making caffeine-free living premium.";
 
-        // Initialize App & Setup UI hooks
-        document.addEventListener("DOMContentLoaded", () => {
-            // Trigger Dynamic Splash Opening Animation Sequence
-            triggerSplashSequence();
-
-            renderProducts();
-            updateCartCount();
-            showPage('home');
-            document.getElementById('address-form').addEventListener('submit', handleOrderSubmit);
-            syncAuthInterface();
-            startCarouselAutoPlay(); // Dynamic sliding carousel sequences
-
-            // PINCODE AUTO-FILL LISTENER
-            document.getElementById('addr-pincode').addEventListener('input', function(e) {
-                const pincode = e.target.value.trim();
-                if (pincode.length === 6 && /^\d+$/.test(pincode)) {
-                    showToast("Detecting your location based on pincode...", "info");
-                    fetch(`https://api.postalpincode.in/pincode/${pincode}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data[0] && data[0].Status === "Success") {
-                                const postOffice = data[0].PostOffice[0];
-                                const city = postOffice.Name || postOffice.Block || postOffice.District || "";
-                                const state = postOffice.State || "";
-                                
-                                document.getElementById('addr-city').value = city;
-                                document.getElementById('addr-state').value = state;
-                                showToast(`Location auto-detected: ${city}, ${state}`, "success");
-                            } else {
-                                showToast("Pincode details not found. Please enter manually.", "error");
-                            }
-                        })
-                        .catch(err => {
-                            console.warn("Pincode API dispatch failed. Offline mode active:", err);
-                        });
-                }
-            });
-        });
-
-        // Dynamic opening splash sequence
-        function triggerSplashSequence() {
-            setTimeout(() => {
-                const textContainer = document.getElementById('splash-text-container');
-                if (textContainer) {
-                    textContainer.style.width = '160px';
-                    textContainer.style.opacity = '1';
-                }
-            }, 550);
-
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                if (splash) {
-                    splash.style.transform = 'translateY(-100%)';
-                    setTimeout(() => {
-                        splash.style.display = 'none';
-                    }, 800);
-                }
-            }, 2100);
-        }
-
-        function syncAuthInterface() {
-            // Setup placeholder
-        }
-
-        // Switch between Sign-In and Sign-Up state modes
-        function toggleAuthState(state) {
-            authStateMode = state;
-            const btnSignIn = document.getElementById('btn-auth-signin');
-            const btnSignUp = document.getElementById('btn-auth-signup');
-            const authTitle = document.getElementById('auth-title');
-            const authSubtitle = document.getElementById('auth-subtitle');
-            const authBtnLabel = document.getElementById('auth-btn-label');
-
-            if (state === 'login') {
-                if (btnSignIn) btnSignIn.className = "py-2 text-xs font-bold rounded-lg transition duration-200 bg-white text-primary shadow-sm";
-                if (btnSignUp) btnSignUp.className = "py-2 text-xs font-bold rounded-lg transition duration-200 text-gray-500 hover:text-primary";
-                if (authTitle) authTitle.innerText = "Sign In to Dazeen";
-                if (authSubtitle) authSubtitle.innerText = "Enter your registered email and password to access your account.";
-                if (authBtnLabel) authBtnLabel.innerText = "Sign In";
-            } else {
-                if (btnSignUp) btnSignUp.className = "py-2 text-xs font-bold rounded-lg transition duration-200 bg-white text-primary shadow-sm";
-                if (btnSignIn) btnSignIn.className = "py-2 text-xs font-bold rounded-lg transition duration-200 text-gray-500 hover:text-primary";
-                if (authTitle) authTitle.innerText = "Create Account";
-                if (authSubtitle) authSubtitle.innerText = "Register directly with your email and set a private password.";
-                if (authBtnLabel) authBtnLabel.innerText = "Sign Up / Register";
-            }
-        }
-
-        async function handleAuthSubmission() {
-            const email = document.getElementById('auth-email').value.trim();
-            const password = document.getElementById('auth-password').value.trim();
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showToast("Please enter a valid email address!", "error");
-                return;
-            }
-
-            if (password.length < 4) {
-                showToast("Password must be at least 4 characters long!", "error");
-                return;
-            }
-
-            // Fetch registered users database locally
-            const localUsers = JSON.parse(localStorage.getItem('dazeen_registered_accounts_email')) || [];
-
-            if (authStateMode === 'signup') {
-                const exists = localUsers.find(acc => acc.email === email);
-                if (exists) {
-                    showToast("This email is already registered. Please Sign In instead!", "error");
-                    toggleAuthState('login');
-                    return;
-                }
-
-                const newUser = {
-                    email: email,
-                    password: password,
-                    timestamp: Date.now()
-                };
-                localUsers.push(newUser);
-                localStorage.setItem('dazeen_registered_accounts_email', JSON.stringify(localUsers));
-
-                user = { phone: email };
-                localStorage.setItem('dazeen_user', JSON.stringify(user));
-                showToast("Account successfully registered! Welcome.", "success");
-                goToAddressPage();
-
-            } else {
-                const account = localUsers.find(acc => acc.email === email && acc.password === password);
-                if (account) {
-                    user = { phone: email };
-                    localStorage.setItem('dazeen_user', JSON.stringify(user));
-                    showToast("Successfully logged in.", "success");
-                    goToAddressPage();
-                } else {
-                    showToast("Incorrect email or password! Please check your credentials.", "error");
-                }
-            }
-        }
-
-        // ================= SLIDING CAROUSEL WIDGET LOGIC =================
-        function startCarouselAutoPlay() {
-            carouselIntervalId = setInterval(() => {
-                shiftCarousel(1);
-            }, 6000);
-        }
-
-        function stopCarouselAutoPlay() {
-            if (carouselIntervalId) {
-                clearInterval(carouselIntervalId);
-            }
-        }
-
-        function shiftCarousel(delta) {
-            currentCarouselIndex += delta;
-            if (currentCarouselIndex > 3) currentCarouselIndex = 0;
-            if (currentCarouselIndex < 0) currentCarouselIndex = 3;
-            renderCarouselPosition();
-        }
-
-        function setCarouselSlide(index) {
-            stopCarouselAutoPlay();
-            currentCarouselIndex = index;
-            renderCarouselPosition();
-            startCarouselAutoPlay();
-        }
-
-        function renderCarouselPosition() {
-            const track = document.getElementById('carousel-track');
-            if (track) {
-                track.style.transform = `translateX(-${currentCarouselIndex * 100}%)`;
-            }
-            
-            // Render active dots state
-            const dots = document.querySelectorAll('.carousel-dot');
-            dots.forEach((dot, idx) => {
-                if (idx === currentCarouselIndex) {
-                    dot.className = "carousel-dot w-3.5 h-2 rounded-full bg-accent cursor-pointer transition-all duration-300";
-                } else {
-                    dot.className = "carousel-dot w-2 h-2 rounded-full bg-gray-300 cursor-pointer transition-all duration-300";
-                }
-            });
-        }
-
-
-        // ================= ACCORDION HELPERS INSIDE MY ACCOUNT =================
-        function toggleAccordion(key) {
-            const accordion = document.getElementById(`accordion-${key}`);
-            const icon = document.getElementById(`icon-${key}`);
-            
-            if (accordion.classList.contains('accordion-active')) {
-                accordion.classList.remove('accordion-active');
-                icon.style.transform = 'rotate(0deg)';
-            } else {
-                // Collapse others first
-                document.querySelectorAll('[id^="accordion-"]').forEach(acc => {
-                    acc.classList.remove('accordion-active');
-                });
-                document.querySelectorAll('[id^="icon-"]').forEach(i => {
-                    i.style.transform = 'rotate(0deg)';
-                });
-                
-                accordion.classList.add('accordion-active');
-                icon.style.transform = 'rotate(180deg)';
-            }
-        }
-
-        // Direct external link mapping to specific accordion items inside Profile
-        function openProfileAccordion(key) {
-            showPage('profile');
-            setTimeout(() => {
-                const accordion = document.getElementById(`accordion-${key}`);
-                const icon = document.getElementById(`icon-${key}`);
-                if (accordion) {
-                    document.querySelectorAll('[id^="accordion-"]').forEach(acc => {
-                        acc.classList.remove('accordion-active');
-                    });
-                    document.querySelectorAll('[id^="icon-"]').forEach(i => {
-                        i.style.transform = 'rotate(0deg)';
-                    });
-
-                    accordion.classList.add('accordion-active');
-                    if (icon) icon.style.transform = 'rotate(180deg)';
-                    accordion.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }, 300);
-        }
-
-
-        // ================= STREAMING_CHUNK: Setting up scroll-linked typewriter effect... =================
-        window.addEventListener('scroll', handleScrollTypewriter);
-
-        function handleScrollTypewriter() {
+        function handleStoryScroll() {
             const section = document.getElementById('scroll-story-section');
-            if (!section || section.getBoundingClientRect().height === 0) return;
+            if (!section) return;
 
             const rect = section.getBoundingClientRect();
-            const viewportHeight = window.innerHeight;
+            const windowHeight = window.innerHeight;
 
-            // Trigger window calculation bounds
-            const startThreshold = viewportHeight * 0.95; // start typing when top is near bottom of screen
-            const endThreshold = viewportHeight * 0.15;   // fully typed when top is near top of screen
+            if (rect.top < windowHeight && rect.bottom > 0) {
+                const progress = Math.min(Math.max((windowHeight - rect.top) / (windowHeight + rect.height * 0.4), 0), 1);
 
-            let progress = (startThreshold - rect.top) / (startThreshold - endThreshold);
-            progress = Math.max(0, Math.min(1, progress));
+                const storyChars = Math.floor(storyText.length * progress);
+                const missionChars = Math.floor(missionText.length * progress);
+                const visionChars = Math.floor(visionText.length * progress);
 
-            const storyStr = "Dazeen was born from a simple realization: India loves coffee, but the caffeine dependency and health issues that come with it are often ignored. We discovered the ancient, healthy practice of roasting date seeds and decided to bring this handcrafted, superfood beverage to modern kitchens. Our journey started in Pune.";
-            const missionStr = '"To provide a premium, 100% caffeine-free alternative to traditional coffee without compromise."';
-            const visionStr = '"To become India\'s leading brand in healthy alternative beverages, making caffeine-free living premium."';
-
-            const len1 = storyStr.length;
-            const len2 = missionStr.length;
-            const len3 = visionStr.length;
-            const totalLen = len1 + len2 + len3;
-
-            const charsToShow = Math.floor(progress * totalLen);
-
-            const storyEl = document.getElementById('typed-story');
-            const missionEl = document.getElementById('typed-mission');
-            const visionEl = document.getElementById('typed-vision');
-
-            if (!storyEl || !missionEl || !visionEl) return;
-
-            if (charsToShow <= len1) {
-                storyEl.innerHTML = storyStr.substring(0, charsToShow) + '<span class="inline-block w-1.5 h-4 ml-1 bg-accent animate-pulse">|</span>';
-                missionEl.innerHTML = '';
-                visionEl.innerHTML = '';
-            } else if (charsToShow <= len1 + len2) {
-                storyEl.innerHTML = storyStr;
-                missionEl.innerHTML = missionStr.substring(0, charsToShow - len1) + '<span class="inline-block w-1.5 h-4 ml-1 bg-accent animate-pulse">|</span>';
-                visionEl.innerHTML = '';
-            } else {
-                storyEl.innerHTML = storyStr;
-                missionEl.innerHTML = missionStr;
-                visionEl.innerHTML = visionStr.substring(0, charsToShow - len1 - len2) + '<span class="inline-block w-1.5 h-4 ml-1 bg-accent animate-pulse">|</span>';
-            }
-
-            // If fully typed, hide trailing cursors
-            if (charsToShow >= totalLen) {
-                visionEl.innerHTML = visionStr; 
-            }
-            if (charsToShow <= 0) {
-                storyEl.innerHTML = '';
+                document.getElementById('typed-story').innerText = storyText.substring(0, storyChars) + (storyChars < storyText.length ? "▊" : "");
+                document.getElementById('typed-mission').innerText = missionText.substring(0, missionChars) + (missionChars < missionText.length ? "▊" : "");
+                document.getElementById('typed-vision').innerText = visionText.substring(0, visionChars) + (visionChars < visionText.length ? "▊" : "");
             }
         }
 
+        window.addEventListener('scroll', handleStoryScroll);
 
-        // ================= REVIEWS & FEEDBACK WALL SYSTEM =================
-        function setStarRating(stars) {
-            selectedStarRating = stars;
-            const starButtons = document.querySelectorAll('#star-rating-selector button');
-            starButtons.forEach((btn, index) => {
-                if (index < stars) {
-                    btn.className = "text-xl text-accent transition focus:outline-none";
-                } else {
-                    btn.className = "text-xl text-gray-300 transition focus:outline-none";
+        if (firebaseConfig) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Authentication Rule 3
+                const initAuth = async () => {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                };
+                initAuth();
+
+                onAuthStateChanged(auth, (firebaseUser) => {
+                    currentUser = firebaseUser;
+                    if (firebaseUser) {
+                        listenToPublicReviews();
+                    }
+                });
+            } catch (e) {
+                console.warn("Firebase initialization failed. Bypassing to Local simulated DB: ", e);
+                initLocalFallbackSync();
+            }
+        } else {
+            initLocalFallbackSync();
+        }
+
+        // Real-time synced public reviews (strictly compliant with Rule 1 & 2)
+        function listenToPublicReviews() {
+            if (!db || !currentUser) return;
+            const reviewsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'reviews');
+            const q = query(reviewsColRef);
+
+            onSnapshot(q, (snapshot) => {
+                const reviews = [];
+                snapshot.forEach((doc) => {
+                    reviews.push({ id: doc.id, ...doc.data() });
+                });
+                syncReviewsData(reviews);
+            }, (error) => {
+                console.error("Firestore onSnapshot subscription failed: ", error);
+                showToast("Real-time review updates interrupted. Syncing local backup.", "error");
+            });
+        }
+
+        function initLocalFallbackSync() {
+            const localReviews = JSON.parse(localStorage.getItem('dazeen_public_reviews_shared')) || [];
+            syncReviewsData(localReviews);
+
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'dazeen_public_reviews_shared') {
+                    const updatedReviews = JSON.parse(e.newValue) || [];
+                    syncReviewsData(updatedReviews);
                 }
             });
         }
 
-        function scrollToReviewForm() {
-            document.getElementById('review-form-block').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        function syncReviewsData(reviews) {
+            syncedReviews = reviews;
+            renderProducts();
+
+            if (activeViewingProductId) {
+                const ratingInfo = getProductRating(activeViewingProductId);
+                const detailRatingEl = document.getElementById('detail-rating');
+                if (detailRatingEl) {
+                    detailRatingEl.innerHTML = `${ratingInfo.starsHtml} <span class="text-gray-400 text-xs ml-1 font-semibold">(${ratingInfo.count} ${ratingInfo.count === 1 ? 'review' : 'reviews'})</span>`;
+                }
+                loadReviews(activeViewingProductId);
+            }
+        }
+
+        function getProductRating(productId) {
+            const productReviews = syncedReviews.filter(r => r.productId === productId);
+            if (productReviews.length === 0) {
+                return {
+                    average: 0,
+                    count: 0,
+                    starsHtml: `
+                        <div class="flex text-gray-300 text-xs">
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span class="text-gray-400 text-[10px] ml-1.5 font-bold">No reviews yet</span>
+                        </div>`
+                };
+            }
+
+            const sum = productReviews.reduce((acc, curr) => acc + curr.rating, 0);
+            const average = (sum / productReviews.length).toFixed(1);
+
+            let starsHtml = `<div class="flex text-accent text-xs">`;
+            const fullStars = Math.floor(average);
+            const hasHalfStar = (average - fullStars) >= 0.5;
+
+            for (let i = 1; i <= 5; i++) {
+                if (i <= fullStars) {
+                    starsHtml += `<i class="fas fa-star mr-0.5"></i>`;
+                } else if (i === fullStars + 1 && hasHalfStar) {
+                    starsHtml += `<i class="fas fa-star-half-alt mr-0.5"></i>`;
+                } else {
+                    starsHtml += `<i class="far fa-star mr-0.5"></i>`;
+                }
+            }
+            starsHtml += `<span class="text-amber-950 font-extrabold text-[11px] ml-1.5 bg-amber-50 px-1.5 py-0.5 rounded border border-accent/20">${average} out of 5</span></div>`;
+
+            return {
+                average: parseFloat(average),
+                count: productReviews.length,
+                starsHtml: starsHtml
+            };
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
 
         function loadReviews(productId) {
             const container = document.getElementById('reviews-list-container');
-            
-            // Tailored default reviews per product
-            const defaultReviewsMap = {
-                1: [
-                    { name: "Edward Carter", rating: 5, comment: "Absolutely stunning coffee replacement. Perfect rich texture, no sour acidity, and wonderful cocoa notes!", date: "15/05/2026" },
-                    { name: "Jessica Taylor", rating: 5, comment: "The 100g pack is perfect for trying it out. The roast fits my French press beautifully!", date: "18/05/2026" }
-                ],
-                2: [
-                    { name: "Priya Patel", rating: 5, comment: "I am amazed by the quality of this 250g pack. Ground fresh and standard delivery reached me fast.", date: "12/05/2026" },
-                    { name: "David Miller", rating: 5, comment: "Great value! Clean, pure, caffeine-free wellness.", date: "19/05/2026" }
-                ]
-            };
+            if (!container) return;
 
-            const storedReviews = JSON.parse(localStorage.getItem(`dazeen_wall_reviews_p${productId}`)) || defaultReviewsMap[productId] || [];
+            const productReviews = syncedReviews.filter(r => r.productId === productId);
 
-            container.innerHTML = storedReviews.map(r => `
-                <div class="bg-gray-50/70 p-4 rounded-2xl border border-gray-100/50 space-y-2 text-xs">
+            if (productReviews.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-1 md:col-span-2 text-center py-10 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                        <i class="far fa-comments text-3xl text-gray-300 mb-2"></i>
+                        <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">No reviews yet for this blend</p>
+                        <p class="text-[10px] text-gray-500 mt-1">Be the first to share your roastery experience with others!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = productReviews.map(r => `
+                <div class="bg-gray-50/70 p-4 rounded-2xl border border-gray-100/50 space-y-2 text-xs animate-[pageFadeIn_0.3s_forwards]">
                     <div class="flex justify-between items-center">
-                        <span class="font-extrabold text-gray-900">${r.name}</span>
-                        <span class="text-[10px] text-gray-400 font-medium">${r.date}</span>
+                        <span class="font-extrabold text-gray-900">${escapeHtml(r.name)}</span>
+                        <span class="text-[10px] text-gray-400 font-medium">${escapeHtml(r.date)}</span>
                     </div>
                     <div class="flex text-accent text-[10px]">
                         ${Array.from({ length: 5 }, (_, i) => `<i class="${i < r.rating ? 'fas' : 'far'} fa-star"></i>`).join('')}
                     </div>
-                    <p class="text-gray-600 leading-relaxed font-medium">${r.comment}</p>
+                    <p class="text-gray-600 leading-relaxed font-medium whitespace-pre-line">${escapeHtml(r.comment)}</p>
                 </div>
             `).join('');
         }
 
-        function handleReviewSubmit(e) {
+        async function handleReviewSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('review-name').value.trim();
             const comment = document.getElementById('review-comment').value.trim();
 
             if (!name || !comment) {
-                showToast("Please provide your name and comment!", "error");
+                showToast("Please provide your name and comments!", "error");
                 return;
             }
 
-            const storedReviews = JSON.parse(localStorage.getItem(`dazeen_registered_reviews_p${activeViewingProductId}`)) || [];
-
             const newReview = {
+                productId: activeViewingProductId,
                 name: name,
                 rating: selectedStarRating,
                 comment: comment,
-                date: new Date().toLocaleDateString('en-IN')
+                date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
             };
 
-            storedReviews.unshift(newReview);
-            localStorage.setItem(`dazeen_registered_reviews_p${activeViewingProductId}`, JSON.stringify(storedReviews));
+            if (db && currentUser) {
+                try {
+                    const reviewsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'reviews');
+                    await addDoc(reviewsColRef, newReview);
+                    showToast("Your review has been successfully published to Dazeen's Public Wall!", "success");
+                } catch (err) {
+                    console.error("Firestore reviews submission failed: ", err);
+                    saveReviewToLocalFallback(newReview);
+                }
+            } else {
+                saveReviewToLocalFallback(newReview);
+            }
 
-            // Reset inputs
             document.getElementById('review-name').value = '';
             document.getElementById('review-comment').value = '';
             setStarRating(5);
-
-            loadReviews(activeViewingProductId);
-            showToast("Thank you so much! Your review was successfully published.", "success");
         }
 
+        function saveReviewToLocalFallback(newReview) {
+            const localReviews = JSON.parse(localStorage.getItem('dazeen_public_reviews_shared')) || [];
+            localReviews.unshift({ id: "local-" + Date.now(), ...newReview });
+            localStorage.setItem('dazeen_public_reviews_shared', JSON.stringify(localReviews));
+            syncReviewsData(localReviews);
+            showToast("Review submitted successfully! (Sandbox Sync)", "success");
+        }
 
-        // Core Page Navigation Routing (Syncs Desktop Top Nav and Mobile Bottom Nav highlighters)
-        // HIDES INTRO BANNERS EXCLUSIVELY ON NON-HOME PAGES TO FORBID ADJACENT CUT-OFFS
         function showPage(pageId) {
-            // 1. Manage Hero and Promotional Banners visibility dynamically
             const heroBanner = document.getElementById('hero-banner');
             const freshBanner = document.getElementById('fresh-banner');
             
@@ -1421,26 +1265,20 @@ By Shivhind – ESTD 2026`,
                 freshBanner?.classList.add('hidden');
             }
 
-            // 2. Un-highlight all desktop navigation headers
-            document.querySelectorAll('nav b').forEach(b => b.classList?.remove('text-accent'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('text-accent', 'border-accent'));
-            // Un-highlight all mobile bottom navigation button icons
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('text-accent'));
             document.querySelectorAll('.fixed.bottom-0 button').forEach(b => b.classList.remove('text-accent'));
 
-            // 3. Toggle Pages Content View blocks
             document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
             const target = document.getElementById(`page-${pageId}`);
             if (target) {
                 target.classList.remove('hidden');
             }
 
-            // 4. Sync Active Highlights - Desktop Top Bar
             const desktopHomeBtn = document.getElementById('nav-home');
             const desktopProfileBtn = document.getElementById('nav-profile');
             const desktopOrdersBtn = document.getElementById('nav-orders');
             const desktopCartBtn = document.getElementById('nav-cart');
 
-            // 5. Sync Active Highlights - Mobile Bottom Bar
             const mobileHomeBtn = document.getElementById('mobile-nav-home');
             const mobileCartBtn = document.getElementById('mobile-nav-cart');
             const mobileOrdersBtn = document.getElementById('mobile-nav-orders');
@@ -1465,51 +1303,59 @@ By Shivhind – ESTD 2026`,
 
         function renderProducts() {
             const container = document.getElementById('product-list');
-            container.innerHTML = products.map(p => `
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 flex flex-col justify-between hover:shadow-lg transition duration-300 transform hover:-translate-y-1 animate-[pageFadeIn_0.3s_ease-out_forwards]">
-                    <div class="space-y-4">
-                        <div class="relative overflow-hidden rounded-xl group cursor-pointer" onclick="openProductDetailPage(${p.id})">
-                            <img src="${p.image}" alt="${p.title}" class="w-full h-48 md:h-56 object-cover rounded-xl transition duration-500 group-hover:scale-105" onerror="this.src='https://placehold.co/600x400/1b3322/ffffff?text=Date+Seed+Roast'">
-                            <span class="absolute top-3 left-3 bg-primary text-accent text-[9px] font-extrabold px-3 py-1 rounded-full shadow-md uppercase tracking-wide">
-                                <i class="fas fa-star text-xs"></i> Best Seller
-                            </span>
+            if (!container) return;
+
+            container.innerHTML = products.map(p => {
+                const ratingInfo = getProductRating(p.id);
+                const ratingLabel = ratingInfo.count > 0 
+                    ? `${ratingInfo.average} out of 5 stars (${ratingInfo.count} ${ratingInfo.count === 1 ? 'review' : 'reviews'})`
+                    : "No reviews yet";
+
+                return `
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6 flex flex-col justify-between hover:shadow-lg transition duration-300 transform hover:-translate-y-1 animate-[pageFadeIn_0.3s_ease-out_forwards]">
+                        <div class="space-y-4">
+                            <div class="relative overflow-hidden rounded-xl group cursor-pointer" onclick="openProductDetailPage(${p.id})">
+                                <img src="${p.image}" alt="${p.title}" class="w-full h-48 md:h-56 object-cover rounded-xl transition duration-500 group-hover:scale-105" onerror="this.src='https://placehold.co/600x400/1b3322/ffffff?text=Date+Seed+Roast'">
+                                <span class="absolute top-3 left-3 bg-primary text-accent text-[9px] font-extrabold px-3 py-1 rounded-full shadow-md uppercase tracking-wide">
+                                    <i class="fas fa-star text-xs"></i> Best Seller
+                                </span>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <h3 class="font-extrabold text-base md:text-lg text-gray-900 leading-tight hover:text-primary cursor-pointer" onclick="openProductDetailPage(${p.id})">${p.title}</h3>
+                                <div class="flex items-center space-x-2 text-xs text-yellow-600 font-semibold select-none">
+                                    <span class="bg-yellow-50 px-2 py-0.5 rounded border border-yellow-200">
+                                        ${ratingInfo.starsHtml}
+                                    </span>
+                                    <span class="text-gray-300">|</span>
+                                    <span onclick="openProductDetailPage(${p.id})" class="hover:underline cursor-pointer text-gray-500 text-[10px]">${ratingLabel}</span>
+                                </div>
+                                <div class="flex items-baseline space-x-2">
+                                    <span class="text-xl md:text-2xl font-black text-amber-900">₹${p.price}</span>
+                                    <span class="text-xs text-gray-400 line-through">₹${p.price + 150}</span>
+                                </div>
+                                <p class="text-xs text-gray-600 leading-relaxed line-clamp-2">${p.desc.substring(0, 140)}...</p>
+                                <p class="text-[10px] text-amber-900 bg-amber-50/70 p-3 rounded-lg border border-amber-100/50 font-medium flex items-start gap-1.5 leading-relaxed">
+                                    <i class="fas fa-truck-clock text-xs text-accent mt-0.5"></i>
+                                    <span><strong>Roastery terms:</strong> ${p.terms}</span>
+                                </p>
+                            </div>
                         </div>
                         
-                        <div class="space-y-2">
-                            <h3 class="font-extrabold text-base md:text-lg text-gray-900 leading-tight hover:text-primary cursor-pointer" onclick="openProductDetailPage(${p.id})">${p.title}</h3>
-                            <div class="flex items-center space-x-2 text-xs text-yellow-600 font-semibold">
-                                <span class="bg-yellow-50 px-2 py-0.5 rounded border border-yellow-200 text-[10px]">
-                                    <i class="fas fa-star text-yellow-500"></i> ${p.rating.split(' ')[0]}
-                                </span>
-                                <span class="text-gray-300">|</span>
-                                <span onclick="openProductDetailPage(${p.id})" class="hover:underline cursor-pointer text-gray-500 text-[10px]">${p.rating.split('(')[1].replace(')', '')}</span>
-                            </div>
-                            <div class="flex items-baseline space-x-2">
-                                <span class="text-xl md:text-2xl font-black text-amber-900">₹${p.price}</span>
-                                <span class="text-xs text-gray-400 line-through">₹${p.price + 150}</span>
-                            </div>
-                            <p class="text-xs text-gray-600 leading-relaxed line-clamp-2">${p.desc}</p>
-                            <p class="text-[10px] text-amber-900 bg-amber-50/70 p-3 rounded-lg border border-amber-100/50 font-medium flex items-start gap-1.5 leading-relaxed">
-                                <i class="fas fa-truck-clock text-xs text-accent mt-0.5"></i>
-                                <span><strong>Roastery terms:</strong> ${p.terms}</span>
-                            </p>
+                        <div class="grid grid-cols-2 gap-3 mt-5">
+                            <button onclick="openProductDetailPage(${p.id})" class="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl font-bold text-xs transition">
+                                More Details
+                            </button>
+                            <button onclick="addToCart(${p.id})" class="bg-accent hover:bg-accentHover text-primary py-2.5 rounded-xl font-bold shadow text-xs transition duration-150 flex items-center justify-center space-x-1">
+                                <i class="fas fa-cart-plus"></i>
+                                <span>Add to Cart</span>
+                            </button>
                         </div>
                     </div>
-                    
-                    <div class="grid grid-cols-2 gap-3 mt-5">
-                        <button onclick="openProductDetailPage(${p.id})" class="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl font-bold text-xs transition">
-                            More Details
-                        </button>
-                        <button onclick="addToCart(${p.id})" class="bg-accent hover:bg-accentHover text-primary py-2.5 rounded-xl font-bold shadow text-xs transition duration-150 flex items-center justify-center space-x-1">
-                            <i class="fas fa-cart-plus"></i>
-                            <span>Add to Cart</span>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        // Beautiful Full Page Animated Product Details Function with Dynamic Slider
         function openProductDetailPage(id) {
             const product = products.find(p => p.id === id);
             if (!product) return;
@@ -1518,7 +1364,6 @@ By Shivhind – ESTD 2026`,
             activeDetailImageIndex = 0;
             activeDetailImages = product.images || [product.image];
 
-            // Render Product Detail Slider Track Images dynamically
             const track = document.getElementById('detail-slider-track');
             track.innerHTML = activeDetailImages.map(img => `
                 <div class="w-full h-full shrink-0">
@@ -1526,7 +1371,6 @@ By Shivhind – ESTD 2026`,
                 </div>
             `).join('');
 
-            // Slider Nav config
             const prevBtn = document.getElementById('detail-prev-btn');
             const nextBtn = document.getElementById('detail-next-btn');
             const dotsContainer = document.getElementById('detail-slider-dots');
@@ -1536,7 +1380,6 @@ By Shivhind – ESTD 2026`,
                 nextBtn.classList.remove('hidden');
                 dotsContainer.classList.remove('hidden');
 
-                // Render progress indicator dots
                 dotsContainer.innerHTML = activeDetailImages.map((_, idx) => `
                     <span onclick="setDetailSliderSlide(${idx})" class="detail-carousel-dot w-2 h-2 rounded-full bg-gray-300 cursor-pointer transition-all duration-300"></span>
                 `).join('');
@@ -1547,17 +1390,16 @@ By Shivhind – ESTD 2026`,
                 dotsContainer.classList.add('hidden');
             }
 
-            // Fill Product Detail Page Text Fields
             document.getElementById('detail-title').innerText = product.title;
             document.getElementById('detail-price').innerText = `₹${product.price}`;
             document.getElementById('detail-strike-price').innerText = `₹${product.price + 150}`;
             document.getElementById('detail-desc').innerText = product.desc;
-            document.getElementById('detail-rating').innerHTML = `<i class="fas fa-star text-yellow-500"></i> ${product.rating.split(' ')[0]}`;
+            
+            const ratingInfo = getProductRating(id);
+            document.getElementById('detail-rating').innerHTML = `${ratingInfo.starsHtml} <span class="text-gray-400 text-xs ml-1 font-semibold">(${ratingInfo.count} ${ratingInfo.count === 1 ? 'review' : 'reviews'})</span>`;
 
-            // Reset quantity selector on the page to default 1
             document.getElementById('detail-qty-val').value = 1;
 
-            // Attach dynamic checkout button event triggers that read current detail quantity
             document.getElementById('detail-add-cart-btn').onclick = () => {
                 const selectedQty = parseInt(document.getElementById('detail-qty-val').value) || 1;
                 addToCart(product.id, selectedQty);
@@ -1567,14 +1409,10 @@ By Shivhind – ESTD 2026`,
                 executeDirectAiOrder(product.id, selectedQty);
             };
 
-            // Load reviews specifically associated with this product ID
             loadReviews(id);
-
-            // Navigate securely to the detail page
             showPage('product-detail');
         }
 
-        // Adjust Detail Quantity Selector State
         function adjustDetailQty(delta) {
             const qtyInput = document.getElementById('detail-qty-val');
             if (qtyInput) {
@@ -1585,7 +1423,6 @@ By Shivhind – ESTD 2026`,
             }
         }
 
-        // Detail Image Slider Navigation Functions
         function shiftDetailSlider(delta) {
             activeDetailImageIndex += delta;
             if (activeDetailImageIndex >= activeDetailImages.length) activeDetailImageIndex = 0;
@@ -1617,7 +1454,6 @@ By Shivhind – ESTD 2026`,
             });
         }
 
-
         function addToCart(id, qty = 1) {
             const product = products.find(p => p.id === id);
             const existing = cart.find(item => item.id === id);
@@ -1637,7 +1473,6 @@ By Shivhind – ESTD 2026`,
 
         function updateCartCount() {
             const count = cart.reduce((acc, item) => acc + item.qty, 0);
-            
             const badgeDesktop = document.getElementById('cart-count');
             const badgeMobile = document.getElementById('cart-count-mobile');
 
@@ -1679,7 +1514,6 @@ By Shivhind – ESTD 2026`,
                 showPage('cart');
                 return;
             }
-
             renderCartSummary();
             showPage('cart');
         }
@@ -1720,7 +1554,6 @@ By Shivhind – ESTD 2026`,
 
             document.getElementById('subtotal-val').innerText = subtotal;
 
-            // Apply standard coupon discount
             let discount = 0;
             if (appliedPromoCode === "DAZEEN10") {
                 discount = Math.round(subtotal * 0.10);
@@ -1780,13 +1613,11 @@ By Shivhind – ESTD 2026`,
             }
         }
 
-        // PRE-FILL ADDRESS FROM AUTOSAVED VAULT STORAGE IF EXISTS
         function goToAddressPage() {
             document.getElementById('form-phone').value = user.phone;
             document.getElementById('form-total').value = document.getElementById('cart-total').innerText;
             document.getElementById('form-items').value = cart.map(item => `${item.title} (x${item.qty})`).join(', ');
 
-            // Check dynamic auto-saved address locally associated with logged user Email
             const savedAddressObj = JSON.parse(localStorage.getItem(`dazeen_saved_address_${user.phone}`));
             if (savedAddressObj) {
                 document.getElementById('addr-name').value = savedAddressObj.name || '';
@@ -1812,13 +1643,10 @@ By Shivhind – ESTD 2026`,
             showPage('address');
         }
 
-
         async function handleOrderSubmit(e) {
             e.preventDefault();
-            
             const btn = document.getElementById('submit-order-btn');
             const originalText = btn.innerHTML;
-            
             btn.disabled = true;
             btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> <span>Processing Secure Order...</span>`;
 
@@ -1832,7 +1660,6 @@ By Shivhind – ESTD 2026`,
             const totalAmt = parseInt(document.getElementById('form-total').value);
             const orderedItemsStr = cart.map(item => `${item.title} (x${item.qty})`).join(', ');
 
-            // Prepare Formspree Payload including mobile phone number and state
             const formData = new FormData();
             formData.append("Customer Name", nameVal);
             formData.append("Customer Email", user ? user.phone : "Unregistered");
@@ -1846,7 +1673,6 @@ By Shivhind – ESTD 2026`,
             formData.append("Ordered Items", orderedItemsStr);
 
             try {
-                // Post order details directly to Formspree endpoint via AJAX
                 const formspreeResponse = await fetch("https://formspree.io/f/mojbvqqd", {
                     method: "POST",
                     body: formData,
@@ -1855,11 +1681,8 @@ By Shivhind – ESTD 2026`,
 
                 if (formspreeResponse.ok) {
                     showToast("Order pipeline successfully submitted to back-office!", "success");
-                } else {
-                    console.warn("Formspree response warning: sandbox pipeline activated.");
                 }
 
-                // AUTOSAVE LOGIC PROCESS (WITH STATE METADATA FIELD)
                 const shouldSave = document.getElementById('save-address-chk').checked;
                 if (shouldSave) {
                     const savedAddressObj = {
@@ -1890,16 +1713,13 @@ By Shivhind – ESTD 2026`,
                     phone: user.phone
                 };
 
-                // Add to persistent orders base
                 orders.unshift(currentOrder);
                 localStorage.setItem('dazeen_orders_store', JSON.stringify(orders));
 
-                // Prep Celebration details block values for Multi-Stage animation
                 document.getElementById('celebration-order-id').innerText = generatedOrderId;
                 document.getElementById('celebration-total-amt').innerText = `₹${totalAmt}`;
                 document.getElementById('celebration-shipping-address').innerText = `${addressDetails} - PIN: ${pinVal}`;
                 
-                // Render order items directly inside details
                 document.getElementById('celebration-items-list').innerHTML = currentOrder.items.map(i => `
                     <div class="flex justify-between">
                         <span>• ${i.title}</span>
@@ -1907,12 +1727,10 @@ By Shivhind – ESTD 2026`,
                     </div>
                 `).join('');
 
-                // Configure dynamic recommendation based on what they bought
                 const recTitle = document.getElementById('rec-title');
                 const recImg = document.getElementById('rec-img');
                 const recDesc = document.getElementById('rec-desc');
                 
-                // If they ordered 100g Pack (ID: 1), recommend 250g Pack (ID: 2). Otherwise, suggest 100g Pack (ID: 1).
                 const purchased100g = currentOrder.items.some(i => i.id === 1);
                 if (purchased100g) {
                     recTitle.innerText = "Dazeen Premium Date Seed Roast - 250g Pack";
@@ -1926,17 +1744,13 @@ By Shivhind – ESTD 2026`,
                     window.currentRecommendationId = 1;
                 }
 
-                // Flush Cart
                 cart = [];
                 saveCart();
-
-                // Trigger smooth full-screen multi-stage celebration
                 showCelebrationPopup();
             } catch (err) {
                 console.error("Order submit exception: ", err);
                 showToast("System offline. Placing simulated fallback order...", "info");
                 
-                // Safe Fallback so checkout flow never breaks
                 const generatedOrderId = "DAZ-" + Math.floor(Math.random() * 900000 + 100000);
                 const addressDetails = `${flatVal}, ${areaVal}, ${cityVal}, ${stateVal}`;
                 const currentOrder = {
@@ -1966,7 +1780,6 @@ By Shivhind – ESTD 2026`,
             }
         }
 
-        // Handles recommendation card click within Order Confirmed Screen
         function addRecommendationToCart() {
             const targetId = window.currentRecommendationId || 1;
             addToCart(targetId);
@@ -1993,141 +1806,103 @@ By Shivhind – ESTD 2026`,
             }
         }
 
-        // Multi-stage flipkart animation sequence
-        let confettiActive = false;
-        let confettiAnimationId = null;
-
-        function showCelebrationPopup() {
-            const overlay = document.getElementById('success-celebration-overlay');
-            const card = document.getElementById('celebration-card');
-            const tickWrapper = document.getElementById('celebration-tick-wrapper');
-            const initialMsg = document.getElementById('celebration-initial-msg');
-            const detailsBlock = document.getElementById('celebration-details-block');
-
-            if (!overlay || !card) return;
-
-            // Reset transitions to default state
-            tickWrapper.classList.remove('py-2', 'scale-90', '-translate-y-2');
-            tickWrapper.classList.add('py-8');
-            initialMsg.style.opacity = '1';
-            detailsBlock.classList.add('hidden', 'opacity-0', 'translate-y-8');
-
-            overlay.classList.remove('hidden');
-            setTimeout(() => {
-                card.classList.remove('scale-95', 'opacity-0');
-                card.classList.add('scale-100', 'opacity-100');
-            }, 50);
-
-            startConfetti();
-            playCelebrationSound();
-
-            // Stage Transition: Tick slides up and reveals Order Details
-            setTimeout(() => {
-                // Slide tick upwards & shrink slightly
-                tickWrapper.classList.remove('py-8');
-                tickWrapper.classList.add('py-2', 'scale-90', '-translate-y-2');
-                initialMsg.style.opacity = '0';
-
-                // Display detailed invoice/status blocks smoothly
-                detailsBlock.classList.remove('hidden');
-                setTimeout(() => {
-                    detailsBlock.classList.remove('opacity-0', 'translate-y-8');
-                    detailsBlock.classList.add('opacity-100', 'translate-y-0');
-                }, 50);
-
-            }, 1600);
+        function startCarouselAutoPlay() {
+            carouselIntervalId = setInterval(() => {
+                shiftCarousel(1);
+            }, 6000);
         }
 
-        function dismissCelebration() {
-            const overlay = document.getElementById('success-celebration-overlay');
-            const card = document.getElementById('celebration-card');
-            if (!overlay || !card) return;
-
-            confettiActive = false;
-            if (confettiAnimationId) {
-                cancelAnimationFrame(confettiAnimationId);
-            }
-
-            card.classList.add('scale-95', 'opacity-0');
-            card.classList.remove('scale-100', 'opacity-100');
-
-            setTimeout(() => {
-                overlay.classList.add('hidden');
-                goToOrders(); // Redirect user to the dedicated Orders page directly
-            }, 400);
-        }
-
-        // Web Audio API Triumphant Chyme
-        function playCelebrationSound() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const notes = [261.63, 329.63, 392.00, 523.25, 659.25]; // Triumphant chord
-                notes.forEach((freq, index) => {
-                    setTimeout(() => {
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.45);
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.start();
-                        osc.stop(audioCtx.currentTime + 0.5);
-                    }, index * 100);
-                });
-            } catch (e) {
-                console.log("Audio play bypassed due to user gesture constraints.", e);
+        function stopCarouselAutoPlay() {
+            if (carouselIntervalId) {
+                clearInterval(carouselIntervalId);
             }
         }
 
-        function startConfetti() {
-            const canvas = document.getElementById('confetti-canvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
-            
-            const colors = ['#d4af37', '#1b3322', '#10b981', '#f59e0b', '#ef4444', '#3b82f6'];
-            const particles = Array.from({ length: 70 }, () => ({
-                x: canvas.width / 2,
-                y: canvas.height * 0.4,
-                r: Math.random() * 4 + 2.5,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                vx: (Math.random() - 0.5) * 7,
-                vy: (Math.random() - 0.5) * 8 - 5,
-                gravity: 0.18,
-                opacity: 1
-            }));
-            
-            confettiActive = true;
-            function draw() {
-                if (!confettiActive) return;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                let alive = false;
-                particles.forEach(p => {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.vy += p.gravity;
-                    p.opacity -= 0.012;
-                    if (p.opacity > 0) {
-                        alive = true;
-                        ctx.beginPath();
-                        ctx.fillStyle = p.color;
-                        ctx.globalAlpha = p.opacity;
-                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                });
-                ctx.globalAlpha = 1.0;
-                if (alive) {
-                    confettiAnimationId = requestAnimationFrame(draw);
+        function shiftCarousel(delta) {
+            currentCarouselIndex += delta;
+            if (currentCarouselIndex > 3) currentCarouselIndex = 0;
+            if (currentCarouselIndex < 0) currentCarouselIndex = 3;
+            renderCarouselPosition();
+        }
+
+        function setCarouselSlide(index) {
+            stopCarouselAutoPlay();
+            currentCarouselIndex = index;
+            renderCarouselPosition();
+            startCarouselAutoPlay();
+        }
+
+        function renderCarouselPosition() {
+            const track = document.getElementById('carousel-track');
+            if (track) {
+                track.style.transform = `translateX(-${currentCarouselIndex * 100}%)`;
+            }
+            const dots = document.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, idx) => {
+                if (idx === currentCarouselIndex) {
+                    dot.className = "carousel-dot w-3.5 h-2 rounded-full bg-accent cursor-pointer transition-all duration-300";
+                } else {
+                    dot.className = "carousel-dot w-2 h-2 rounded-full bg-gray-300 cursor-pointer transition-all duration-300";
                 }
-            }
-            draw();
+            });
         }
 
-        // Dedicated profile view handler
+        function toggleAccordion(key) {
+            const accordion = document.getElementById(`accordion-${key}`);
+            const icon = document.getElementById(`icon-${key}`);
+            
+            if (accordion.classList.contains('accordion-active')) {
+                accordion.classList.remove('accordion-active');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                document.querySelectorAll('[id^="accordion-"]').forEach(acc => {
+                    acc.classList.remove('accordion-active');
+                });
+                document.querySelectorAll('[id^="icon-"]').forEach(i => {
+                    i.style.transform = 'rotate(0deg)';
+                });
+                
+                accordion.classList.add('accordion-active');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        function openProfileAccordion(key) {
+            showPage('profile');
+            setTimeout(() => {
+                const accordion = document.getElementById(`accordion-${key}`);
+                const icon = document.getElementById(`icon-${key}`);
+                if (accordion) {
+                    document.querySelectorAll('[id^="accordion-"]').forEach(acc => {
+                        acc.classList.remove('accordion-active');
+                    });
+                    document.querySelectorAll('[id^="icon-"]').forEach(i => {
+                        i.style.transform = 'rotate(0deg)';
+                    });
+
+                    accordion.classList.add('accordion-active');
+                    if (icon) icon.style.transform = 'rotate(180deg)';
+                    accordion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 300);
+        }
+
+        function setStarRating(stars) {
+            selectedStarRating = stars;
+            const starButtons = document.querySelectorAll('#star-rating-selector button');
+            starButtons.forEach((btn, index) => {
+                if (index < stars) {
+                    btn.className = "text-xl text-accent transition focus:outline-none";
+                } else {
+                    btn.className = "text-xl text-gray-300 transition focus:outline-none";
+                }
+            });
+        }
+
+        function scrollToReviewForm() {
+            document.getElementById('review-form-block').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
         function goToProfile() {
             if (!user) { 
                 toggleAuthState('login');
@@ -2138,7 +1913,6 @@ By Shivhind – ESTD 2026`,
             showPage('profile');
         }
 
-        // Dedicated Orders history and dispatch tracking loader
         function goToOrders() {
             if (!user) { 
                 toggleAuthState('login');
@@ -2149,7 +1923,6 @@ By Shivhind – ESTD 2026`,
             const ordersContainer = document.getElementById('orders-list');
             const trackerContainer = document.getElementById('live-tracker-container');
 
-            // Filter history belonging to CURRENT USER ONLY
             const currentUserOrders = orders.filter(o => o.phone === user.phone);
 
             if(currentUserOrders.length === 0) {
@@ -2175,7 +1948,6 @@ By Shivhind – ESTD 2026`,
                             <div class="text-gray-700 leading-normal">${order.address} - <strong class="font-bold text-gray-900">${order.pincode}</strong></div>
                         </div>
                         
-                        <!-- Order item summaries (integrated matching product images in list) -->
                         <div class="space-y-3">
                             ${order.items.map(i => {
                                 const matchedProduct = products.find(p => p.id === i.id) || i;
@@ -2208,7 +1980,6 @@ By Shivhind – ESTD 2026`,
                             <span class="text-[9px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded font-extrabold">5-7 Days Delivery</span>
                         </div>
                         
-                        <!-- Timeline Tracker (Only Placed, Dispatched, Out for Delivery, Delivered) -->
                         <div class="relative pl-6 space-y-6 border-l-2 border-accent">
                             <div class="relative">
                                 <div class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-accent border-4 border-white shadow-sm flex items-center justify-center"></div>
@@ -2240,13 +2011,65 @@ By Shivhind – ESTD 2026`,
             showPage('orders');
         }
 
-        // Proper Logout Sequence
         function logout() {
             localStorage.removeItem('dazeen_user');
             user = null;
             showPage('home');
             showToast("Logged out successfully from account.", 'info');
         }
+
+        // Pincode dynamic lookup auto-fill
+        document.getElementById('addr-pincode').addEventListener('input', function(e) {
+            const pincode = e.target.value.trim();
+            if (pincode.length === 6 && /^\d+$/.test(pincode)) {
+                showToast("Detecting your location based on pincode...", "info");
+                fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data[0] && data[0].Status === "Success") {
+                            const postOffice = data[0].PostOffice[0];
+                            const city = postOffice.Name || postOffice.District || "";
+                            const state = postOffice.State || "";
+                            
+                            document.getElementById('addr-city').value = city;
+                            document.getElementById('addr-state').value = state;
+                            showToast(`Location auto-detected: ${city}, ${state}`, "success");
+                        } else {
+                            showToast("Pincode details not found. Please enter manually.", "error");
+                        }
+                    })
+                    .catch(err => {
+                        console.warn("Pincode API dispatch failed. Offline mode active:", err);
+                    });
+            }
+        });
+
+        // Exposing modern modules to global window context
+        window.showPage = showPage;
+        window.addToCart = addToCart;
+        window.adjustQuantity = adjustQuantity;
+        window.removeFromCart = removeFromCart;
+        window.applyCoupon = applyCoupon;
+        window.checkoutProcess = checkoutProcess;
+        window.handleAuthSubmission = handleAuthSubmission;
+        window.toggleAuthState = toggleAuthState;
+        window.toggleAccordion = toggleAccordion;
+        window.openProfileAccordion = openProfileAccordion;
+        window.setStarRating = setStarRating;
+        window.scrollToReviewForm = scrollToReviewForm;
+        window.handleReviewSubmit = handleReviewSubmit;
+        window.shiftCarousel = shiftCarousel;
+        window.setCarouselSlide = setCarouselSlide;
+        window.addRecommendationToCart = addRecommendationToCart;
+        window.dismissCelebration = dismissCelebration;
+        window.goToOrders = goToOrders;
+        window.goToProfile = goToProfile;
+        window.logout = logout;
+        window.openProductDetailPage = openProductDetailPage;
+        window.adjustDetailQty = adjustDetailQty;
+        window.shiftDetailSlider = shiftDetailSlider;
+        window.setDetailSliderSlide = setDetailSliderSlide;
+
     </script>
 </body>
 </html>
