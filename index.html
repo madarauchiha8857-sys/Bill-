@@ -23,68 +23,70 @@
     <style>
         .page-view { display: none; }
         .active-view { display: block; }
-        .marquee { animation: marquee 20s linear infinite; }
+        .marquee { animation: marquee 25s linear infinite; }
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .hero-slide { transition: opacity 0.5s ease-in-out; }
     </style>
 </head>
-<body class="bg-[#faf8f5] font-sans text-gray-900 pb-20 md:pb-0">
+<body class="bg-[#faf8f5] font-sans text-gray-900 pb-24 md:pb-0">
 
+    <!-- Top Promo Banner -->
     <div class="bg-primary text-accent text-[10px] py-2 overflow-hidden whitespace-nowrap">
         <div class="marquee font-bold tracking-widest uppercase">
             ✨ Free Shipping on All Orders • Freshly Roasted Upon Order • 100% Caffeine Free • Premium Date Seed Wellness • Satisfaction Guaranteed
         </div>
     </div>
 
-    <nav class="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm">
+    <!-- Main Navigation (Desktop) -->
+    <nav class="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm hidden md:block">
         <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-2 cursor-pointer" onclick="showPage('home')">
                 <div class="bg-primary p-1.5 rounded-lg text-accent"><i class="fas fa-seedling"></i></div>
                 <span class="text-xl font-black text-primary tracking-tighter">DAZEEN</span>
             </div>
-            <div class="hidden md:flex space-x-8 text-sm font-bold text-gray-600">
+            <div class="flex space-x-8 text-sm font-bold text-gray-600">
                 <button onclick="showPage('home')" class="hover:text-primary transition">Shop</button>
                 <button onclick="showPage('orders')" class="hover:text-primary transition">Orders</button>
                 <button onclick="showPage('profile')" class="hover:text-primary transition">Profile</button>
+                <button onclick="showPage('cart')" class="hover:text-primary transition relative">
+                    Cart <span id="cart-count" class="absolute -top-2 -right-3 bg-accent text-primary text-[9px] w-4 h-4 rounded-full hidden flex items-center justify-center">0</span>
+                </button>
             </div>
-            <button onclick="showPage('cart')" class="relative p-2 hover:bg-gray-100 rounded-full transition">
-                <i class="fas fa-shopping-basket text-lg text-primary"></i>
-                <span id="cart-count" class="absolute top-0 right-0 bg-accent text-primary text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full hidden">0</span>
-            </button>
         </div>
     </nav>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-50 flex justify-around p-3 shadow-lg">
+        <button onclick="showPage('home')" class="flex flex-col items-center text-primary"><i class="fas fa-home"></i><span class="text-[10px] font-bold">Shop</span></button>
+        <button onclick="showPage('cart')" class="flex flex-col items-center text-primary"><i class="fas fa-shopping-basket"></i><span class="text-[10px] font-bold">Cart</span></button>
+        <button onclick="showPage('orders')" class="flex flex-col items-center text-primary"><i class="fas fa-box"></i><span class="text-[10px] font-bold">Orders</span></button>
+        <button onclick="showPage('profile')" class="flex flex-col items-center text-primary"><i class="fas fa-user"></i><span class="text-[10px] font-bold">Profile</span></button>
+    </div>
 
     <main class="max-w-4xl mx-auto px-4 py-8">
         
         <!-- Home Section -->
         <section id="page-home" class="page-view active-view">
-            <div class="text-center mb-12">
-                <h1 class="text-4xl font-black text-primary mb-4">Our Premium Roasts</h1>
-                <p class="text-gray-500 max-w-lg mx-auto">Experience the richness of coffee, powered by nature. Hand-roasted in small batches for peak freshness.</p>
-            </div>
-            <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16"></div>
-            
-            <!-- Widget Benefits Section -->
-            <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                <h3 class="text-2xl font-black text-primary mb-8 text-center">Why Dazeen Date Seed Roast?</h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    <div class="text-center space-y-2">
-                        <i class="fas fa-ban text-3xl text-accent"></i>
-                        <p class="font-bold text-sm">100% Caffeine Free</p>
-                    </div>
-                    <div class="text-center space-y-2">
-                        <i class="fas fa-heart text-3xl text-accent"></i>
-                        <p class="font-bold text-sm">Rich in Antioxidants</p>
-                    </div>
-                    <div class="text-center space-y-2">
-                        <i class="fas fa-mug-hot text-3xl text-accent"></i>
-                        <p class="font-bold text-sm">Rich Coffee Aroma</p>
-                    </div>
-                    <div class="text-center space-y-2">
-                        <i class="fas fa-seedling text-3xl text-accent"></i>
-                        <p class="font-bold text-sm">100% Organic</p>
-                    </div>
+            <!-- Hero Sliding Header -->
+            <div id="hero-slider" class="relative bg-primary rounded-3xl h-64 md:h-80 mb-12 overflow-hidden shadow-2xl flex items-center justify-center text-center px-6">
+                <div class="hero-slide active-slide absolute inset-0 flex flex-col items-center justify-center space-y-4">
+                    <h1 class="text-3xl md:text-5xl font-black text-accent tracking-tighter">Welcome to Dazeen</h1>
+                    <p class="text-white text-sm md:text-base font-light opacity-80">Premium, caffeine-free wellness, roasted to perfection.</p>
+                </div>
+                <div class="hero-slide absolute inset-0 flex flex-col items-center justify-center space-y-4 opacity-0">
+                    <h1 class="text-3xl md:text-5xl font-black text-white tracking-tighter">Limited Offer</h1>
+                    <p class="text-accent text-xl font-bold italic">Get 15% off your first fresh-roast batch!</p>
+                </div>
+                <div class="hero-slide absolute inset-0 flex flex-col items-center justify-center space-y-4 opacity-0">
+                    <h1 class="text-3xl md:text-5xl font-black text-accent tracking-tighter">Purely Organic</h1>
+                    <p class="text-white text-sm md:text-base font-light opacity-80">Rich coffee flavor, zero acidity. Good for your heart.</p>
                 </div>
             </div>
+
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-black text-primary mb-4">Our Premium Roasts</h2>
+            </div>
+            <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16"></div>
         </section>
 
         <!-- Product Detail Section -->
@@ -97,7 +99,7 @@
         <section id="page-cart" class="page-view">
             <h1 class="text-3xl font-black text-primary mb-8">Shopping Summary</h1>
             <div id="cart-items" class="space-y-4 mb-8"></div>
-            <div id="cart-actions" class="bg-white p-6 rounded-2xl border border-gray-100">
+            <div id="cart-actions" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                 <div class="flex justify-between font-bold text-lg mb-6"><span>Total</span><span id="cart-total">₹0</span></div>
                 <button onclick="showPage('address')" class="w-full bg-primary text-white py-4 rounded-xl font-bold hover:bg-emerald-950 transition">Proceed to Checkout</button>
             </div>
@@ -109,12 +111,8 @@
             <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
                 <input type="text" placeholder="Full Name" class="w-full p-4 rounded-xl border border-gray-200">
                 <input type="tel" placeholder="Phone Number" class="w-full p-4 rounded-xl border border-gray-200">
-                <input type="text" placeholder="House Address" class="w-full p-4 rounded-xl border border-gray-200">
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="text" placeholder="City" class="p-4 rounded-xl border border-gray-200">
-                    <input type="text" placeholder="Pincode" class="p-4 rounded-xl border border-gray-200">
-                </div>
-                <button onclick="finalizeOrder()" class="w-full bg-accent text-primary py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition">Confirm Order (COD)</button>
+                <input type="text" placeholder="Full Delivery Address" class="w-full p-4 rounded-xl border border-gray-200">
+                <button onclick="finalizeOrder()" class="w-full bg-accent text-primary py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition">Confirm Order</button>
             </div>
         </section>
     </main>
@@ -126,6 +124,14 @@
         ];
 
         let cart = [];
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.hero-slide');
+
+        function slideHero() {
+            slides.forEach((s, i) => s.style.opacity = i === currentSlide ? '1' : '0');
+            currentSlide = (currentSlide + 1) % slides.length;
+        }
+        setInterval(slideHero, 4000);
 
         function showPage(pageId) {
             document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active-view'));
@@ -165,7 +171,6 @@
             const p = products.find(i => i.id === id);
             cart.push({...p, qty: 1});
             updateCartUI();
-            alert('Added to your basket!');
         }
 
         function updateCartUI() {
@@ -174,17 +179,12 @@
             const count = document.getElementById('cart-count');
             
             let sum = 0;
-            list.innerHTML = cart.map((item, index) => {
+            list.innerHTML = cart.map(item => {
                 sum += item.price;
-                return `
-                    <div class="flex items-center space-x-4 bg-white p-4 rounded-xl shadow-sm border">
-                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-lg">
-                        <div class="flex-grow">
-                            <p class="font-bold text-sm">${item.title}</p>
-                            <p class="text-xs text-gray-500">₹${item.price}</p>
-                        </div>
-                    </div>
-                `;
+                return `<div class="flex items-center space-x-4 bg-white p-4 rounded-xl border border-gray-100">
+                            <img src="${item.image}" class="w-16 h-16 object-cover rounded-lg">
+                            <div class="flex-grow"><p class="font-bold text-sm">${item.title}</p><p class="text-xs text-gray-500">₹${item.price}</p></div>
+                        </div>`;
             }).join('');
             
             total.innerText = `₹${sum}`;
@@ -193,7 +193,7 @@
         }
 
         function finalizeOrder() {
-            alert('Order Placed Successfully! Your fresh roast will be dispatched soon.');
+            alert('Order Placed Successfully!');
             cart = [];
             updateCartUI();
             showPage('home');
