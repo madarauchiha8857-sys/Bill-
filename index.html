@@ -50,19 +50,19 @@
         .bounce-arrow {
             animation: bounce-arrow 1.8s infinite ease-in-out;
         }
-        /* Splash Screen Anim mechanics */
+        /* Mobile Premium Fluid Splash Screen mechanics */
         #splash-screen {
             position: fixed;
             inset: 0;
-            background-color: #1e110a;
+            background: radial-gradient(circle at center, #2b190f 0%, #1e110a 100%);
             z-index: 99999;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: transform 0.85s cubic-bezier(0.77, 0, 0.175, 1);
+            will-change: transform;
+            touch-action: none; /* Prevents default mobile bounce/scroll triggers while swiping */
             user-select: none;
-            touch-action: none;
         }
         .splash-logo-box {
             display: flex;
@@ -71,30 +71,33 @@
             overflow: hidden;
         }
         .splash-cup {
-            font-size: 3.5rem;
-            color: #d4a373;
             transform: scale(0);
             transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .splash-text {
             font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
             font-weight: 900;
             color: #faf7f2;
             width: 0px;
             opacity: 0;
             overflow: hidden;
             white-space: nowrap;
-            transition: width 0.9s ease-in-out, opacity 0.6s ease-in-out;
-            margin-left: 1rem;
+            transition: width 0.9s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.6s ease-in-out;
+            margin-left: 0.75rem;
             letter-spacing: -0.05em;
         }
         .splash-logo-box.reveal .splash-cup {
             transform: scale(1);
         }
+        /* Completely safe mobile dimension limits to prevent clipping */
         .splash-logo-box.reveal .splash-text {
-            width: 170px;
+            width: 130px; 
             opacity: 1;
+        }
+        @media (min-width: 640px) {
+            .splash-logo-box.reveal .splash-text {
+                width: 175px;
+            }
         }
     </style>
 </head>
@@ -102,24 +105,26 @@
 
     <!-- INTRO SPLASH PRELOADER CONTAINER -->
     <div id="splash-screen">
-        <div class="flex flex-col items-center justify-center max-w-sm px-6">
+        <div class="flex flex-col items-center justify-center max-w-sm px-6 w-full">
             <!-- Brand Symmetrical Logo Anim -->
             <div id="splash-logo" class="splash-logo-box">
-                <i class="fas fa-coffee splash-cup"></i>
-                <span class="splash-text">dazeen</span>
+                <i class="fas fa-coffee splash-cup text-5xl sm:text-6xl text-[#d4a373]"></i>
+                <span class="splash-text text-5xl sm:text-6xl">dazeen</span>
             </div>
             
-            <p class="text-[10px] text-stone-400 tracking-widest uppercase font-semibold mt-3 text-center opacity-0 transition-opacity duration-1000 delay-700" id="splash-subtitle">
+            <p class="text-[10px] text-stone-400 tracking-widest uppercase font-semibold mt-4 text-center opacity-0 transition-opacity duration-1000 delay-700" id="splash-subtitle">
                 Specialty Roasters India
             </p>
 
-            <!-- Swipe/Slide interaction controller -->
-            <div id="splash-trigger" class="mt-20 flex flex-col items-center justify-center text-center opacity-0 transition-opacity duration-1000 delay-1000">
-                <span class="text-xs tracking-widest uppercase font-bold text-[#d4a373]">Swipe Up to Enter</span>
-                <button onclick="exitSplash()" class="mt-4 w-12 h-12 rounded-full border border-[#d4a373]/30 bg-[#2b190f] text-[#d4a373] flex items-center justify-center shadow-lg hover:bg-[#d4a373] hover:text-[#1e110a] transition-all bounce-arrow">
-                    <i class="fas fa-chevron-up text-base"></i>
+            <!-- Swipe/Slide interaction controller (Highly Touch Comfortable) -->
+            <div id="splash-trigger" class="mt-24 flex flex-col items-center justify-center text-center opacity-0 transition-opacity duration-1000 delay-1000 w-full">
+                <span class="text-[11px] tracking-widest uppercase font-bold text-[#d4a373]">Swipe Up to Enter</span>
+                
+                <!-- Safe hit area touch button -->
+                <button onclick="exitSplash()" class="mt-4 w-14 h-14 rounded-full border border-[#d4a373]/30 bg-[#2b190f] text-[#d4a373] flex items-center justify-center shadow-lg hover:bg-[#d4a373] hover:text-[#1e110a] active:scale-90 transition-all bounce-arrow">
+                    <i class="fas fa-chevron-up text-lg"></i>
                 </button>
-                <span class="text-[9px] text-stone-500 mt-2 font-light">or tap the arrow above</span>
+                <span class="text-[9px] text-stone-500 mt-3 font-light">or tap the gold arrow</span>
             </div>
         </div>
     </div>
@@ -559,29 +564,45 @@
                 trigger.classList.remove('opacity-0');
             }, 1800);
 
-            // Touch Swipe-Up Event Mechanics for Mobile Devices
+            // Touch Swipe-Up Event Mechanics for Mobile Devices (Highly Responsive)
             let startY = 0;
+            let isSwiping = false;
             const splash = document.getElementById('splash-screen');
 
             splash.addEventListener('touchstart', (e) => {
                 startY = e.touches[0].clientY;
+                isSwiping = true;
+                splash.style.transition = 'none'; // Disable transition for real-time tracking
             }, { passive: true });
 
             splash.addEventListener('touchmove', (e) => {
+                if (!isSwiping) return;
                 let currentY = e.touches[0].clientY;
                 let diff = startY - currentY;
-                if (diff > 50) {
+                
+                if (diff > 0) {
+                    // Following the finger precisely (Upward swipe)
                     splash.style.transform = `translateY(-${diff}px)`;
+                } else {
+                    // Slight resistance when pulling down to avoid negative scroll
+                    splash.style.transform = `translateY(${-diff * 0.15}px)`;
                 }
             }, { passive: true });
 
             splash.addEventListener('touchend', (e) => {
+                if (!isSwiping) return;
+                isSwiping = false;
                 let endY = e.changedTouches[0].clientY;
                 let finalDiff = startY - endY;
+                
+                // Add natural easing transitions back
+                splash.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; // Springy feedback
+                
                 if (finalDiff > 100) {
+                    // Complete the transition
                     exitSplash();
                 } else {
-                    // Reset positions smoothly
+                    // Spring back to default view
                     splash.style.transform = 'translateY(0)';
                 }
             }, { passive: true });
@@ -590,6 +611,7 @@
         // Swipe up exit splash function
         function exitSplash() {
             const splash = document.getElementById('splash-screen');
+            splash.style.transition = 'transform 0.85s cubic-bezier(0.77, 0, 0.175, 1)';
             splash.style.transform = 'translateY(-100%)';
             setTimeout(() => {
                 splash.style.display = 'none';
@@ -716,7 +738,7 @@
                     
                     <div onclick="openProductDetailsModal(${p.id})" class="cursor-pointer">
                         <div class="w-full h-56 bg-[#fdfaf7] flex items-center justify-center overflow-hidden relative border-b border-stone-100">
-                            <img src="${p.image}" alt="${p.title}" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x400/2b190f/ffffff?text=Dazeen+Premium+Coffee'">
+                            <img src="${p.image}" alt="${p.title}" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=400'">
                             <div class="absolute inset-0 bg-gradient-to-t from-stone-900/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                 <span class="bg-white/95 text-stone-900 text-xs font-extrabold px-4 py-2 rounded-full shadow-lg"><i class="fas fa-eye mr-1.5 text-[#8c502b]"></i>Quick Explore</span>
                             </div>
@@ -771,7 +793,7 @@
                         <span class="absolute top-4 left-4 bg-emerald-100 text-emerald-800 text-[10px] uppercase font-extrabold px-3 py-1 rounded-full">
                             <i class="fas fa-leaf mr-1"></i> Shade Grown
                         </span>
-                        <img src="${p.image}" class="max-h-72 object-contain rounded-xl drop-shadow-md" alt="${p.title}" onerror="this.src='https://placehold.co/400x400/2b190f/ffffff?text=Dazeen+Premium+Coffee'">
+                        <img src="${p.image}" class="max-h-72 object-contain rounded-xl drop-shadow-md" alt="${p.title}" onerror="this.src='https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=400'">
                     </div>
 
                     <!-- Product info section -->
@@ -980,7 +1002,7 @@
             container.innerHTML = cart.map((item, index) => `
                 <div class="flex flex-wrap items-center justify-between gap-4 border-b border-stone-100 pb-4 last:border-0 last:pb-0">
                     <div class="flex items-center space-x-4">
-                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-xl p-1 bg-stone-50 border shrink-0" onerror="this.src='https://placehold.co/100x100/2b190f/ffffff?text=Coffee'">
+                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-xl p-1 bg-stone-50 border shrink-0" onerror="this.src='https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=400'">
                         <div class="space-y-1 max-w-md">
                             <h4 class="serif-title font-bold text-sm text-stone-900 line-clamp-2 leading-tight">${item.title}</h4>
                             <p class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded w-fit"><i class="fas fa-check"></i> Fresh Batch Roast Checked</p>
@@ -1324,7 +1346,7 @@
                                 ${order.items.map(i => `
                                     <div class="flex items-center justify-between py-2">
                                         <div class="flex items-center space-x-2.5">
-                                            <img src="${i.image}" class="w-10 h-10 object-cover rounded border border-stone-200" onerror="this.src='https://placehold.co/50x50/2b190f/ffffff?text=Coffee'">
+                                            <img src="${i.image}" class="w-10 h-10 object-cover rounded border border-stone-200" onerror="this.src='https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=400'">
                                             <div>
                                                 <p class="text-xs font-bold text-stone-800 max-w-sm line-clamp-1">${i.title}</p>
                                             </div>
