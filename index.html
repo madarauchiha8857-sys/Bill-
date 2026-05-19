@@ -54,21 +54,6 @@
             from { transform: translateY(100%) translateX(50%); opacity: 0; }
             to { transform: translateY(0) translateX(0); opacity: 1; }
         }
-        .chat-wave span {
-            animation: chatBob 1.2s infinite ease-in-out;
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #d4af37;
-            margin: 0 2px;
-        }
-        .chat-wave span:nth-child(2) { animation-delay: 0.2s; }
-        .chat-wave span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes chatBob {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
         @keyframes drawCheck {
             to { stroke-dashoffset: 0; }
         }
@@ -80,6 +65,12 @@
         @keyframes driveAcross {
             0% { transform: translateX(-150px); }
             100% { transform: translateX(360px); }
+        }
+        /* Splash Screen Animations */
+        @keyframes splashLogoPop {
+            0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+            70% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
         }
         /* Smooth Scale and Fade in animation for New Product Detail View */
         .page-transition {
@@ -100,9 +91,34 @@
             background-size: 16px 16px;
             background-position: 0 0, 8px 8px;
         }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+        }
+        .accordion-active .accordion-content {
+            max-height: 500px;
+            padding-top: 1rem;
+            padding-bottom: 0.5rem;
+        }
     </style>
 </head>
 <body class="bg-[#faf8f5] font-sans min-h-screen flex flex-col text-gray-800 antialiased overflow-x-hidden pb-24 md:pb-0">
+
+    <!-- BRAND OPENING SPLASH SCREEN -->
+    <div id="splash-screen" class="fixed inset-0 bg-primary z-[300] flex flex-col items-center justify-center transition-all duration-700 ease-in-out">
+        <div class="flex items-center space-x-4">
+            <!-- App Logo (Pop Animation) -->
+            <div id="splash-logo" class="bg-accent p-4 rounded-2xl text-primary font-black shadow-lg" style="animation: splashLogoPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;">
+                <i class="fas fa-seedling text-4xl"></i>
+            </div>
+            <!-- Brand Name (Slides Out dynamically) -->
+            <div id="splash-text-container" class="overflow-hidden whitespace-nowrap transition-all duration-1000 ease-out" style="width: 0; opacity: 0;">
+                <span class="text-3xl font-black tracking-wider text-accent block">DAZEEN</span>
+                <span class="text-white text-xs font-light tracking-widest block -mt-1.5">PREMIUM</span>
+            </div>
+        </div>
+    </div>
 
     
     <!-- CUSTOM TOAST CONTAINER (Replaces raw Alerts) -->
@@ -321,6 +337,56 @@
                     </div>
                 </div>
             </div>
+
+            <!-- BRAND NEW: INTERACTIVE CUSTOMER REVIEW WALL AT BOTTOM OF HOME -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 space-y-6">
+                <div class="border-b pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h3 class="text-lg md:text-xl font-extrabold text-gray-900 flex items-center gap-2">
+                            <i class="fas fa-comments text-accent"></i> Customer Review Wall
+                        </h3>
+                        <p class="text-xs text-gray-500">Mera Apna Brand - True reviews from real wellness seekers.</p>
+                    </div>
+                    <button onclick="scrollToReviewForm()" class="bg-primary hover:bg-emerald-950 text-accent font-bold py-2 px-4 rounded-xl text-xs transition shadow-sm">
+                        Write a Review
+                    </button>
+                </div>
+
+                <!-- Live reviews container -->
+                <div id="reviews-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Loaded dynamically via JS from localStorage -->
+                </div>
+
+                <!-- Submit Review Form Block -->
+                <div id="review-form-block" class="bg-gray-50 p-5 rounded-2xl border border-gray-100 space-y-4">
+                    <h4 class="font-extrabold text-sm text-gray-900">Apna Anubhav Share Karein (Write a Review)</h4>
+                    <form id="home-review-form" onsubmit="handleReviewSubmit(event)" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Your Name</label>
+                                <input type="text" id="review-name" required class="w-full border border-gray-200 p-2.5 rounded-xl text-xs focus:ring-1 focus:ring-accent focus:outline-none font-semibold" placeholder="Enter name">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Star Rating</label>
+                                <div class="flex items-center space-x-1.5 pt-1" id="star-rating-selector">
+                                    <button type="button" onclick="setStarRating(1)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
+                                    <button type="button" onclick="setStarRating(2)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
+                                    <button type="button" onclick="setStarRating(3)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
+                                    <button type="button" onclick="setStarRating(4)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
+                                    <button type="button" onclick="setStarRating(5)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Review Details</label>
+                            <textarea id="review-comment" rows="3" required class="w-full border border-gray-200 p-2.5 rounded-xl text-xs focus:ring-1 focus:ring-accent focus:outline-none font-medium" placeholder="Jaise aapko taste kaisa laga, brewing process, packing ya support kaisa raha..."></textarea>
+                        </div>
+                        <button type="submit" class="bg-primary hover:bg-emerald-950 text-accent font-bold py-2 px-6 rounded-xl text-xs transition tracking-wide shadow-sm">
+                            Submit Review 👍
+                        </button>
+                    </form>
+                </div>
+            </div>
         </section>
 
 
@@ -440,8 +506,8 @@
                     
                     <!-- Decorative voice/call icons like Whatsapp -->
                     <div class="flex items-center space-x-4 text-gray-300 text-xs">
-                        <button onclick="showToast('Customer Desk connected online via chat system.', 'info')" class="hover:text-white transition"><i class="fas fa-phone"></i></button>
-                        <button onclick="showToast('Secure instant chat log is active.', 'info')" class="hover:text-white transition"><i class="fas fa-video"></i></button>
+                        <a href="mailto:support@dazeen.in" class="hover:text-white transition" title="Mail Us"><i class="fas fa-envelope"></i></a>
+                        <button onclick="showToast('Secure instant chat log is active. support@dazeen.in is available.', 'info')" class="hover:text-white transition"><i class="fas fa-info-circle"></i></button>
                     </div>
                 </div>
 
@@ -453,7 +519,7 @@
                             <span class="text-[9px] font-black text-primary uppercase block mb-1">DZN Support Executive</span>
                             Namaste supreme being! Humare support desk me aapka swagat hai. 🙏 <br><br>
                             Hum aapke date seed roast orders ko complete custom fresh roast karke hi dispatch karte hain. Returns and refund strictly tabhi hote hain jab package damaged ya galat ho.<br><br>
-                            Aapko kisi bhi sahaita ki jarurat ho, niche diye options par tap kijiye ya apna message write kijiye!
+                            Humari brand dynamic mail ID <strong class="text-emerald-800">support@dazeen.in</strong> hai. Aapko kisi bhi sahaita ki jarurat ho, niche diye options par tap kijiye ya apna message write kijiye!
                         </div>
                     </div>
                 </div>
@@ -644,6 +710,12 @@
                             <input type="text" name="city" id="addr-city" required class="w-full border border-gray-200 p-2.5 rounded-lg text-xs focus:ring-1 focus:ring-accent focus:outline-none" placeholder="Enter City">
                         </div>
                     </div>
+
+                    <!-- AUTOSAVE ADDRESS CHECKBOX -->
+                    <div class="flex items-center space-x-2.5 pt-2 border-t border-gray-100">
+                        <input type="checkbox" id="save-address-chk" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-accent accent-primary cursor-pointer">
+                        <label for="save-address-chk" class="text-xs text-gray-700 font-extrabold cursor-pointer">Save this address details for future orders</label>
+                    </div>
                     
                     <!-- Hidden elements for EmailJS / Forms database processing -->
                     <input type="hidden" name="user_phone" id="form-phone">
@@ -659,64 +731,8 @@
         </section>
 
 
-        <!-- TERMS & CONDITIONS PAGE (ALAG ALAG PAGE #1) -->
-        <section id="page-terms" class="page-view hidden max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6 page-transition">
-            <div class="border-b pb-4 flex justify-between items-center">
-                <div>
-                    <h2 class="text-xl md:text-2xl font-extrabold text-gray-900">Terms & Conditions</h2>
-                    <p class="text-xs text-gray-500">Service usage terms & pre-launch sale parameters.</p>
-                </div>
-                <button onclick="showPage('home')" class="text-primary hover:text-accent font-bold text-xs bg-gray-50 px-3 py-1.5 rounded-lg border">← Continue Shopping</button>
-            </div>
-            
-            <div class="space-y-4 text-xs text-gray-600 leading-relaxed">
-                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">1. Batch Processing & Small Batches</h3>
-                <p>We work exclusively with fresh handcrafted operations. Once you order, the raw organic date seeds enter customized slow roasting schedules. No items are pre-packed or held on shelves indefinitely.</p>
-
-                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">2. Secure Customer Account Usage</h3>
-                <p>Account database records are generated locally on client screen protocols. Your password remains locally processed for transaction retrieval and dispatch tracking.</p>
-
-                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">3. Cash on Delivery verification</h3>
-                <p>Cash on Delivery coordinates are subjected to active communications. Duplicate orders or incorrect shipping information can lead to order suspension prior to roasting.</p>
-            </div>
-        </section>
-
-
-        <!-- RETURN POLICY PAGE (ALAG ALAG PAGE #2) -->
-        <section id="page-returns" class="page-view hidden max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6 page-transition">
-            <div class="border-b pb-4 flex justify-between items-center">
-                <div>
-                    <h2 class="text-xl md:text-2xl font-extrabold text-gray-900">Return & Refund Policy</h2>
-                    <p class="text-xs text-gray-500">How we manage custom food batch returns safely.</p>
-                </div>
-                <button onclick="showPage('home')" class="text-primary hover:text-accent font-bold text-xs bg-gray-50 px-3 py-1.5 rounded-lg border">← Continue Shopping</button>
-            </div>
-            
-            <div class="space-y-4 text-xs text-gray-600 leading-relaxed">
-                <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-amber-950 font-semibold mb-2">
-                    ⚠️ <strong>Refund Rules Check:</strong> Humare date seed roasts specialized pre-ordered items hote hain jo directly aapke order par hi fresh grind hote hain.
-                </div>
-
-                <div class="bg-rose-50 p-4 rounded-xl border border-rose-200 text-rose-950 font-bold text-xs">
-                    🔴 Refund and Return strictly tabhi process hoga agar aapko:
-                    <ul class="list-disc list-inside mt-2 font-semibold">
-                        <li>Wrong Order deliver kiya gaya ho</li>
-                        <li>Package damaged/kharab condition me mila ho</li>
-                    </ul>
-                    Other wise koi bhi general return ya refund support nahi hoga. Kisi bhi exceptions me directly **Customer Care Support Desk** se sampark karein!
-                </div>
-
-                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">1. Return Claim Submission Timeline</h3>
-                <p>Yadi product wrong ya kharab condition me mila hai, to delivery ke 48 hours ke bhitar order status menu se hamare system par photo updates ke sath request submit karein. Verify hote hi refund process ho jayega.</p>
-
-                <h3 class="font-bold text-sm text-gray-900 border-b pb-1">2. Contact Customer Care Support</h3>
-                <p>Aap hume email par, WhatsApp support, ya is floating interactive AI Pal widget ke madhyam se 24/7 direct contact kar sakte hain. General feedback ya personal preferences ke returns allowed nahi hain.</p>
-            </div>
-        </section>
-
-
         <!-- DEDICATED USER PROFILE PAGE (No orders listed here) -->
-        <section id="page-profile" class="page-view hidden space-y-6 max-w-md mx-auto page-transition">
+        <section id="page-profile" class="page-view hidden space-y-6 max-w-xl mx-auto page-transition">
             <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 space-y-6">
                 <div class="text-center space-y-2">
                     <div class="bg-accent/15 w-16 h-16 rounded-full flex items-center justify-center mx-auto text-primary">
@@ -739,6 +755,46 @@
                         </div>
                         <i class="fas fa-shield-halved text-emerald-600 text-lg"></i>
                     </div>
+
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <span class="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Contact Support Desk</span>
+                        <a href="mailto:support@dazeen.in" class="text-xs font-bold text-primary hover:underline flex items-center gap-1.5 mt-1">
+                            <i class="fas fa-envelope text-accent"></i> support@dazeen.in
+                        </a>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC ACCORDIONS INSIDE PROFILE PAGE -->
+                <div class="space-y-3 pt-2">
+                    
+                    <!-- Accordion Item 1: Terms & Conditions -->
+                    <div id="accordion-terms" class="border border-gray-100 rounded-2xl overflow-hidden bg-gray-50/50">
+                        <button onclick="toggleAccordion('terms')" class="w-full flex justify-between items-center p-4 text-left font-bold text-xs text-gray-950 uppercase tracking-wider focus:outline-none select-none">
+                            <span>Terms & Conditions</span>
+                            <i class="fas fa-chevron-down text-accent transition-transform duration-300" id="icon-terms"></i>
+                        </button>
+                        <div class="accordion-content px-4 text-xs text-gray-600 space-y-2 leading-relaxed" id="content-terms">
+                            <p><strong>1. Batch Processing & Slow Roasting:</strong> We work exclusively with fresh handcrafted operations. Once you order, the raw organic date seeds enter customized slow roasting schedules. No items are pre-packed or held on shelves indefinitely.</p>
+                            <p><strong>2. Secure Local Database:</strong> Account database records are generated locally on client screen protocols. Your credentials remain securely stored for transaction retrieval and dispatch tracking.</p>
+                            <p><strong>3. Cash on Delivery verification:</strong> COD coordinates are subjected to active communications. Duplicate orders or incorrect shipping info will be suspended prior to roasting.</p>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Item 2: Return & Refund Policy -->
+                    <div id="accordion-returns" class="border border-gray-100 rounded-2xl overflow-hidden bg-gray-50/50">
+                        <button onclick="toggleAccordion('returns')" class="w-full flex justify-between items-center p-4 text-left font-bold text-xs text-gray-950 uppercase tracking-wider focus:outline-none select-none">
+                            <span>Return & Refund Policy</span>
+                            <i class="fas fa-chevron-down text-accent transition-transform duration-300" id="icon-returns"></i>
+                        </button>
+                        <div class="accordion-content px-4 text-xs text-gray-600 space-y-2 leading-relaxed" id="content-returns">
+                            <div class="bg-rose-50 border border-rose-150 p-3 rounded-xl text-rose-950 font-bold mb-2">
+                                🔴 Refund and Return strictly tabhi process hoga jab aapko galat (wrong) ya damaged package mila ho. Baaki kisi bhi exception me directly hamare Customer Support Desk se sampark karein!
+                            </div>
+                            <p><strong>1. Return Claim Submission:</strong> Yadi product wrong ya damaged mila hai, to delivery ke 48 hours ke bhitar support desk me detail proof ke sath update kijiye. Hamari quality verification team check karke refund process karegi.</p>
+                            <p><strong>2. Contact Support directly:</strong> Aap directly hamari brand ID <strong class="text-primary font-bold">support@dazeen.in</strong> par mail daal sakte hain. General feedback ya taste preference par refunds process nahi kiye ja sakte.</p>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Primary Logout button is ONLY present here -->
@@ -797,11 +853,11 @@
                     <a href="#page-home" onclick="showPage('home')" class="hover:text-accent transition">Shop</a>
                     <a href="#page-orders" onclick="goToOrders()" class="hover:text-accent transition">Orders</a>
                     <a href="#page-profile" onclick="goToProfile()" class="hover:text-accent transition">My Profile</a>
-                    <a href="#page-terms" onclick="showPage('terms')" class="hover:text-accent transition">Terms & Conditions</a>
-                    <a href="#page-returns" onclick="showPage('returns')" class="hover:text-accent transition">Return Policy</a>
+                    <a href="#page-profile" onclick="openProfileAccordion('terms')" class="hover:text-accent transition">Terms & Conditions</a>
+                    <a href="#page-profile" onclick="openProfileAccordion('returns')" class="hover:text-accent transition">Return Policy</a>
                 </div>
                 <div class="text-center md:text-right text-gray-400">
-                    <p class="text-[9px]">Secure Checkout Process Guaranteed</p>
+                    <p class="text-[9px]">Secure Checkout Process Guaranteed • <a href="mailto:support@dazeen.in" class="text-accent underline font-semibold">support@dazeen.in</a></p>
                     <div class="flex justify-center md:justify-end space-x-2 text-sm text-accent mt-1">
                         <i class="fab fa-cc-visa"></i>
                         <i class="fab fa-cc-mastercard"></i>
@@ -812,10 +868,10 @@
             
             <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-gray-400 text-[10px]">
                 <div class="space-x-4">
-                    <a href="#page-terms" onclick="showPage('terms')" class="hover:underline hover:text-white">Conditions of Sale</a>
-                    <a href="#page-returns" onclick="showPage('returns')" class="hover:underline hover:text-white">Returns & Refund Policy</a>
+                    <a href="#page-profile" onclick="openProfileAccordion('terms')" class="hover:underline hover:text-white">Conditions of Sale</a>
+                    <a href="#page-profile" onclick="openProfileAccordion('returns')" class="hover:underline hover:text-white">Returns & Refund Policy</a>
                 </div>
-                <p>Dazeen Premium - Mera Apna Store App</p>
+                <p>Dazeen Premium - Mera Apna Store App • support@dazeen.in</p>
             </div>
         </div>
     </footer>
@@ -850,6 +906,7 @@
         let appliedPromoCode = localStorage.getItem('dazeen_coupon') || null;
         let authStateMode = 'login'; // 'login' or 'signup'
         let currentChatLog = []; // Used to collect full Support thread values for admin dispatch
+        let selectedStarRating = 5; // Default review rating
 
         // Modernized Toast Alerts System
         function showToast(message, type = 'success') {
@@ -881,15 +938,40 @@
 
         // Initialize App & Setup UI hooks
         document.addEventListener("DOMContentLoaded", () => {
+            // Trigger Dynamic Splash Opening Animation Sequence
+            triggerSplashSequence();
+
             renderProducts();
             updateCartCount();
             showPage('home');
             document.getElementById('address-form').addEventListener('submit', handleOrderSubmit);
             syncAuthInterface();
+            loadReviews(); // Dynamic review rendering
             
             // Initial Support greetings load
             appendSupportBubble("Namaste supreme being! Main DZN Customer Desk se hu. Aapko date seed roasts ke bare me kya help chahiye?", "executive");
         });
+
+        // Dynamic opening splash sequence
+        function triggerSplashSequence() {
+            setTimeout(() => {
+                const textContainer = document.getElementById('splash-text-container');
+                if (textContainer) {
+                    textContainer.style.width = '160px';
+                    textContainer.style.opacity = '1';
+                }
+            }, 550);
+
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                if (splash) {
+                    splash.style.transform = 'translateY(-100%)';
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                    }, 800);
+                }
+            }, 2100);
+        }
 
         function syncAuthInterface() {
             // Keep for potential back-office sync
@@ -992,11 +1074,11 @@
                 } else if (lowerFaq.includes("acidity") || lowerFaq.includes("taste")) {
                     responseText = "Dazeen 100% natural, premium dates seed roast superfood drink hai. Isme zero acidity hoti hai aur zero jitters! Taste profile normal coffee ki tarah rich, deep roasted and cocoa elements se bhara hai.";
                 } else if (lowerFaq.includes("refund") || lowerFaq.includes("damage")) {
-                    responseText = "Clear returns guidance check kijiye bhai! Refund and Replacement strictly **tabhi valid hai jab aapka package galat (wrong) ya kharab (damaged)** deliver hua ho. Other conditions me refunds allowed nahi hain, aap humse customer care desk par support chat kar sakte hain.";
+                    responseText = "Clear returns guidance check kijiye bhai! Refund and Replacement strictly **tabhi valid hai jab aapka package galat (wrong) ya kharab (damaged)** deliver hua ho. Other conditions me refunds allowed nahi hain, aap directly support@dazeen.in par contact kijiye ya support chat par judiye.";
                 } else if (lowerFaq.includes("brew") || lowerFaq.includes("kaise")) {
                     responseText = "Iske brewing steps behad simple hain! Aap is powder ko standard espresso machine, French press, drip filters, ya direct milk/pani ke sath traditional style boiling se tyar kar sakte hain!";
                 } else {
-                    responseText = "Aapka query humne save kiya hai supreme being! Jaise aap order karte ho hum fresh date seeds roast karke supply karte hain. Help desk is always active.";
+                    responseText = "Aapka query humne save kiya hai supreme being! Jaise aap order karte ho hum fresh date seeds roast karke supply karte hain. support@dazeen.in is always active.";
                 }
 
                 appendSupportBubble(responseText, "executive");
@@ -1092,6 +1174,123 @@
                 document.getElementById('support-rating-panel').classList.add('hidden');
                 showPage('home');
             }
+        }
+
+
+        // ================= ACCORDION HELPERS INSIDE MY ACCOUNT =================
+        function toggleAccordion(key) {
+            const accordion = document.getElementById(`accordion-${key}`);
+            const icon = document.getElementById(`icon-${key}`);
+            
+            if (accordion.classList.contains('accordion-active')) {
+                accordion.classList.remove('accordion-active');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                // Collapse others first
+                document.querySelectorAll('[id^="accordion-"]').forEach(acc => {
+                    acc.classList.remove('accordion-active');
+                });
+                document.querySelectorAll('[id^="icon-"]').forEach(i => {
+                    i.style.transform = 'rotate(0deg)';
+                });
+                
+                accordion.classList.add('accordion-active');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // Direct external link mapping to specific accordion items inside Profile
+        function openProfileAccordion(key) {
+            showPage('profile');
+            setTimeout(() => {
+                const accordion = document.getElementById(`accordion-${key}`);
+                const icon = document.getElementById(`icon-${key}`);
+                if (accordion) {
+                    document.querySelectorAll('[id^="accordion-"]').forEach(acc => {
+                        acc.classList.remove('accordion-active');
+                    });
+                    document.querySelectorAll('[id^="icon-"]').forEach(i => {
+                        i.style.transform = 'rotate(0deg)';
+                    });
+
+                    accordion.classList.add('accordion-active');
+                    if (icon) icon.style.transform = 'rotate(180deg)';
+                    accordion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 300);
+        }
+
+
+        // ================= REVIEWS & FEEDBACK WALL SYSTEM =================
+        function setStarRating(stars) {
+            selectedStarRating = stars;
+            const starButtons = document.querySelectorAll('#star-rating-selector button');
+            starButtons.forEach((btn, index) => {
+                if (index < stars) {
+                    btn.className = "text-xl text-accent transition focus:outline-none";
+                } else {
+                    btn.className = "text-xl text-gray-300 transition focus:outline-none";
+                }
+            });
+        }
+
+        function scrollToReviewForm() {
+            document.getElementById('review-form-block').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function loadReviews() {
+            const container = document.getElementById('reviews-list-container');
+            const storedReviews = JSON.parse(localStorage.getItem('dazeen_wall_reviews')) || [
+                { name: "Rahul Sharma", rating: 5, comment: "Bhai maza aa gaya! Coffee jaisa rich taste hai aur acidity bilkul nahi hoti. Highly recommended!", date: "15/05/2026" },
+                { name: "Priya Patel", rating: 5, comment: "Organic date seeds are amazing. The cocoa and roasted notes are spot on. support@dazeen.in team was very helpful.", date: "18/05/2026" }
+            ];
+
+            container.innerHTML = storedReviews.map(r => `
+                <div class="bg-gray-50/70 p-4 rounded-2xl border border-gray-100/50 space-y-2 text-xs">
+                    <div class="flex justify-between items-center">
+                        <span class="font-extrabold text-gray-900">${r.name}</span>
+                        <span class="text-[10px] text-gray-400 font-medium">${r.date}</span>
+                    </div>
+                    <div class="flex text-accent text-[10px]">
+                        ${Array.from({ length: 5 }, (_, i) => `<i class="${i < r.rating ? 'fas' : 'far'} fa-star"></i>`).join('')}
+                    </div>
+                    <p class="text-gray-600 leading-relaxed font-medium">${r.comment}</p>
+                </div>
+            `).join('');
+        }
+
+        function handleReviewSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('review-name').value.trim();
+            const comment = document.getElementById('review-comment').value.trim();
+
+            if (!name || !comment) {
+                showToast("Kripya saari details sahi se fill karein!", "error");
+                return;
+            }
+
+            const storedReviews = JSON.parse(localStorage.getItem('dazeen_wall_reviews')) || [
+                { name: "Rahul Sharma", rating: 5, comment: "Bhai maza aa gaya! Coffee jaisa rich taste hai aur acidity bilkul nahi hoti. Highly recommended!", date: "15/05/2026" },
+                { name: "Priya Patel", rating: 5, comment: "Organic date seeds are amazing. The cocoa and roasted notes are spot on. support@dazeen.in team was very helpful.", date: "18/05/2026" }
+            ];
+
+            const newReview = {
+                name: name,
+                rating: selectedStarRating,
+                comment: comment,
+                date: new Date().toLocaleDateString('en-IN')
+            };
+
+            storedReviews.unshift(newReview);
+            localStorage.setItem('dazeen_wall_reviews', JSON.stringify(storedReviews));
+
+            // Reset inputs
+            document.getElementById('review-name').value = '';
+            document.getElementById('review-comment').value = '';
+            setStarRating(5);
+
+            loadReviews();
+            showToast("Dhanyawad supreme being! Aapka review successfully register ho gaya.", "success");
         }
 
 
@@ -1389,10 +1588,31 @@
             }
         }
 
+        // PRE-FILL ADDRESS FROM AUTOSAVED VAULT STORAGE IF EXISTS
         function goToAddressPage() {
             document.getElementById('form-phone').value = user.phone;
             document.getElementById('form-total').value = document.getElementById('cart-total').innerText;
             document.getElementById('form-items').value = cart.map(item => `${item.title} (x${item.qty})`).join(', ');
+
+            // Check dynamic auto-saved address locally associated with logged user Email
+            const savedAddressObj = JSON.parse(localStorage.getItem(`dazeen_saved_address_${user.phone}`));
+            if (savedAddressObj) {
+                document.getElementById('addr-name').value = savedAddressObj.name || '';
+                document.getElementById('addr-flat').value = savedAddressObj.flat || '';
+                document.getElementById('addr-area').value = savedAddressObj.area || '';
+                document.getElementById('addr-pincode').value = savedAddressObj.pincode || '';
+                document.getElementById('addr-city').value = savedAddressObj.city || '';
+                document.getElementById('save-address-chk').checked = true;
+                showToast("Saved address filled automatically!", "info");
+            } else {
+                document.getElementById('addr-name').value = '';
+                document.getElementById('addr-flat').value = '';
+                document.getElementById('addr-area').value = '';
+                document.getElementById('addr-pincode').value = '';
+                document.getElementById('addr-city').value = '';
+                document.getElementById('save-address-chk').checked = false;
+            }
+
             showPage('address');
         }
 
@@ -1407,10 +1627,31 @@
             btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> <span>Processing Secure Order...</span>`;
 
             try {
+                const nameVal = document.getElementById('addr-name').value.trim();
+                const flatVal = document.getElementById('addr-flat').value.trim();
+                const areaVal = document.getElementById('addr-area').value.trim();
+                const pinVal = document.getElementById('addr-pincode').value.trim();
+                const cityVal = document.getElementById('addr-city').value.trim();
+
+                // AUTOSAVE LOGIC PROCESS
+                const shouldSave = document.getElementById('save-address-chk').checked;
+                if (shouldSave) {
+                    const savedAddressObj = {
+                        name: nameVal,
+                        flat: flatVal,
+                        area: areaVal,
+                        pincode: pinVal,
+                        city: cityVal
+                    };
+                    localStorage.setItem(`dazeen_saved_address_${user.phone}`, JSON.stringify(savedAddressObj));
+                } else {
+                    localStorage.removeItem(`dazeen_saved_address_${user.phone}`);
+                }
+
                 // Prepare secure order metadata
                 const totalAmt = parseInt(document.getElementById('form-total').value);
                 const generatedOrderId = "DAZ-" + Math.floor(Math.random() * 900000 + 100000);
-                const addressDetails = `${document.getElementById('addr-flat').value}, ${document.getElementById('addr-area').value}, ${document.getElementById('addr-city').value}`;
+                const addressDetails = `${flatVal}, ${areaVal}, ${cityVal}`;
                 
                 const currentOrder = {
                     orderId: generatedOrderId,
@@ -1419,7 +1660,7 @@
                     items: [...cart],
                     total: totalAmt,
                     address: addressDetails,
-                    pincode: document.getElementById('addr-pincode').value,
+                    pincode: pinVal,
                     phone: user.phone
                 };
 
@@ -1430,7 +1671,7 @@
                 // Prep Celebration details block values for Multi-Stage animation
                 document.getElementById('celebration-order-id').innerText = generatedOrderId;
                 document.getElementById('celebration-total-amt').innerText = `₹${totalAmt}`;
-                document.getElementById('celebration-shipping-address').innerText = `${addressDetails} - PIN: ${document.getElementById('addr-pincode').value}`;
+                document.getElementById('celebration-shipping-address').innerText = `${addressDetails} - PIN: ${pinVal}`;
                 
                 // Render order items directly inside details
                 document.getElementById('celebration-items-list').innerHTML = cart.map(i => `
