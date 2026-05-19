@@ -3,135 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dazeen Premium | Organic Date Seed Roast</title>
+    <title>Dazeen Premium | Shop Premium Roasted Date Seeds</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#1b3322',
-                        accent: '#d4af37',
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         .page-view { display: none; }
         .active-view { display: block; }
-        .marquee { animation: marquee 25s linear infinite; }
-        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        .hero-slide { transition: opacity 0.5s ease-in-out; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 4px; }
     </style>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: '#1b3322', accent: '#d4af37' } } }
+        }
+    </script>
 </head>
 <body class="bg-[#faf8f5] font-sans text-gray-900 pb-24 md:pb-0">
 
-    <!-- Top Promo Banner -->
-    <div class="bg-primary text-accent text-[10px] py-2 overflow-hidden whitespace-nowrap">
-        <div class="marquee font-bold tracking-widest uppercase">
-            ✨ Free Shipping on All Orders • Freshly Roasted Upon Order • 100% Caffeine Free • Premium Date Seed Wellness • Satisfaction Guaranteed
+    <!-- Top Promo Header with Promises -->
+    <div class="bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div class="bg-primary py-2 text-[10px] text-accent font-bold tracking-widest text-center uppercase">
+            🚀 Pre-launch Special: Free Shipping & Fresh Roasting Guarantee
         </div>
-    </div>
-
-    <!-- Main Navigation (Desktop) -->
-    <nav class="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm hidden md:block">
-        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-2 cursor-pointer" onclick="showPage('home')">
-                <div class="bg-primary p-1.5 rounded-lg text-accent"><i class="fas fa-seedling"></i></div>
+        <div class="flex justify-center space-x-4 py-2 bg-gray-50 text-[10px] font-bold text-gray-600 uppercase border-b border-gray-100">
+            <span class="flex items-center gap-1.5"><i class="fas fa-truck text-accent"></i> Fast Delivery</span>
+            <span class="flex items-center gap-1.5"><i class="fas fa-leaf text-accent"></i> 100% Organic</span>
+            <span class="flex items-center gap-1.5"><i class="fas fa-fire text-accent"></i> Freshly Roasted</span>
+        </div>
+        <nav class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between bg-white">
+            <div class="cursor-pointer" onclick="showPage('home')">
                 <span class="text-xl font-black text-primary tracking-tighter">DAZEEN</span>
             </div>
-            <div class="flex space-x-8 text-sm font-bold text-gray-600">
+            <div class="hidden md:flex space-x-8 text-xs font-bold text-gray-600">
                 <button onclick="showPage('home')" class="hover:text-primary transition">Shop</button>
                 <button onclick="showPage('orders')" class="hover:text-primary transition">Orders</button>
                 <button onclick="showPage('profile')" class="hover:text-primary transition">Profile</button>
-                <button onclick="showPage('cart')" class="hover:text-primary transition relative">
-                    Cart <span id="cart-count" class="absolute -top-2 -right-3 bg-accent text-primary text-[9px] w-4 h-4 rounded-full hidden flex items-center justify-center">0</span>
-                </button>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </div>
 
     <!-- Mobile Bottom Navigation -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-50 flex justify-around p-3 shadow-lg">
         <button onclick="showPage('home')" class="flex flex-col items-center text-primary"><i class="fas fa-home"></i><span class="text-[10px] font-bold">Shop</span></button>
-        <button onclick="showPage('cart')" class="flex flex-col items-center text-primary"><i class="fas fa-shopping-basket"></i><span class="text-[10px] font-bold">Cart</span></button>
         <button onclick="showPage('orders')" class="flex flex-col items-center text-primary"><i class="fas fa-box"></i><span class="text-[10px] font-bold">Orders</span></button>
         <button onclick="showPage('profile')" class="flex flex-col items-center text-primary"><i class="fas fa-user"></i><span class="text-[10px] font-bold">Profile</span></button>
     </div>
 
-    <main class="max-w-4xl mx-auto px-4 py-8">
+    <main class="max-w-5xl mx-auto px-4 py-8">
         
-        <!-- Home Section -->
+        <!-- Home -->
         <section id="page-home" class="page-view active-view">
-            <!-- Hero Sliding Header -->
-            <div id="hero-slider" class="relative bg-primary rounded-3xl h-64 md:h-80 mb-12 overflow-hidden shadow-2xl flex items-center justify-center text-center px-6">
-                <div class="hero-slide active-slide absolute inset-0 flex flex-col items-center justify-center space-y-4">
-                    <h1 class="text-3xl md:text-5xl font-black text-accent tracking-tighter">Welcome to Dazeen</h1>
-                    <p class="text-white text-sm md:text-base font-light opacity-80">Premium, caffeine-free wellness, roasted to perfection.</p>
-                </div>
-                <div class="hero-slide absolute inset-0 flex flex-col items-center justify-center space-y-4 opacity-0">
-                    <h1 class="text-3xl md:text-5xl font-black text-white tracking-tighter">Limited Offer</h1>
-                    <p class="text-accent text-xl font-bold italic">Get 15% off your first fresh-roast batch!</p>
-                </div>
-                <div class="hero-slide absolute inset-0 flex flex-col items-center justify-center space-y-4 opacity-0">
-                    <h1 class="text-3xl md:text-5xl font-black text-accent tracking-tighter">Purely Organic</h1>
-                    <p class="text-white text-sm md:text-base font-light opacity-80">Rich coffee flavor, zero acidity. Good for your heart.</p>
-                </div>
+            <div class="mb-12">
+                <h1 class="text-3xl font-black text-primary mb-2">Our Premium Collection</h1>
+                <p class="text-gray-500 text-sm">Roasted fresh, just for you.</p>
             </div>
-
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-black text-primary mb-4">Our Premium Roasts</h2>
-            </div>
-            <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16"></div>
+            <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
         </section>
 
-        <!-- Product Detail Section -->
+        <!-- Product Detail Page -->
         <section id="page-detail" class="page-view">
-            <button onclick="showPage('home')" class="mb-6 text-sm text-gray-500 hover:text-primary font-bold"><i class="fas fa-arrow-left mr-2"></i>Back to Shop</button>
+            <button onclick="showPage('home')" class="mb-6 text-sm text-gray-500 font-bold hover:text-primary"><i class="fas fa-arrow-left mr-2"></i>Back</button>
             <div id="product-detail-content" class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100"></div>
         </section>
 
-        <!-- Cart Section -->
-        <section id="page-cart" class="page-view">
-            <h1 class="text-3xl font-black text-primary mb-8">Shopping Summary</h1>
-            <div id="cart-items" class="space-y-4 mb-8"></div>
-            <div id="cart-actions" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <div class="flex justify-between font-bold text-lg mb-6"><span>Total</span><span id="cart-total">₹0</span></div>
-                <button onclick="showPage('address')" class="w-full bg-primary text-white py-4 rounded-xl font-bold hover:bg-emerald-950 transition">Proceed to Checkout</button>
+        <!-- Profile / Login -->
+        <section id="page-profile" class="page-view">
+            <div class="max-w-md mx-auto bg-white p-8 rounded-3xl shadow-sm border border-gray-100 text-center">
+                <i class="fas fa-user-circle text-5xl text-primary mb-4"></i>
+                <h1 class="text-2xl font-black mb-6">Account Access</h1>
+                <input type="email" placeholder="Email" class="w-full p-4 mb-3 border rounded-xl">
+                <input type="password" placeholder="Password" class="w-full p-4 mb-6 border rounded-xl">
+                <button class="w-full bg-primary text-white py-4 rounded-xl font-bold">Sign In</button>
             </div>
         </section>
 
-        <!-- Address Section -->
-        <section id="page-address" class="page-view">
-            <h1 class="text-3xl font-black text-primary mb-8">Delivery Details</h1>
-            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
-                <input type="text" placeholder="Full Name" class="w-full p-4 rounded-xl border border-gray-200">
-                <input type="tel" placeholder="Phone Number" class="w-full p-4 rounded-xl border border-gray-200">
-                <input type="text" placeholder="Full Delivery Address" class="w-full p-4 rounded-xl border border-gray-200">
-                <button onclick="finalizeOrder()" class="w-full bg-accent text-primary py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition">Confirm Order</button>
-            </div>
+        <!-- Orders -->
+        <section id="page-orders" class="page-view">
+            <h1 class="text-2xl font-black mb-6">Order History</h1>
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 text-center text-gray-500 italic">No orders found. Start shopping to begin your wellness journey!</div>
         </section>
     </main>
 
     <script>
         const products = [
-            { id: 1, title: "100g Classic Roast", price: 170, image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&q=80", desc: "Our signature blend of slow-roasted date seeds, perfect for daily wellness." },
-            { id: 2, title: "250g Premium Blend", price: 290, image: "https://images.unsplash.com/photo-1498804103079-a6351b050096?w=600&q=80", desc: "A larger, richer blend for those who truly appreciate the depth of artisanal roasting." }
+            { id: 1, title: "100g Classic Roast", price: 170, image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&q=80", desc: "Our signature blend of slow-roasted date seeds, perfect for daily wellness.", reviews: 4.8 },
+            { id: 2, title: "250g Premium Blend", price: 290, image: "https://images.unsplash.com/photo-1498804103079-a6351b050096?w=600&q=80", desc: "A larger, richer blend for those who truly appreciate the depth of artisanal roasting.", reviews: 4.9 }
         ];
-
-        let cart = [];
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.hero-slide');
-
-        function slideHero() {
-            slides.forEach((s, i) => s.style.opacity = i === currentSlide ? '1' : '0');
-            currentSlide = (currentSlide + 1) % slides.length;
-        }
-        setInterval(slideHero, 4000);
 
         function showPage(pageId) {
             document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active-view'));
@@ -141,62 +99,37 @@
         function renderProducts() {
             const list = document.getElementById('product-list');
             list.innerHTML = products.map(p => `
-                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 hover:shadow-lg transition cursor-pointer" onclick="viewProduct(${p.id})">
-                    <img src="${p.image}" class="w-full h-64 object-cover rounded-2xl mb-6">
-                    <h3 class="font-black text-lg mb-2">${p.title}</h3>
-                    <p class="text-2xl font-black text-primary mb-6">₹${p.price}</p>
-                    <button class="w-full bg-gray-100 py-3 rounded-xl font-bold hover:bg-gray-200 transition">View Details</button>
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition cursor-pointer" onclick="openDetail(${p.id})">
+                    <img src="${p.image}" class="w-full h-64 object-cover rounded-2xl mb-4">
+                    <h3 class="font-black text-xl mb-1">${p.title}</h3>
+                    <div class="text-amber-500 mb-4 text-xs font-bold">${p.reviews} ★★★★☆</div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-black text-primary">₹${p.price}</span>
+                        <button class="bg-accent text-primary px-6 py-2 rounded-xl font-bold text-sm">View</button>
+                    </div>
                 </div>
             `).join('');
         }
 
-        function viewProduct(id) {
+        function openDetail(id) {
             const p = products.find(i => i.id === id);
             const container = document.getElementById('product-detail-content');
             container.innerHTML = `
                 <div class="grid md:grid-cols-2 gap-8">
-                    <img src="${p.image}" class="w-full h-80 object-cover rounded-3xl">
-                    <div class="flex flex-col justify-center">
-                        <h2 class="text-3xl font-black mb-4">${p.title}</h2>
+                    <img src="${p.image}" class="w-full h-96 object-cover rounded-3xl">
+                    <div>
+                        <h2 class="text-3xl font-black mb-2">${p.title}</h2>
+                        <div class="text-amber-500 font-bold mb-4">${p.reviews} stars | 124 Reviews</div>
                         <p class="text-gray-600 mb-6">${p.desc}</p>
-                        <p class="text-3xl font-black text-primary mb-8">₹${p.price}</p>
-                        <button onclick="addToCart(${p.id})" class="w-full bg-accent text-primary py-4 rounded-xl font-black text-lg shadow-lg hover:shadow-xl transition">Add to Cart</button>
+                        <div class="mb-6">
+                            <label class="font-bold text-sm">Quantity:</label>
+                            <input type="number" value="1" min="1" class="w-16 p-2 border rounded-lg ml-2">
+                        </div>
+                        <button class="w-full bg-primary text-white py-4 rounded-xl font-black text-lg shadow-lg">Buy Now</button>
                     </div>
                 </div>
             `;
             showPage('detail');
-        }
-
-        function addToCart(id) {
-            const p = products.find(i => i.id === id);
-            cart.push({...p, qty: 1});
-            updateCartUI();
-        }
-
-        function updateCartUI() {
-            const list = document.getElementById('cart-items');
-            const total = document.getElementById('cart-total');
-            const count = document.getElementById('cart-count');
-            
-            let sum = 0;
-            list.innerHTML = cart.map(item => {
-                sum += item.price;
-                return `<div class="flex items-center space-x-4 bg-white p-4 rounded-xl border border-gray-100">
-                            <img src="${item.image}" class="w-16 h-16 object-cover rounded-lg">
-                            <div class="flex-grow"><p class="font-bold text-sm">${item.title}</p><p class="text-xs text-gray-500">₹${item.price}</p></div>
-                        </div>`;
-            }).join('');
-            
-            total.innerText = `₹${sum}`;
-            count.innerText = cart.length;
-            count.classList.remove('hidden');
-        }
-
-        function finalizeOrder() {
-            alert('Order Placed Successfully!');
-            cart = [];
-            updateCartUI();
-            showPage('home');
         }
 
         renderProducts();
