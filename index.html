@@ -18,7 +18,9 @@
     </script>
 
     <script>
-        tailwind.config = {
+        // Secure Tailwind config initialization to prevent race conditions during script loading
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
             theme: {
                 extend: {
                     colors: {
@@ -1265,6 +1267,7 @@ By Shivhind – ESTD 2026`,
                 freshBanner?.classList.add('hidden');
             }
 
+            document.querySelectorAll('nav font').forEach(b => b.classList?.remove('text-accent'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('text-accent'));
             document.querySelectorAll('.fixed.bottom-0 button').forEach(b => b.classList.remove('text-accent'));
 
@@ -1466,6 +1469,7 @@ By Shivhind – ESTD 2026`,
             showToast(`Added ${qty}x ${product.title} to your basket!`, 'success');
         }
 
+        // Automated persistent address & checkout saving
         function saveCart() {
             localStorage.setItem('dazeen_cart', JSON.stringify(cart));
             updateCartCount();
@@ -1803,18 +1807,6 @@ By Shivhind – ESTD 2026`,
                 showPage('login');
             } else {
                 goToAddressPage();
-            }
-        }
-
-        function startCarouselAutoPlay() {
-            carouselIntervalId = setInterval(() => {
-                shiftCarousel(1);
-            }, 6000);
-        }
-
-        function stopCarouselAutoPlay() {
-            if (carouselIntervalId) {
-                clearInterval(carouselIntervalId);
             }
         }
 
