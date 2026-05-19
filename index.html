@@ -54,6 +54,21 @@
             from { transform: translateY(100%) translateX(50%); opacity: 0; }
             to { transform: translateY(0) translateX(0); opacity: 1; }
         }
+        .chat-wave span {
+            animation: chatBob 1.2s infinite ease-in-out;
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #d4af37;
+            margin: 0 2px;
+        }
+        .chat-wave span:nth-child(2) { animation-delay: 0.2s; }
+        .chat-wave span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes chatBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
         @keyframes drawCheck {
             to { stroke-dashoffset: 0; }
         }
@@ -125,9 +140,9 @@
     <div id="toast-container" class="fixed bottom-24 md:bottom-5 right-5 z-[100] flex flex-col space-y-2 pointer-events-none max-w-sm w-full p-4"></div>
 
 
-    <!-- FLIPKART STYLE CELEBRATION OVERLAY (Smooth Multi-Stage Experience) -->
+    <!-- FLIPKART STYLE CELEBRATION OVERLAY (Smooth Multi-Stage Experience with Scratch Card) -->
     <div id="success-celebration-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 hidden transition-opacity duration-300">
-        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full text-center shadow-2xl transform scale-95 opacity-0 smooth-celebration-card relative overflow-hidden max-h-[90vh] flex flex-col justify-between" id="celebration-card">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full text-center shadow-2xl transform scale-95 opacity-0 smooth-celebration-card relative overflow-hidden max-h-[95vh] flex flex-col justify-between" id="celebration-card">
             <!-- Confetti Canvas background overlay -->
             <canvas id="confetti-canvas" class="absolute inset-0 pointer-events-none w-full h-full rounded-3xl"></canvas>
             
@@ -141,7 +156,7 @@
                 <h3 id="celebration-initial-msg" class="text-xl font-extrabold text-gray-900 mt-4 transition-opacity duration-300">Order Placed Successfully!</h3>
             </div>
             
-            <!-- Stages 2 & 3: Order Details Container (Revealed smoothly) -->
+            <!-- Stages 2 & 3: Order Details & Scratch Card Container (Revealed smoothly) -->
             <div id="celebration-details-block" class="opacity-0 translate-y-8 transition-all duration-700 ease-out hidden space-y-4 overflow-y-auto custom-scrollbar flex-grow px-1">
                 <div class="space-y-1">
                     <span class="text-[10px] uppercase font-extrabold tracking-widest text-emerald-600 block">Fulfillment Verified</span>
@@ -150,13 +165,33 @@
                 </div>
 
                 <!-- Displayed Order ID -->
-                <div class="bg-primary/5 border border-primary/10 rounded-2xl p-3 text-center">
+                <div class="bg-primary/5 border border-primary/10 rounded-2xl p-2 text-center">
                     <span class="text-[9px] uppercase font-bold text-gray-500 tracking-wider block">Your Order Reference ID</span>
                     <span id="celebration-order-id" class="text-lg font-black text-amber-900 tracking-wider">DAZ-XXXXXX</span>
                 </div>
 
+                <!-- NEW: SCRATCH CARD FOR REWARD -->
+                <div id="scratch-card-box" class="bg-gradient-to-br from-amber-50 to-amber-100/60 border border-accent/30 rounded-2xl p-3.5 text-center space-y-2 relative overflow-hidden shadow-sm">
+                    <div id="scratch-card-title-block">
+                        <h5 class="font-extrabold text-xs text-amber-950 flex items-center justify-center gap-1">
+                            <i class="fas fa-gift text-accent"></i> Pre-Launch Reward Card!
+                        </h5>
+                        <p class="text-[9px] text-gray-500 leading-none">Scratch target box to win your next batch reward!</p>
+                    </div>
+                    <div class="relative w-48 h-20 mx-auto bg-white rounded-xl shadow-inner flex items-center justify-center border border-gray-100 overflow-hidden">
+                        <!-- Hidden reward message behind the canvas -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center select-none">
+                            <span class="text-[9px] uppercase font-black text-emerald-800 tracking-widest block">Aapne Jeeta</span>
+                            <span class="text-2xl font-black text-emerald-700 leading-none">₹<span id="scratch-reward-amt">0</span></span>
+                            <span class="text-[8px] text-emerald-900 font-bold bg-emerald-50 px-2 py-0.5 rounded mt-1">Wallet me save ho gaya!</span>
+                        </div>
+                        <!-- Canvas scratchable overlay -->
+                        <canvas id="scratch-canvas" class="absolute inset-0 cursor-pointer w-full h-full rounded-xl"></canvas>
+                    </div>
+                </div>
+
                 <!-- Order items summary and address -->
-                <div class="text-left text-xs space-y-2 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <div class="text-left text-xs space-y-1.5 bg-gray-50 p-3 rounded-xl border border-gray-100">
                     <div class="flex justify-between font-bold text-gray-900 border-b pb-1">
                         <span>Items summary</span>
                         <span id="celebration-total-amt" class="text-amber-950">₹0</span>
@@ -180,7 +215,7 @@
                 </div>
 
                 <!-- Dispatch indicator truck -->
-                <div class="relative h-10 overflow-hidden bg-gray-50 rounded-xl border border-gray-100 flex items-center">
+                <div class="relative h-10 overflow-hidden bg-gray-50 rounded-xl border border-gray-100 flex items-center shrink-0">
                     <div class="absolute left-0 animate-[driveAcross_3s_linear_infinite] text-primary flex items-center space-x-2">
                         <i class="fas fa-truck-fast text-base text-accent"></i>
                         <span class="text-[8px] font-bold uppercase tracking-widest text-emerald-800">Dazeen Express Delivery</span>
@@ -338,7 +373,7 @@
                 </div>
             </div>
 
-            <!-- BRAND NEW: INTERACTIVE CUSTOMER REVIEW WALL AT BOTTOM OF HOME -->
+            <!-- INTERACTIVE CUSTOMER REVIEW WALL AT BOTTOM OF HOME -->
             <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 space-y-6">
                 <div class="border-b pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div>
@@ -598,6 +633,11 @@
                                 <span>Promo Discount (10%)</span>
                                 <span>-₹<span id="discount-val">0</span></span>
                             </div>
+                            <!-- Wallet Discount Row -->
+                            <div class="flex justify-between text-amber-800 font-bold" id="wallet-discount-row" style="display: none;">
+                                <span>Dazeen Wallet Discount</span>
+                                <span>-₹<span id="wallet-discount-val">0</span></span>
+                            </div>
                             <div class="flex justify-between">
                                 <span>Shipping Fees</span>
                                 <span class="text-emerald-700 font-bold">FREE</span>
@@ -746,6 +786,18 @@
                     <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                         <span class="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Registered Account ID</span>
                         <span id="profile-phone" class="font-extrabold text-sm text-[#1b3322]">supremebeing@domain.com</span>
+                    </div>
+
+                    <!-- NEW: DAZEEN WALLET REWARD BALANCE CARD -->
+                    <div class="bg-gradient-to-br from-amber-50 to-amber-100/50 p-4 rounded-2xl border border-accent/20 flex justify-between items-center">
+                        <div>
+                            <span class="text-[9px] uppercase font-bold text-amber-900 tracking-wider block">Dazeen Wallet Balance</span>
+                            <span class="text-xl font-black text-amber-950 flex items-center gap-1">₹<span id="wallet-balance-val">0</span></span>
+                            <span class="text-[10px] text-gray-500 block mt-0.5">Agle order par automatic discount mil jayega!</span>
+                        </div>
+                        <div class="bg-accent/20 p-3 rounded-full text-accent text-lg">
+                            <i class="fas fa-wallet text-amber-800"></i>
+                        </div>
                     </div>
 
                     <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center">
@@ -1454,6 +1506,7 @@
                 `;
                 document.getElementById('subtotal-val').innerText = "0";
                 document.getElementById('discount-row').style.display = 'none';
+                document.getElementById('wallet-discount-row').style.display = 'none';
                 document.getElementById('cart-total').innerText = "0";
                 showPage('cart');
                 return;
@@ -1499,6 +1552,7 @@
 
             document.getElementById('subtotal-val').innerText = subtotal;
 
+            // Apply standard coupon discount
             let discount = 0;
             if (appliedPromoCode === "DAZEEN10") {
                 discount = Math.round(subtotal * 0.10);
@@ -1510,7 +1564,22 @@
                 document.getElementById('discount-row').style.display = 'none';
             }
 
-            document.getElementById('cart-total').innerText = subtotal - discount;
+            // Apply Wallet Discount if logged in
+            let walletDiscount = 0;
+            if (user) {
+                const walletBal = parseFloat(localStorage.getItem(`dazeen_wallet_${user.phone}`)) || 0;
+                if (walletBal > 0) {
+                    walletDiscount = Math.min(walletBal, subtotal - discount);
+                    document.getElementById('wallet-discount-val').innerText = walletDiscount;
+                    document.getElementById('wallet-discount-row').style.display = 'flex';
+                } else {
+                    document.getElementById('wallet-discount-row').style.display = 'none';
+                }
+            } else {
+                document.getElementById('wallet-discount-row').style.display = 'none';
+            }
+
+            document.getElementById('cart-total').innerText = subtotal - discount - walletDiscount;
         }
 
         function adjustQuantity(id, delta) {
@@ -1634,6 +1703,20 @@
                     phone: user.phone
                 };
 
+                // Deduct used wallet money from storage
+                const walletBal = parseFloat(localStorage.getItem(`dazeen_wallet_${user.phone}`)) || 0;
+                if (walletBal > 0) {
+                    const subtotalTemp = currentOrder.items.reduce((acc, i) => acc + (i.price * i.qty), 0);
+                    let discountTemp = 0;
+                    if (appliedPromoCode === "DAZEEN10") {
+                        discountTemp = Math.round(subtotalTemp * 0.10);
+                    }
+                    const finalUsedWalletAmt = Math.min(walletBal, subtotalTemp - discountTemp);
+                    const updatedWalletBal = walletBal - finalUsedWalletAmt;
+                    localStorage.setItem(`dazeen_wallet_${user.phone}`, updatedWalletBal);
+                    currentOrder.walletDiscountUsed = finalUsedWalletAmt;
+                }
+
                 // Add to persistent orders base
                 orders.unshift(currentOrder);
                 localStorage.setItem('dazeen_orders_store', JSON.stringify(orders));
@@ -1644,7 +1727,7 @@
                 document.getElementById('celebration-shipping-address').innerText = `${addressDetails} - PIN: ${pinVal}`;
                 
                 // Render order items directly inside details
-                document.getElementById('celebration-items-list').innerHTML = cart.map(i => `
+                document.getElementById('celebration-items-list').innerHTML = currentOrder.items.map(i => `
                     <div class="flex justify-between">
                         <span>• ${i.title}</span>
                         <span class="font-black text-gray-900">x${i.qty}</span>
@@ -1653,7 +1736,7 @@
 
                 // Configure dynamic recommendation based on what they bought
                 const recTitle = document.getElementById('rec-title');
-                const purchased250g = cart.some(i => i.id === 1);
+                const purchased250g = currentOrder.items.some(i => i.id === 1);
                 if (purchased250g) {
                     recTitle.innerText = "500g Value Roast Pack";
                     window.currentRecommendationId = 2;
@@ -1666,7 +1749,7 @@
                 cart = [];
                 saveCart();
 
-                // Trigger smooth full-screen multi-stage celebration
+                // Trigger smooth full-screen multi-stage celebration with Scratch Card reveal
                 showCelebrationPopup();
             } catch (err) {
                 console.error("Order pipeline error: ", err);
@@ -1704,6 +1787,128 @@
             }
         }
 
+        // Generate biased random reward amount between ₹1 and ₹24 (Preference towards 5-15)
+        function generateRewardAmount() {
+            const rand = Math.random();
+            if (rand < 0.70) { // 70% chance of getting 5-15
+                return Math.floor(Math.random() * 11) + 5;
+            } else if (rand < 0.85) { // 15% chance of getting 1-4
+                return Math.floor(Math.random() * 4) + 1;
+            } else { // 15% chance of getting 16-24
+                return Math.floor(Math.random() * 9) + 16;
+            }
+        }
+
+        // Canvas Scratch Card Overlay Initializer
+        function initScratchCard(rewardAmt) {
+            const canvas = document.getElementById('scratch-canvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.offsetWidth || 192;
+            const height = canvas.offsetHeight || 80;
+            canvas.width = width;
+            canvas.height = height;
+
+            // Reset custom scratch tracking datasets
+            canvas.removeAttribute('data-revealed');
+
+            // Draw a high-contrast premium gold gradient covering scratch layer
+            const grad = ctx.createLinearGradient(0, 0, width, height);
+            grad.addColorStop(0, '#c19a2e');
+            grad.addColorStop(0.3, '#fdf9e2');
+            grad.addColorStop(0.7, '#d4af37');
+            grad.addColorStop(1, '#aa7c11');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, height);
+
+            // Print metallic details overlay
+            ctx.fillStyle = '#1b3322';
+            ctx.font = '900 11px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('SCRATCH TO WIN', width / 2, height / 2 - 8);
+            ctx.font = '800 12px Inter, sans-serif';
+            ctx.fillText('🎁 UPTO ₹1000! 🎁', width / 2, height / 2 + 8);
+
+            let isScratching = false;
+
+            function scratchAction(x, y) {
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(x, y, 18, 0, Math.PI * 2);
+                ctx.fill();
+                checkScratchProgress();
+            }
+
+            function checkScratchProgress() {
+                if (canvas.getAttribute('data-revealed') === "true") return;
+
+                const imgData = ctx.getImageData(0, 0, width, height);
+                const pixels = imgData.data;
+                let transparentCount = 0;
+
+                for (let i = 0; i < pixels.length; i += 4) {
+                    if (pixels[i + 3] === 0) transparentCount++;
+                }
+
+                const clearedPercentage = (transparentCount / (pixels.length / 4)) * 100;
+                
+                // Clear fully once scratched past 45%
+                if (clearedPercentage > 45) {
+                    canvas.setAttribute('data-revealed', "true");
+                    ctx.clearRect(0, 0, width, height); // Instant complete reveal
+                    saveEarnedRewardToWallet(rewardAmt);
+                }
+            }
+
+            function getMouseCoordinates(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: clientX - rect.left,
+                    y: clientY - rect.top
+                };
+            }
+
+            // Mouse events hooks
+            canvas.addEventListener('mousedown', (e) => {
+                isScratching = true;
+                const coords = getMouseCoordinates(e);
+                scratchAction(coords.x, coords.y);
+            });
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isScratching) return;
+                const coords = getMouseCoordinates(e);
+                scratchAction(coords.x, coords.y);
+            });
+            window.addEventListener('mouseup', () => { isScratching = false; });
+
+            // Touch events hooks (responsive on mobile screens)
+            canvas.addEventListener('touchstart', (e) => {
+                isScratching = true;
+                const coords = getMouseCoordinates(e);
+                scratchAction(coords.x, coords.y);
+                e.preventDefault();
+            });
+            canvas.addEventListener('touchmove', (e) => {
+                if (!isScratching) return;
+                const coords = getMouseCoordinates(e);
+                scratchAction(coords.x, coords.y);
+                e.preventDefault();
+            });
+            window.addEventListener('touchend', () => { isScratching = false; });
+        }
+
+        function saveEarnedRewardToWallet(amt) {
+            if (!user) return;
+            let walletBal = parseFloat(localStorage.getItem(`dazeen_wallet_${user.phone}`)) || 0;
+            walletBal += amt;
+            localStorage.setItem(`dazeen_wallet_${user.phone}`, walletBal);
+            showToast(`Mubarak ho! ₹${amt} aapke Dazeen Wallet me add ho gaya hai!`, 'success');
+        }
+
         // Multi-stage flipkart animation sequence
         let confettiActive = false;
         let confettiAnimationId = null;
@@ -1716,6 +1921,10 @@
             const detailsBlock = document.getElementById('celebration-details-block');
 
             if (!overlay || !card) return;
+
+            // Generate randomized dynamic reward value
+            const earnedAmt = generateRewardAmount();
+            document.getElementById('scratch-reward-amt').innerText = earnedAmt;
 
             // Reset transitions to default state
             tickWrapper.classList.remove('py-2', 'scale-90', '-translate-y-2');
@@ -1732,7 +1941,12 @@
             startConfetti();
             playCelebrationSound();
 
-            // Stage Transition: Tick slides up and reveals Order Details
+            // Initialize custom dynamic Scratch Card drawing overlay
+            setTimeout(() => {
+                initScratchCard(earnedAmt);
+            }, 100);
+
+            // Stage Transition: Tick slides up and reveals Order Details & Scratch Card
             setTimeout(() => {
                 // Slide tick upwards & shrink slightly
                 tickWrapper.classList.remove('py-8');
@@ -1846,6 +2060,14 @@
                 return; 
             }
             document.getElementById('profile-phone').innerText = user.phone;
+
+            // Load saved wallet balance in UI
+            const walletBal = parseFloat(localStorage.getItem(`dazeen_wallet_${user.phone}`)) || 0;
+            const walletValDisplay = document.getElementById('wallet-balance-val');
+            if (walletValDisplay) {
+                walletValDisplay.innerText = walletBal;
+            }
+
             showPage('profile');
         }
 
@@ -1893,6 +2115,11 @@
                                 </div>
                             `).join('')}
                         </div>
+                        ${order.walletDiscountUsed ? `
+                        <div class="flex justify-between text-[11px] text-amber-800 font-bold bg-amber-50 px-2.5 py-1 rounded">
+                            <span>Dazeen Reward Discount applied</span>
+                            <span>-₹${order.walletDiscountUsed}</span>
+                        </div>` : ''}
                         <div class="flex justify-between items-center font-bold text-xs text-amber-950 pt-2 border-t border-gray-100">
                             <span>Total COD Amount</span>
                             <span>₹${order.total}</span>
