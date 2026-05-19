@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>dazeen - Premium Specialty Coffee Powder</title>
+    <title>dazeen - Premium Dates Seed Coffee</title>
     <!-- Tailwind CSS for modern fluid designs -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Playfair Display for headers & Inter for body -->
@@ -92,13 +92,13 @@
             <div class="flex items-center space-x-3">
                 <span onclick="showPage('home')" class="cursor-pointer flex items-center space-x-2 select-none">
                     <span class="w-10 h-10 bg-[#d4a373] text-[#1e110a] rounded-full flex items-center justify-center font-extrabold shadow-md transform hover:rotate-12 transition-transform duration-300">
-                        <i class="fas fa-coffee text-lg"></i>
+                        <i class="fas fa-seedling text-lg"></i>
                     </span>
                     <div>
                         <span class="serif-title text-2xl font-black tracking-wide text-[#faf7f2]">
                             dazeen
                         </span>
-                        <p class="text-[9px] text-stone-400 tracking-widest uppercase font-semibold">Specialty Roasters India</p>
+                        <p class="text-[9px] text-stone-400 tracking-widest uppercase font-semibold">By Shivhind – ESTD 2026</p>
                     </div>
                 </span>
             </div>
@@ -106,7 +106,7 @@
             <!-- Global Brew Search Bar -->
             <div class="flex-1 max-w-md mx-2 relative min-w-[200px]">
                 <div class="flex">
-                    <input type="text" id="search-bar" oninput="handleSearch()" placeholder="Search blends, roasts or beans..." class="w-full px-4 py-2 bg-[#2b190f] text-[#faf7f2] border border-[#3d2417] text-sm rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#d4a373] placeholder-stone-500">
+                    <input type="text" id="search-bar" oninput="handleSearch()" placeholder="Search dates seed brews..." class="w-full px-4 py-2 bg-[#2b190f] text-[#faf7f2] border border-[#3d2417] text-sm rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#d4a373] placeholder-stone-500">
                     <button onclick="handleSearch()" class="bg-[#d4a373] hover:bg-[#c68b59] text-[#1e110a] px-5 rounded-r-md transition-colors font-bold">
                         <i class="fas fa-search"></i>
                     </button>
@@ -175,12 +175,12 @@
         <div class="absolute inset-0 opacity-20 pointer-events-none bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1506370822625-61419d147fc5?auto=format&fit=crop&q=80&w=1200');"></div>
         
         <div class="relative z-10 px-4 space-y-3 max-w-2xl">
-            <span class="bg-[#d4a373]/20 border border-[#d4a373] text-[#d4a373] text-[10px] tracking-widest font-bold px-3 py-1 rounded-full uppercase">100% Specialty Arabica & Robusta</span>
+            <span class="bg-[#d4a373]/20 border border-[#d4a373] text-[#d4a373] text-[10px] tracking-widest font-bold px-3 py-1 rounded-full uppercase">100% Natural & Caffeine-Free</span>
             <h1 class="serif-title text-3xl md:text-5xl font-black text-[#faf7f2] drop-shadow-md">
-                Freshly Roasted <span class="italic text-[#d4a373]">On-Demand</span>
+                Dates Seed <span class="italic text-[#d4a373]">Coffee</span>
             </h1>
             <p class="text-xs md:text-sm text-stone-300 leading-relaxed font-light">
-                Dazeen imports single-origin cherries from Coorg, Chikmagalur & Mysore, custom profiles, and grinds specifically to deliver pure coffee powder.
+                Experience a new way of coffee with Dazeen, a premium caffeine-free brew made from finely roasted date seeds. Enjoy it hot or cold — black, with milk, or as a refreshing cold coffee.
             </p>
         </div>
         <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#faf7f2] to-transparent"></div>
@@ -191,13 +191,37 @@
         
         <!-- HOME PAGE (2 PREMIUM PRODUCTS) -->
         <section id="page-home" class="page-view space-y-6">
+            <!-- Brand Highlights Intro -->
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 bg-white p-4 rounded-2xl shadow-sm border border-stone-200/50 text-center">
+                <div class="p-2 border-r border-stone-100 last:border-0">
+                    <i class="fas fa-leaf text-[#d4a373] text-lg mb-1"></i>
+                    <p class="text-[10px] font-bold text-stone-800 uppercase leading-tight">100% Natural</p>
+                </div>
+                <div class="p-2 border-r border-stone-100 last:border-0">
+                    <i class="fas fa-ban text-red-500 text-lg mb-1"></i>
+                    <p class="text-[10px] font-bold text-stone-800 uppercase leading-tight">Caffeine-Free</p>
+                </div>
+                <div class="p-2 border-r border-stone-100 last:border-0">
+                    <i class="fas fa-shield-virus text-[#d4a373] text-lg mb-1"></i>
+                    <p class="text-[10px] font-bold text-stone-800 uppercase leading-tight">No Preservatives</p>
+                </div>
+                <div class="p-2 border-r border-stone-100 last:border-0">
+                    <i class="fas fa-feather-alt text-[#d4a373] text-lg mb-1"></i>
+                    <p class="text-[10px] font-bold text-stone-800 uppercase leading-tight">Light on Stomach</p>
+                </div>
+                <div class="p-2 col-span-2 md:col-span-1">
+                    <i class="fas fa-certificate text-emerald-600 text-lg mb-1"></i>
+                    <p class="text-[10px] font-bold text-stone-800 uppercase leading-tight">By Shivhind</p>
+                </div>
+            </div>
+
             <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-xl shadow-sm border border-stone-200/60">
                 <div>
                     <h2 class="serif-title text-2xl font-bold text-[#1e110a] flex items-center">
                         <span class="inline-block w-2.5 h-6 bg-[#d4a373] mr-3 rounded-full"></span>
-                        <span id="category-title-display">Freshly Roasted Coffee Powders</span>
+                        <span id="category-title-display">Finely Roasted Date Seed Blends</span>
                     </h2>
-                    <p class="text-xs text-stone-500 mt-1">Click on a product to explore customized roast details immediately!</p>
+                    <p class="text-xs text-stone-500 mt-1">Make the smarter switch. Choose clean energy. Choose Dazeen.</p>
                 </div>
             </div>
 
@@ -541,32 +565,32 @@
         const products = [
             {
                 id: 1,
-                title: "Dazeen Signature Espresso Powder (Premium Dark Roast)",
+                title: "Dazeen Signature Dates Seed Powder (Dark Roast)",
                 category: "House Blends",
                 price: 490,
                 rating: 4.8,
                 reviewCount: 320,
                 image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=400",
-                desc: "Our finest specialty blend specifically profiled for rich velvety crema. Notes of molasses, dark cocoa, and toasted walnuts. Low acidity, high body, bold mouthfeel.",
-                terms: "Best consumed within 6 months of roasting date. 100% biodegradable bag.",
+                desc: "Experience a new way of coffee with Dazeen. A premium caffeine-free brew made from 100% natural, finely roasted date seeds. Delivers a rich aroma, smooth texture, and a satisfying coffee-like taste — without caffeine. Light on the stomach and perfect for your daily routine.",
+                terms: "100% Natural & Caffeine-Free. No Chemicals or Preservatives. Crafted by Shivhind - ESTD 2026.",
                 stock: 14,
                 roastLevel: "Dark Roast",
-                acidity: "Low",
+                acidity: "Caffeine-Free",
                 body: "Heavy & Intense"
             },
             {
                 id: 2,
-                title: "Mysore Nuggets Extra Bold Powder (Medium Roast)",
+                title: "Dazeen Classic Dates Seed Powder (Medium Roast)",
                 category: "Single Origin",
-                price: 580,
+                price: 450,
                 rating: 4.9,
                 reviewCount: 194,
                 image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=400",
-                desc: "An elite Indian Arabica coffee. Sourced from Bababudangiri estates. Delicate citrus tones combined with honey sweetness and a smooth, elegant vanilla-caramel finish.",
-                terms: "100% Single Estate Arabica. Micro-batch roasted weekly.",
+                desc: "Expertly roasted date seeds produce a satisfying coffee profile without any chemicals, preservatives, or caffeine. Perfect for fitness enthusiasts, health-conscious individuals, or clean lifetyle lovers. Enjoy it hot or cold — black, with milk, or as a refreshing cold coffee.",
+                terms: "100% Pure Date Seed Powder. Smooth, Rich Coffee-Like Taste. Crafted by Shivhind.",
                 stock: 8,
                 roastLevel: "Medium Roast",
-                acidity: "Medium-High",
+                acidity: "Caffeine-Free",
                 body: "Smooth & Balanced"
             }
         ];
@@ -726,7 +750,7 @@
                             
                             <div class="flex items-center space-x-2 text-[10px] bg-stone-50 text-stone-600 px-2.5 py-1 rounded-md w-fit font-semibold">
                                 <span class="border-r border-stone-200 pr-2">Body: ${p.body}</span>
-                                <span>Acidity: ${p.acidity}</span>
+                                <span>Caffeine: ${p.acidity}</span>
                             </div>
                             
                             <div class="flex items-baseline space-x-1 pt-1">
@@ -763,7 +787,7 @@
                     <!-- Product Visual Media -->
                     <div class="flex flex-col items-center justify-center p-6 bg-stone-50 rounded-2xl border border-stone-200/60 relative">
                         <span class="absolute top-4 left-4 bg-emerald-100 text-emerald-800 text-[10px] uppercase font-extrabold px-3 py-1 rounded-full">
-                            <i class="fas fa-leaf mr-1"></i> Shade Grown
+                            <i class="fas fa-leaf mr-1"></i> 100% Natural
                         </span>
                         <img src="${p.image}" class="max-h-72 object-contain rounded-xl drop-shadow-md" alt="${p.title}" onerror="this.src='https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=400'">
                     </div>
@@ -772,7 +796,7 @@
                     <div class="flex flex-col justify-between space-y-6">
                         <div class="space-y-4">
                             <span class="bg-[#d4a373]/20 border border-[#d4a373] text-[#8c502b] text-[10px] tracking-widest font-extrabold px-3 py-1 rounded-full uppercase">
-                                ${p.category} BEST SELLER
+                                CAFFEINE-FREE SPECIALTY
                             </span>
                             
                             <h1 class="serif-title text-2xl font-bold text-stone-900 leading-snug">${p.title}</h1>
@@ -796,7 +820,7 @@
                                     <p class="text-xs font-black text-stone-800">${p.roastLevel}</p>
                                 </div>
                                 <div class="border-x border-stone-200">
-                                    <p class="text-[9px] text-stone-400 font-bold uppercase tracking-wider">Acidity</p>
+                                    <p class="text-[9px] text-stone-400 font-bold uppercase tracking-wider">Caffeine</p>
                                     <p class="text-xs font-black text-stone-800">${p.acidity}</p>
                                 </div>
                                 <div>
@@ -812,7 +836,7 @@
 
                             <div class="border-t pt-4 space-y-1">
                                 <p class="text-3xl font-black text-[#8c502b]">₹${p.price.toLocaleString('en-IN')}</p>
-                                <p class="text-[10px] text-emerald-600 font-bold"><i class="fas fa-truck mr-1"></i> Dispatched under 24hrs / Pure Single Estate</p>
+                                <p class="text-[10px] text-emerald-600 font-bold"><i class="fas fa-truck mr-1"></i> Dispatched under 24hrs / Pure Dates Seed Brew</p>
                             </div>
                         </div>
 
@@ -848,7 +872,7 @@
         function filterCategory(categoryName) {
             selectedCategory = categoryName;
             document.getElementById('category-title-display').innerText = categoryName === 'All' 
-                ? 'Freshly Roasted Coffee Powders' 
+                ? 'Finely Roasted Date Seed Blends' 
                 : `${categoryName} Specials`;
             
             document.querySelectorAll('.category-pill').forEach(pill => {
@@ -953,7 +977,7 @@
                     <div class="text-center py-12 space-y-4">
                         <i class="fas fa-coffee text-5xl text-stone-200"></i>
                         <h4 class="serif-title font-bold text-stone-700 text-lg">Your Coffee Mug is empty</h4>
-                        <p class="text-xs text-stone-400">Discover handpicked high-elevation single estate organic beans now.</p>
+                        <p class="text-xs text-stone-400">Discover handpicked, premium date seed coffees now.</p>
                         <button onclick="showPage('home')" class="bg-[#1e110a] text-[#d4a373] py-2.5 px-6 rounded-xl text-xs font-bold shadow transition-all">Start Brewing</button>
                     </div>
                 `;
@@ -975,7 +999,7 @@
                 <div class="flex flex-wrap items-center justify-between gap-4 border-b border-stone-100 pb-4 last:border-0 last:pb-0">
                     <div class="flex items-center space-x-4">
                         <img src="${item.image}" class="w-16 h-16 object-cover rounded-xl p-1 bg-stone-50 border shrink-0" onerror="this.src='https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=400'">
-                        <div class="space-y-1 max-w-md font-sans">
+                        <div class="space-y-1 max-w-md">
                             <h4 class="serif-title font-bold text-sm text-stone-900 line-clamp-2 leading-tight">${item.title}</h4>
                             <p class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded w-fit"><i class="fas fa-check"></i> Fresh Batch Roast Checked</p>
                             
@@ -1471,6 +1495,7 @@ ${itemsText}
 GRAND TOTAL REMITTED:  ₹${order.total.toLocaleString('en-IN')}
 ========================================
   Brew with Love. Drink with Passion.
+  Crafted by Shivhind - ESTD 2026.
 ========================================
 `;
             
