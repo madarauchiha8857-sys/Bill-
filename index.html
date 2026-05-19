@@ -392,61 +392,11 @@
                     <span onclick="setCarouselSlide(3)" class="carousel-dot w-2 h-2 rounded-full bg-gray-200 cursor-pointer transition"></span>
                 </div>
             </div>
-
-            <!-- INTERACTIVE CUSTOMER REVIEW WALL AT BOTTOM OF HOME -->
-            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 space-y-6">
-                <div class="border-b pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div>
-                        <h3 class="text-lg md:text-xl font-extrabold text-gray-900 flex items-center gap-2">
-                            <i class="fas fa-comments text-accent"></i> Customer Review Wall
-                        </h3>
-                        <p class="text-xs text-gray-500">True reviews from verified wellness seekers.</p>
-                    </div>
-                    <button onclick="scrollToReviewForm()" class="bg-primary hover:bg-emerald-950 text-accent font-bold py-2 px-4 rounded-xl text-xs transition shadow-sm">
-                        Write a Review
-                    </button>
-                </div>
-
-                <!-- Live reviews container -->
-                <div id="reviews-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Loaded dynamically via JS from localStorage -->
-                </div>
-
-                <!-- Submit Review Form Block -->
-                <div id="review-form-block" class="bg-gray-50 p-5 rounded-2xl border border-gray-100 space-y-4">
-                    <h4 class="font-extrabold text-sm text-gray-900">Share Your Experience</h4>
-                    <form id="home-review-form" onsubmit="handleReviewSubmit(event)" class="space-y-3">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Your Name</label>
-                                <input type="text" id="review-name" required class="w-full border border-gray-200 p-2.5 rounded-xl text-xs focus:ring-1 focus:ring-accent focus:outline-none font-semibold" placeholder="Enter name">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Star Rating</label>
-                                <div class="flex items-center space-x-1.5 pt-1" id="star-rating-selector">
-                                    <button type="button" onclick="setStarRating(1)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
-                                    <button type="button" onclick="setStarRating(2)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
-                                    <button type="button" onclick="setStarRating(3)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
-                                    <button type="button" onclick="setStarRating(4)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
-                                    <button type="button" onclick="setStarRating(5)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Review Comments</label>
-                            <textarea id="review-comment" rows="3" required class="w-full border border-gray-200 p-2.5 rounded-xl text-xs focus:ring-1 focus:ring-accent focus:outline-none font-medium" placeholder="Tell us how you enjoyed the rich aroma, custom packaging, or safe delivery..."></textarea>
-                        </div>
-                        <button type="submit" class="bg-primary hover:bg-emerald-950 text-accent font-bold py-2 px-6 rounded-xl text-xs transition tracking-wide shadow-sm">
-                            Submit Review 👍
-                        </button>
-                    </form>
-                </div>
-            </div>
         </section>
 
 
         <!-- PRODUCT DETAIL VIEW (Masterpiece Animating Full Page) -->
-        <section id="page-product-detail" class="page-view hidden space-y-6 page-transition">
+        <section id="page-product-detail" class="page-view hidden space-y-8 page-transition">
             <div class="flex items-center space-x-2">
                 <button onclick="showPage('home')" class="text-xs font-bold text-primary hover:text-accent bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm flex items-center space-x-2 transition duration-150">
                     <i class="fas fa-arrow-left"></i>
@@ -516,6 +466,16 @@
                         </div>
                     </div>
 
+                    <!-- NEW: PRODUCT QUANTITY SELECTOR IN DETAIL VIEW -->
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 flex items-center justify-between gap-4">
+                        <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">Select Roast Quantity</span>
+                        <div class="flex items-center space-x-1 border border-gray-300 rounded-xl bg-white p-1">
+                            <button type="button" onclick="adjustDetailQty(-1)" class="w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-sm font-bold shadow-sm focus:outline-none transition">-</button>
+                            <input type="text" id="detail-qty-val" readonly value="1" class="w-10 text-center bg-transparent text-xs font-extrabold focus:outline-none select-none">
+                            <button type="button" onclick="adjustDetailQty(1)" class="w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-sm font-bold shadow-sm focus:outline-none transition">+</button>
+                        </div>
+                    </div>
+
                     <!-- Direct Ordering Trigger Deck -->
                     <div class="space-y-3 pt-6 border-t border-gray-100">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -532,6 +492,56 @@
                             ⚡ Pre-launch batch dispatch starts directly from our roasting units. Delivery takes 5-7 days.
                         </p>
                     </div>
+                </div>
+            </div>
+
+            <!-- PRODUCT-SPECIFIC CUSTOMER REVIEW WALL (Moved inside Product Detail View) -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 space-y-6">
+                <div class="border-b pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h3 class="text-lg md:text-xl font-extrabold text-gray-900 flex items-center gap-2">
+                            <i class="fas fa-comments text-accent"></i> Customer Review Wall
+                        </h3>
+                        <p class="text-xs text-gray-500">True, verified feedback specifically for this blend.</p>
+                    </div>
+                    <button onclick="scrollToReviewForm()" class="bg-primary hover:bg-emerald-950 text-accent font-bold py-2 px-4 rounded-xl text-xs transition shadow-sm">
+                        Write a Review
+                    </button>
+                </div>
+
+                <!-- Live product-specific reviews container -->
+                <div id="reviews-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Loaded dynamically via JS from localStorage -->
+                </div>
+
+                <!-- Submit Review Form Block -->
+                <div id="review-form-block" class="bg-gray-50 p-5 rounded-2xl border border-gray-100 space-y-4 animate-[pageFadeIn_0.3s_forwards]">
+                    <h4 class="font-extrabold text-sm text-gray-900">Share Your Experience</h4>
+                    <form id="home-review-form" onsubmit="handleReviewSubmit(event)" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Your Name</label>
+                                <input type="text" id="review-name" required class="w-full border border-gray-200 p-2.5 rounded-xl text-xs focus:ring-1 focus:ring-accent focus:outline-none font-semibold" placeholder="Enter name">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Star Rating</label>
+                                <div class="flex items-center space-x-1.5 pt-1" id="star-rating-selector">
+                                    <button type="button" onclick="setStarRating(1)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
+                                    <button type="button" onclick="setStarRating(2)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
+                                    <button type="button" onclick="setStarRating(3)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
+                                    <button type="button" onclick="setStarRating(4)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
+                                    <button type="button" onclick="setStarRating(5)" class="text-xl text-gray-300 hover:text-accent transition focus:outline-none"><i class="fas fa-star"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-600 uppercase mb-1">Review Comments</label>
+                            <textarea id="review-comment" rows="3" required class="w-full border border-gray-200 p-2.5 rounded-xl text-xs focus:ring-1 focus:ring-accent focus:outline-none font-medium" placeholder="Tell us how you enjoyed the rich aroma, custom packaging, or safe delivery..."></textarea>
+                        </div>
+                        <button type="submit" class="bg-primary hover:bg-emerald-950 text-accent font-bold py-2 px-6 rounded-xl text-xs transition tracking-wide shadow-sm">
+                            Submit Review 👍
+                        </button>
+                    </form>
                 </div>
             </div>
         </section>
@@ -882,6 +892,9 @@
         let selectedStarRating = 5; // Default review rating
         let currentCarouselIndex = 0; // Dynamic slider state tracker
         let carouselIntervalId = null;
+        
+        // Active viewing product reference for quantity configuration
+        let activeViewingProductId = 1;
 
         // Modernized Toast Alerts System
         function showToast(message, type = 'success') {
@@ -921,7 +934,6 @@
             showPage('home');
             document.getElementById('address-form').addEventListener('submit', handleOrderSubmit);
             syncAuthInterface();
-            loadReviews(); // Dynamic review rendering
             startCarouselAutoPlay(); // Dynamic sliding carousel sequences
         });
 
@@ -1132,12 +1144,22 @@
             document.getElementById('review-form-block').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        function loadReviews() {
+        function loadReviews(productId) {
             const container = document.getElementById('reviews-list-container');
-            const storedReviews = JSON.parse(localStorage.getItem('dazeen_wall_reviews')) || [
-                { name: "Edward Carter", rating: 5, comment: "Absolutely stunning coffee replacement. Perfect rich texture, no sour acidity, and wonderful cocoa notes!", date: "15/05/2026" },
-                { name: "Priya Patel", rating: 5, comment: "I am amazed by the quality. Ground fresh, and standard delivery reached me fast. Excellent team support at support@dazeen.in", date: "18/05/2026" }
-            ];
+            
+            // Tailored default reviews per product
+            const defaultReviewsMap = {
+                1: [
+                    { name: "Edward Carter", rating: 5, comment: "Absolutely stunning coffee replacement. Perfect rich texture, no sour acidity, and wonderful cocoa notes!", date: "15/05/2026" },
+                    { name: "Jessica Taylor", rating: 5, comment: "The 250g pack is perfect for trying it out. The rich medium roast fits my French press beautifully!", date: "18/05/2026" }
+                ],
+                2: [
+                    { name: "Priya Patel", rating: 5, comment: "I am amazed by the quality of this 500g value pack. It keeps fresh forever with the zipper lock!", date: "12/05/2026" },
+                    { name: "David Miller", rating: 5, comment: "Great value! Ordering this is now part of my family's morning ritual. Clean, pure, caffeine-free wellness.", date: "19/05/2026" }
+                ]
+            };
+
+            const storedReviews = JSON.parse(localStorage.getItem(`dazeen_wall_reviews_p${productId}`)) || defaultReviewsMap[productId] || [];
 
             container.innerHTML = storedReviews.map(r => `
                 <div class="bg-gray-50/70 p-4 rounded-2xl border border-gray-100/50 space-y-2 text-xs">
@@ -1163,10 +1185,7 @@
                 return;
             }
 
-            const storedReviews = JSON.parse(localStorage.getItem('dazeen_wall_reviews')) || [
-                { name: "Edward Carter", rating: 5, comment: "Absolutely stunning coffee replacement. Perfect rich texture, no sour acidity, and wonderful cocoa notes!", date: "15/05/2026" },
-                { name: "Priya Patel", rating: 5, comment: "I am amazed by the quality. Ground fresh, and standard delivery reached me fast. Excellent team support at support@dazeen.in", date: "18/05/2026" }
-            ];
+            const storedReviews = JSON.parse(localStorage.getItem(`dazeen_wall_reviews_p${activeViewingProductId}`)) || [];
 
             const newReview = {
                 name: name,
@@ -1176,14 +1195,14 @@
             };
 
             storedReviews.unshift(newReview);
-            localStorage.setItem('dazeen_wall_reviews', JSON.stringify(storedReviews));
+            localStorage.setItem(`dazeen_wall_reviews_p${activeViewingProductId}`, JSON.stringify(storedReviews));
 
             // Reset inputs
             document.getElementById('review-name').value = '';
             document.getElementById('review-comment').value = '';
             setStarRating(5);
 
-            loadReviews();
+            loadReviews(activeViewingProductId);
             showToast("Thank you so much! Your review was successfully published.", "success");
         }
 
@@ -1296,6 +1315,8 @@
             const product = products.find(p => p.id === id);
             if (!product) return;
 
+            activeViewingProductId = id;
+
             // Fill Product Detail Page Elements
             document.getElementById('detail-img').src = product.image;
             document.getElementById('detail-title').innerText = product.title;
@@ -1304,29 +1325,47 @@
             document.getElementById('detail-desc').innerText = product.desc;
             document.getElementById('detail-rating').innerHTML = `<i class="fas fa-star text-yellow-500"></i> ${product.rating.split(' ')[0]}`;
 
-            // Attach dynamic checkout button event triggers
+            // Reset quantity selector on the page to default 1
+            document.getElementById('detail-qty-val').value = 1;
+
+            // Attach dynamic checkout button event triggers that read current detail quantity
             document.getElementById('detail-add-cart-btn').onclick = () => {
-                addToCart(product.id);
+                const selectedQty = parseInt(document.getElementById('detail-qty-val').value) || 1;
+                addToCart(product.id, selectedQty);
             };
             document.getElementById('detail-buy-now-btn').onclick = () => {
-                executeDirectAiOrder(product.id);
+                const selectedQty = parseInt(document.getElementById('detail-qty-val').value) || 1;
+                executeDirectAiOrder(product.id, selectedQty);
             };
+
+            // Load reviews specifically associated with this product ID
+            loadReviews(id);
 
             // Navigate securely to the detail page
             showPage('product-detail');
         }
 
+        // Adjust Detail Quantity Selector State
+        function adjustDetailQty(delta) {
+            const qtyInput = document.getElementById('detail-qty-val');
+            if (qtyInput) {
+                let currentVal = parseInt(qtyInput.value) || 1;
+                currentVal += delta;
+                if (currentVal < 1) currentVal = 1;
+                qtyInput.value = currentVal;
+            }
+        }
 
-        function addToCart(id) {
+        function addToCart(id, qty = 1) {
             const product = products.find(p => p.id === id);
             const existing = cart.find(item => item.id === id);
             if(existing) {
-                existing.qty += 1;
+                existing.qty += qty;
             } else {
-                cart.push({...product, qty: 1});
+                cart.push({...product, qty: qty});
             }
             saveCart();
-            showToast(`Added ${product.title} to your basket!`, 'success');
+            showToast(`Added ${qty}x ${product.title} to your basket!`, 'success');
         }
 
         function saveCart() {
@@ -1390,7 +1429,7 @@
             container.innerHTML = cart.map(item => {
                 subtotal += item.price * item.qty;
                 return `
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-100 pb-4 last:border-0 last:pb-0 gap-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-100 pb-4 last:border-0 last:pb-0 gap-4 animate-[pageFadeIn_0.3s_forwards]">
                         <div class="flex items-center space-x-4 flex-grow">
                             <img src="${item.image}" class="w-14 h-14 object-cover rounded-xl border shrink-0" onerror="this.src='https://placehold.co/100x100/1b3322/ffffff?text=Date+Seed+Roast'">
                             <div class="space-y-1">
@@ -1663,13 +1702,13 @@
             `;
         }
 
-        function executeDirectAiOrder(pid) {
+        function executeDirectAiOrder(pid, qty = 1) {
             const product = products.find(p => p.id === pid);
             if (!product) return;
 
-            cart = [{ ...product, qty: 1 }];
+            cart = [{ ...product, qty: qty }];
             saveCart();
-            showToast(`Securely set cart to ${product.title} and moving to checkout!`, 'success');
+            showToast(`Securely set cart to ${qty}x ${product.title} and moving to checkout!`, 'success');
             
             if (!user) {
                 toggleAuthState('signup');
