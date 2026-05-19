@@ -247,14 +247,14 @@
     </div>
 
 
-    <!-- FRESH TO ORDER HEADER BANNER -->
-    <div class="bg-[#d4af37]/10 border-b border-[#d4af37]/30 text-[#5c3a21] py-3 px-4 text-center text-[11px] sm:text-xs font-bold shadow-sm relative z-10">
+    <!-- FRESH TO ORDER HEADER BANNER (Has ID to hide dynamically) -->
+    <div id="fresh-banner" class="bg-[#d4af37]/10 border-b border-[#d4af37]/30 text-[#5c3a21] py-3 px-4 text-center text-[11px] sm:text-xs font-bold shadow-sm relative z-10">
         ✨ <strong class="text-primary uppercase font-extrabold tracking-wide">Mera Apna Premium batch:</strong> Jaise aap order dete ho, vaise hi fresh roast karke hum aapko banake dete hain!
     </div>
 
 
-    <!-- HERO INTRO BANNER -->
-    <header class="bg-gradient-to-r from-primary via-emerald-950 to-amberDark text-white py-10 md:py-16 px-4 relative overflow-hidden shadow-inner text-center shrink-0">
+    <!-- HERO INTRO BANNER (Has ID to hide dynamically) -->
+    <header id="hero-banner" class="bg-gradient-to-r from-primary via-emerald-950 to-amberDark text-white py-10 md:py-16 px-4 relative overflow-hidden shadow-inner text-center shrink-0">
         <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px]"></div>
         <div class="max-w-4xl mx-auto relative z-10 space-y-4">
             <span class="bg-accent/20 border border-accent/40 text-accent text-[10px] md:text-xs uppercase font-extrabold px-3 py-1 rounded-full tracking-wider inline-block">
@@ -416,9 +416,9 @@
         </section>
 
 
-        <!-- Dedicated WhatsApp Style DZN Support Panel -->
+        <!-- Dedicated WhatsApp Style DZN Support Panel (Made Responsive to fit full height dynamically) -->
         <section id="page-support" class="page-view hidden max-w-xl mx-auto page-transition">
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col h-[520px]">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col h-[calc(100vh-12rem)] md:h-[600px]">
                 
                 <!-- WhatsApp styled green header bar -->
                 <div class="bg-primary p-4 text-white flex justify-between items-center shrink-0 border-b border-accent/20">
@@ -1096,26 +1096,40 @@
 
 
         // Core Page Navigation Routing (Syncs Desktop Top Nav and Mobile Bottom Nav highlighters)
+        // HIDES INTRO BANNERS EXCLUSIVELY ON NON-HOME PAGES TO FORBID ADJACENT CUT-OFFS
         function showPage(pageId) {
-            // Un-highlight all desktop navigation headers
+            // 1. Manage Hero and Promotional Banners visibility dynamically
+            const heroBanner = document.getElementById('hero-banner');
+            const freshBanner = document.getElementById('fresh-banner');
+            
+            if (pageId === 'home') {
+                heroBanner?.classList.remove('hidden');
+                freshBanner?.classList.remove('hidden');
+            } else {
+                heroBanner?.classList.add('hidden');
+                freshBanner?.classList.add('hidden');
+            }
+
+            // 2. Un-highlight all desktop navigation headers
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('text-accent', 'border-accent'));
             // Un-highlight all mobile bottom navigation button icons
             document.querySelectorAll('.fixed.bottom-0 button').forEach(b => b.classList.remove('text-accent'));
 
+            // 3. Toggle Pages Content View blocks
             document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
             const target = document.getElementById(`page-${pageId}`);
             if (target) {
                 target.classList.remove('hidden');
             }
 
-            // Sync Nav Highlights - Desktop Top Bar
+            // 4. Sync Active Highlights - Desktop Top Bar
             const desktopHomeBtn = document.getElementById('nav-home');
             const desktopProfileBtn = document.getElementById('nav-profile');
             const desktopOrdersBtn = document.getElementById('nav-orders');
             const desktopSupportBtn = document.getElementById('nav-support');
             const desktopCartBtn = document.getElementById('nav-cart');
 
-            // Sync Nav Highlights - Mobile Bottom Bar
+            // 5. Sync Active Highlights - Mobile Bottom Bar
             const mobileHomeBtn = document.getElementById('mobile-nav-home');
             const mobileCartBtn = document.getElementById('mobile-nav-cart');
             const mobileOrdersBtn = document.getElementById('mobile-nav-orders');
