@@ -443,7 +443,6 @@
             }
         ];
 
-        // State variables
         let cart = JSON.parse(localStorage.getItem('dazeen_coffee_cart')) || [];
         let user = JSON.parse(localStorage.getItem('dazeen_coffee_user')) || null; 
         let orders = JSON.parse(localStorage.getItem('dazeen_coffee_orders')) || [];
@@ -650,6 +649,9 @@
 
             showToast("Opening elegant coffee detail page in a secure new tab...", "info");
 
+            // We safely concatenate the closing script tag to prevent any HTML parser collisions!
+            const closeScriptTag = '</' + 'script>';
+
             const newTabHtml = `
             <!DOCTYPE html>
             <html lang="en">
@@ -658,7 +660,7 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>${p.title} - Dazeen Specialty Roasters</title>
                 <script src="https://cdn.tailwindcss.com"></script>
-                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,500&display=swap" rel="stylesheet">
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:ital,wght=0,600;0,800;1,500&display=swap" rel="stylesheet">
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
                 <style>
                     body {
@@ -691,6 +693,12 @@
 
                 <!-- DETAIL DISPLAY CARD -->
                 <main class="flex-grow max-w-4xl mx-auto p-6 md:p-12 w-full">
+                    <!-- Inline warning banner replaces ugly alert window blocks -->
+                    <div id="error-box" class="hidden mb-6 bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl text-xs font-semibold flex items-center gap-2">
+                        <i class="fas fa-exclamation-triangle text-lg text-red-500"></i>
+                        <span>Main app window is closed or was reloaded! Please reopen the main app tab to sync your coffee basket checkout safely.</span>
+                    </div>
+
                     <div class="bg-white rounded-2xl shadow-xl border border-stone-200/60 overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8">
                         
                         <!-- Product Visual Media with mock steam animations -->
@@ -716,10 +724,10 @@
                                         <i class="fas fa-star"></i>
                                         <i class="fas fa-star"></i>
                                         <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star text-stone-300"></i>
                                     </div>
                                     <span class="font-bold text-stone-700">${p.rating} / 5.0</span>
-                                    <span class="text-stone-400">(${p.reviewCount} expert evaluations)</span>
+                                    <span class="text-stone-400">(${p.reviewCount} evaluations)</span>
                                 </div>
 
                                 <!-- Tasting specifications -->
@@ -788,15 +796,18 @@
                             // Auto close child tab
                             window.close();
                         } else {
-                            alert("Main app window is closed! Please reopen main app to complete checkout.");
+                            const errBox = document.getElementById('error-box');
+                            if (errBox) {
+                                errBox.classList.remove('hidden');
+                            }
                         }
                     }
-                <\/script>
+                ${closeScriptTag}
             </body>
             </html>
             `;
 
-            // Open the new tab
+            // Open the new tab securely
             const newWindow = window.open("", "_blank");
             if (newWindow) {
                 newWindow.document.write(newTabHtml);
