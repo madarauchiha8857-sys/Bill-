@@ -43,91 +43,19 @@
         .live-indicator {
             animation: pulse-ring 2s infinite;
         }
-        @keyframes bounce-arrow {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
+
+        /* */
+        @keyframes bluetick-pop {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
         }
-        .bounce-arrow {
-            animation: bounce-arrow 1.8s infinite ease-in-out;
-        }
-        /* Mobile Premium Fluid Splash Screen mechanics */
-        #splash-screen {
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(circle at center, #2b190f 0%, #1e110a 100%);
-            z-index: 99999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            will-change: transform;
-            touch-action: none; /* Prevents default mobile bounce/scroll triggers while swiping */
-            user-select: none;
-        }
-        .splash-logo-box {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        .splash-cup {
-            transform: scale(0);
-            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .splash-text {
-            font-family: 'Playfair Display', serif;
-            font-weight: 900;
-            color: #faf7f2;
-            width: 0px;
-            opacity: 0;
-            overflow: hidden;
-            white-space: nowrap;
-            transition: width 0.9s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.6s ease-in-out;
-            margin-left: 0.75rem;
-            letter-spacing: -0.05em;
-        }
-        .splash-logo-box.reveal .splash-cup {
-            transform: scale(1);
-        }
-        /* Completely safe mobile dimension limits to prevent clipping */
-        .splash-logo-box.reveal .splash-text {
-            width: 130px; 
-            opacity: 1;
-        }
-        @media (min-width: 640px) {
-            .splash-logo-box.reveal .splash-text {
-                width: 175px;
-            }
+        .animate-bluetick {
+            animation: bluetick-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative pb-32 md:pb-20 text-stone-800">
-
-    <!-- INTRO SPLASH PRELOADER CONTAINER -->
-    <div id="splash-screen">
-        <div class="flex flex-col items-center justify-center max-w-sm px-6 w-full">
-            <!-- Brand Symmetrical Logo Anim -->
-            <div id="splash-logo" class="splash-logo-box">
-                <i class="fas fa-coffee splash-cup text-5xl sm:text-6xl text-[#d4a373]"></i>
-                <span class="splash-text text-5xl sm:text-6xl">dazeen</span>
-            </div>
-            
-            <p class="text-[10px] text-stone-400 tracking-widest uppercase font-semibold mt-4 text-center opacity-0 transition-opacity duration-1000 delay-700" id="splash-subtitle">
-                Specialty Roasters India
-            </p>
-
-            <!-- Swipe/Slide interaction controller (Highly Touch Comfortable) -->
-            <div id="splash-trigger" class="mt-24 flex flex-col items-center justify-center text-center opacity-0 transition-opacity duration-1000 delay-1000 w-full">
-                <span class="text-[11px] tracking-widest uppercase font-bold text-[#d4a373]">Swipe Up to Enter</span>
-                
-                <!-- Safe hit area touch button -->
-                <button onclick="exitSplash()" class="mt-4 w-14 h-14 rounded-full border border-[#d4a373]/30 bg-[#2b190f] text-[#d4a373] flex items-center justify-center shadow-lg hover:bg-[#d4a373] hover:text-[#1e110a] active:scale-90 transition-all bounce-arrow">
-                    <i class="fas fa-chevron-up text-lg"></i>
-                </button>
-                <span class="text-[9px] text-stone-500 mt-3 font-light">or tap the gold arrow</span>
-            </div>
-        </div>
-    </div>
 
     <!-- DYNAMIC TOAST NOTIFICATION DOCK -->
     <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
@@ -489,6 +417,89 @@
         </div>
     </div>
 
+    <!-- ORDER CONFIRMATION & BLUE TICK ANIMATION DOCK -->
+    <div id="order-confirmation-modal" class="fixed inset-0 bg-[#1e110a]/90 backdrop-blur-md z-[200] hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl relative border border-stone-200/60 overflow-hidden">
+            
+            <!-- Confirmed Animation Area -->
+            <div class="flex flex-col items-center justify-center min-h-[400px]">
+                
+                <!-- Blue Tick Container with sliding layout parameters -->
+                <div id="bluetick-wrapper" class="flex flex-col md:flex-row items-center justify-center transition-all duration-700 ease-in-out transform translate-y-20 space-y-4 md:space-y-0 md:space-x-4">
+                    <!-- Bluetick Badge -->
+                    <div id="bluetick-badge" class="w-20 h-20 md:w-16 md:h-16 bg-[#1d9bf0] text-white rounded-full flex items-center justify-center shadow-xl scale-0 opacity-0">
+                        <i class="fas fa-check text-4xl md:text-3xl"></i>
+                    </div>
+                    <!-- Order Reference ID Revealed next to Blue Tick -->
+                    <div id="confirmation-header-text" class="text-center md:text-left opacity-0 max-w-0 overflow-hidden whitespace-nowrap transition-all duration-700 ease-in-out">
+                        <p class="text-[10px] uppercase tracking-widest text-[#1d9bf0] font-bold leading-none">Specialty Roast Confirmed</p>
+                        <h3 class="serif-title text-xl md:text-2xl font-black text-stone-900 mt-1" id="conf-order-id">DAZEEN-COFFEE-XXXXXX</h3>
+                    </div>
+                </div>
+
+                <!-- Descriptive Content Block (Products, Address & Real-time Live Status Tracking) -->
+                <div id="conf-details-card" class="w-full mt-10 space-y-5 opacity-0 translate-y-10 transition-all duration-700 ease-in-out hidden">
+                    
+                    <!-- Products summary sub-card -->
+                    <div class="bg-stone-50 p-4 rounded-xl border border-stone-200/50 space-y-2">
+                        <p class="text-[9px] uppercase tracking-widest font-extrabold text-stone-400">Coffee Items Sourced</p>
+                        <div id="conf-products" class="divide-y divide-stone-100 max-h-32 overflow-y-auto pr-1">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Destination address sub-card -->
+                    <div class="bg-stone-50 p-4 rounded-xl border border-stone-200/50 space-y-1">
+                        <p class="text-[9px] uppercase tracking-widest font-extrabold text-stone-400">Brewing Destination</p>
+                        <p id="conf-address" class="text-xs text-stone-700 font-semibold leading-relaxed"></p>
+                    </div>
+
+                    <!-- Live Farm-to-cup tracker status -->
+                    <div class="bg-[#1e110a]/5 p-4 rounded-xl border border-[#3d2417]/10 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] uppercase tracking-widest font-black text-[#8c502b]">Real-Time Track status</span>
+                            <span class="bg-emerald-100 text-emerald-800 text-[9px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">
+                                <span class="w-2 h-2 bg-emerald-500 rounded-full live-indicator"></span> Live Roast Pipeline
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-4 gap-1 text-center relative pt-2">
+                            <div class="flex flex-col items-center">
+                                <div class="w-6 h-6 rounded-full bg-[#1e110a] text-[#d4a373] flex items-center justify-center text-[10px] font-bold ring-4 ring-amber-100">
+                                    <i class="fas fa-fire"></i>
+                                </div>
+                                <span class="text-[8px] font-black mt-1 text-stone-800">Roasting</span>
+                            </div>
+                            <div class="flex flex-col items-center opacity-40">
+                                <div class="w-6 h-6 rounded-full bg-stone-200 text-stone-500 flex items-center justify-center text-[10px]">
+                                    <i class="fas fa-sliders"></i>
+                                </div>
+                                <span class="text-[8px] font-bold mt-1 text-stone-400">Grinding</span>
+                            </div>
+                            <div class="flex flex-col items-center opacity-40">
+                                <div class="w-6 h-6 rounded-full bg-stone-200 text-stone-500 flex items-center justify-center text-[10px]">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <span class="text-[8px] font-bold mt-1 text-stone-400">Packed</span>
+                            </div>
+                            <div class="flex flex-col items-center opacity-40">
+                                <div class="w-6 h-6 rounded-full bg-stone-200 text-stone-500 flex items-center justify-center text-[10px]">
+                                    <i class="fas fa-shipping-fast"></i>
+                                </div>
+                                <span class="text-[8px] font-bold mt-1 text-stone-400">Dispatched</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Primary Continue shopping interaction action -->
+                    <button onclick="dismissConfirmationAndGoToProfile()" class="w-full bg-[#1e110a] hover:bg-[#3d2417] text-[#d4a373] py-3.5 rounded-xl font-black text-xs tracking-wider uppercase transition-all shadow-md flex items-center justify-center gap-2">
+                        Go to My Orders Tracker <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 
     <!-- THE CORE COFFEE LOGIC ENGINE -->
     <script>
@@ -538,86 +549,12 @@
             renderProducts();
             updateCartCount();
             updateHeaderUI();
-            setupPreloader();
+            
+            // Immediately show the home page since preloader splash animation is removed
+            showPage('home');
 
             document.getElementById('address-form').addEventListener('submit', handleOrderSubmit);
         });
-
-        // Preloader Reveal Engine
-        function setupPreloader() {
-            const logo = document.getElementById('splash-logo');
-            const sub = document.getElementById('splash-subtitle');
-            const trigger = document.getElementById('splash-trigger');
-
-            // Phase 1: Reveal visual brand logo elements inside Preloader
-            setTimeout(() => {
-                logo.classList.add('reveal');
-            }, 300);
-
-            // Phase 2: Fade-in micro text details
-            setTimeout(() => {
-                sub.classList.remove('opacity-0');
-            }, 1000);
-
-            // Phase 3: Display swipe up interface instructions
-            setTimeout(() => {
-                trigger.classList.remove('opacity-0');
-            }, 1800);
-
-            // Touch Swipe-Up Event Mechanics for Mobile Devices (Highly Responsive)
-            let startY = 0;
-            let isSwiping = false;
-            const splash = document.getElementById('splash-screen');
-
-            splash.addEventListener('touchstart', (e) => {
-                startY = e.touches[0].clientY;
-                isSwiping = true;
-                splash.style.transition = 'none'; // Disable transition for real-time tracking
-            }, { passive: true });
-
-            splash.addEventListener('touchmove', (e) => {
-                if (!isSwiping) return;
-                let currentY = e.touches[0].clientY;
-                let diff = startY - currentY;
-                
-                if (diff > 0) {
-                    // Following the finger precisely (Upward swipe)
-                    splash.style.transform = `translateY(-${diff}px)`;
-                } else {
-                    // Slight resistance when pulling down to avoid negative scroll
-                    splash.style.transform = `translateY(${-diff * 0.15}px)`;
-                }
-            }, { passive: true });
-
-            splash.addEventListener('touchend', (e) => {
-                if (!isSwiping) return;
-                isSwiping = false;
-                let endY = e.changedTouches[0].clientY;
-                let finalDiff = startY - endY;
-                
-                // Add natural easing transitions back
-                splash.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; // Springy feedback
-                
-                if (finalDiff > 100) {
-                    // Complete the transition
-                    exitSplash();
-                } else {
-                    // Spring back to default view
-                    splash.style.transform = 'translateY(0)';
-                }
-            }, { passive: true });
-        }
-
-        // Swipe up exit splash function
-        function exitSplash() {
-            const splash = document.getElementById('splash-screen');
-            splash.style.transition = 'transform 0.85s cubic-bezier(0.77, 0, 0.175, 1)';
-            splash.style.transform = 'translateY(-100%)';
-            setTimeout(() => {
-                splash.style.display = 'none';
-            }, 900);
-            showPage('home');
-        }
 
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
@@ -1205,6 +1142,27 @@
             
             showToast("Encrypting Dazeen roast logs & placing order secure transmission...", "info");
 
+            const rawTotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            const discountValue = activeDiscountPercentage > 0 ? (rawTotal * (activeDiscountPercentage / 100)) : 0;
+            const finalTotal = rawTotal - discountValue;
+            const paymentMode = document.getElementById('form-pay-mode').value;
+
+            const orderIdGenerated = "DAZEEN-COFFEE-" + Math.floor(Math.random() * 900000 + 100000);
+            const addressFullString = `${document.getElementById('addr-flat').value}, ${document.getElementById('addr-area').value}, ${document.getElementById('addr-city').value}, ${document.getElementById('addr-state').value} - ${document.getElementById('addr-pincode').value}`;
+
+            const currentOrder = {
+                orderId: orderIdGenerated,
+                date: new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }),
+                items: [...cart],
+                total: finalTotal,
+                paymentMode: paymentMode,
+                status: "Roasting", 
+                address: addressFullString
+            };
+
+            // Trigger the blue-tick immersive confirmation animation page sequence
+            triggerBlueTickConfirmationAnimation(currentOrder);
+
             try {
                 await fetch("https://formspree.io/f/mojbvqqd", {
                     method: "POST",
@@ -1213,22 +1171,6 @@
                         'Accept': 'application/json'
                     }
                 });
-
-                const rawTotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
-                const discountValue = activeDiscountPercentage > 0 ? (rawTotal * (activeDiscountPercentage / 100)) : 0;
-                const finalTotal = rawTotal - discountValue;
-
-                const paymentMode = document.getElementById('form-pay-mode').value;
-
-                const currentOrder = {
-                    orderId: "DAZEEN-COFFEE-" + Math.floor(Math.random() * 900000 + 100000),
-                    date: new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }),
-                    items: [...cart],
-                    total: finalTotal,
-                    paymentMode: paymentMode,
-                    status: "Roasting", 
-                    address: `${document.getElementById('addr-flat').value}, ${document.getElementById('addr-area').value}, ${document.getElementById('addr-city').value}, ${document.getElementById('addr-state').value} - ${document.getElementById('addr-pincode').value}`
-                };
 
                 orders.unshift(currentOrder);
                 localStorage.setItem('dazeen_coffee_orders', JSON.stringify(orders));
@@ -1240,13 +1182,89 @@
                 document.getElementById('coupon-code').value = "";
                 document.getElementById('coupon-message').innerText = "";
 
-                showToast("🎉 Roast order logged! Forwarded safely to Dazeen Dashboard.", "success");
-                goToProfile();
-
             } catch (err) {
                 console.error("Connection dispatch block error:", err);
-                showToast("A mock delivery was queued successfully despite connection blocks.", "warning");
+                // Fail-safe offline backup trace
+                orders.unshift(currentOrder);
+                localStorage.setItem('dazeen_coffee_orders', JSON.stringify(orders));
+                cart = [];
+                saveCart();
             }
+        }
+
+        function triggerBlueTickConfirmationAnimation(order) {
+            const modal = document.getElementById('order-confirmation-modal');
+            const wrapper = document.getElementById('bluetick-wrapper');
+            const badge = document.getElementById('bluetick-badge');
+            const headerText = document.getElementById('confirmation-header-text');
+            const detailsCard = document.getElementById('conf-details-card');
+
+            // Set dynamic order elements onto modal fields
+            document.getElementById('conf-order-id').innerText = order.orderId;
+            document.getElementById('conf-address').innerText = order.address;
+
+            const productsContainer = document.getElementById('conf-products');
+            productsContainer.innerHTML = order.items.map(item => `
+                <div class="flex justify-between py-1.5 text-xs text-stone-800">
+                    <span class="font-semibold truncate max-w-[280px]">${item.title}</span>
+                    <span class="text-stone-500 font-bold shrink-0 ml-2">Qty x${item.qty}</span>
+                </div>
+            `).join('');
+
+            // Display overlay
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+
+            // Phase 1: pop the Blue-Tick badge in the center
+            setTimeout(() => {
+                badge.classList.remove('scale-0', 'opacity-0');
+                badge.classList.add('animate-bluetick');
+            }, 100);
+
+            // Phase 2: Slide the tick up and slide open the Order ID text next to it
+            setTimeout(() => {
+                wrapper.classList.remove('translate-y-20');
+                wrapper.classList.add('translate-y-0');
+                headerText.classList.remove('opacity-0', 'max-w-0');
+                headerText.classList.add('opacity-100', 'max-w-xs');
+            }, 1200);
+
+            // Phase 3: Cascade in the order parameters card details and tracking status pipeline from the bottom
+            setTimeout(() => {
+                detailsCard.classList.remove('hidden');
+                // Trigger smooth CSS slide up transition
+                setTimeout(() => {
+                    detailsCard.classList.remove('opacity-0', 'translate-y-10');
+                    detailsCard.classList.add('opacity-100', 'translate-y-0');
+                }, 50);
+            }, 1800);
+        }
+
+        function dismissConfirmationAndGoToProfile() {
+            const modal = document.getElementById('order-confirmation-modal');
+            const wrapper = document.getElementById('bluetick-wrapper');
+            const badge = document.getElementById('bluetick-badge');
+            const headerText = document.getElementById('confirmation-header-text');
+            const detailsCard = document.getElementById('conf-details-card');
+
+            // Reset animation properties to base state
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+
+            wrapper.classList.add('translate-y-20');
+            wrapper.classList.remove('translate-y-0');
+            
+            badge.classList.add('scale-0', 'opacity-0');
+            badge.classList.remove('animate-bluetick');
+
+            headerText.classList.add('opacity-0', 'max-w-0');
+            headerText.classList.remove('opacity-100', 'max-w-xs');
+
+            detailsCard.classList.add('opacity-0', 'translate-y-10', 'hidden');
+            detailsCard.classList.remove('opacity-100', 'translate-y-0');
+
+            // Open profile page to show tracked batch
+            goToProfile();
         }
 
         function getStatusStepIndex(status) {
