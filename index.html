@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dazeen Coffee Roasters - Premium Specialty Coffee Powder</title>
+    <title>Dazeen - Premium Specialty Coffee Powder</title>
     <!-- Tailwind CSS for modern fluid designs -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Playfair Display for headers & Inter for body -->
@@ -61,7 +61,7 @@
                     </span>
                     <div>
                         <span class="serif-title text-2xl font-black tracking-wide text-[#faf7f2]">
-                            dazeen<span class="text-[#d4a373]">.coffee</span>
+                            dazeen
                         </span>
                         <p class="text-[9px] text-stone-400 tracking-widest uppercase font-semibold">Specialty Roasters India</p>
                     </div>
@@ -369,7 +369,7 @@
                         D
                     </div>
                     <div>
-                        <h2 class="serif-title text-xl font-bold" id="profile-display-name">Dazeen Coffee Connoisseur</h2>
+                        <h2 class="serif-title text-xl font-bold" id="profile-display-name">Dazeen Connoisseur</h2>
                         <p class="text-xs text-stone-300">Registered Email: <span id="profile-email" class="font-bold text-[#d4a373]"></span></p>
                     </div>
                 </div>
@@ -405,22 +405,6 @@
             </div>
         </div>
     </div>
-
-    <!-- FOOTER -->
-    <footer class="bg-[#1e110a] text-white text-xs py-10 mt-16 border-t-4 border-[#d4a373]">
-        <div class="container mx-auto text-center space-y-5 px-4 max-w-4xl">
-            <div class="flex justify-center items-center space-x-2">
-                <span class="w-8 h-8 bg-[#d4a373] text-[#1e110a] rounded-full flex items-center justify-center font-bold">
-                    <i class="fas fa-coffee text-sm"></i>
-                </span>
-                <span class="serif-title text-xl font-bold text-[#faf7f2]">dazeen<span class="text-[#d4a373]">.coffee</span></span>
-            </div>
-            <div class="text-stone-400 text-[11px] leading-relaxed max-w-2xl mx-auto">
-                Our coffee beans are responsibly sourced from high-altitude shade-grown estates in Western Ghats, India. We roast in micro-batches every single morning to deliver unparalleled creaminess and aroma.
-            </div>
-            <p class="text-stone-500 text-[10px]">© 2026 Dazeen Coffee Solutions Pvt Ltd. All Rights Reserved.</p>
-        </div>
-    </footer>
 
 
     <!-- THE CORE COFFEE LOGIC ENGINE -->
@@ -622,21 +606,11 @@
                     </div>
                     
                     <div class="px-5 pb-5 pt-1 flex flex-col gap-2 border-t border-stone-100">
-                        <!-- Quick Grind selection -->
-                        <div class="flex flex-col space-y-1">
-                            <label class="text-[9px] font-bold text-stone-500 uppercase">Grind Size Profile:</label>
-                            <select id="grind-select-${p.id}" class="text-[11px] bg-stone-50 border border-stone-200 text-stone-800 p-1.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#d4a373] font-bold">
-                                <option value="Fine (Espresso)">Fine (Espresso)</option>
-                                <option value="Medium (Filter Coffee)" selected>Medium (Filter Coffee)</option>
-                                <option value="Coarse (Cold Brew)">Coarse (Cold Brew)</option>
-                                <option value="Whole Beans">Whole Beans</option>
-                            </select>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2 mt-1">
-                            <button onclick="quickAddToCart(${p.id})" class="bg-[#1e110a] hover:bg-[#3d2417] text-[#d4a373] py-2 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all">
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            <button onclick="quickAddToCart(${p.id})" class="bg-[#1e110a] hover:bg-[#3d2417] text-[#d4a373] py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all w-full col-span-1">
                                 <i class="fas fa-shopping-bag text-[10px]"></i> Quick Add
                             </button>
-                            <button onclick="openProductDetailsModal(${p.id})" class="bg-amber-100 hover:bg-amber-200/80 text-[#8c502b] py-2 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all">
+                            <button onclick="openProductDetailsModal(${p.id})" class="bg-amber-100 hover:bg-amber-200/80 text-[#8c502b] py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all w-full col-span-1">
                                 <i class="fas fa-expand text-[10px]"></i> View Full
                             </button>
                         </div>
@@ -708,17 +682,6 @@
                                 <p class="text-3xl font-black text-[#8c502b]">₹${p.price.toLocaleString('en-IN')}</p>
                                 <p class="text-[10px] text-emerald-600 font-bold"><i class="fas fa-truck mr-1"></i> Dispatched under 24hrs / Pure Single Estate</p>
                             </div>
-
-                            <!-- Grind size dropdown selector inside modal -->
-                            <div class="space-y-1">
-                                <label class="block text-xs font-bold text-stone-700 uppercase">Select Grind Size Method:</label>
-                                <select id="modal-grind-select" class="w-full text-xs bg-stone-50 border border-stone-200 text-stone-800 p-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#d4a373] font-bold">
-                                    <option value="Fine (Espresso)">Fine (Espresso) - Moka Pot / Machine</option>
-                                    <option value="Medium (Filter Coffee)" selected>Medium (Filter Coffee) - Traditional Drip</option>
-                                    <option value="Coarse (Cold Brew)">Coarse (Cold Brew) - French Press</option>
-                                    <option value="Whole Beans">Whole Beans - Grind-at-home</option>
-                                </select>
-                            </div>
                         </div>
 
                         <!-- Integration triggers -->
@@ -733,23 +696,20 @@
 
             // Display modal gracefully
             modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Stop background scrolling
+            document.body.style.overflow = 'hidden'; 
         }
 
         function closeProductDetailsModal() {
             const modal = document.getElementById('product-detail-modal');
             modal.classList.add('hidden');
-            document.body.style.overflow = ''; // Restore standard viewport scrolls
+            document.body.style.overflow = ''; 
         }
 
         function addCoffeeFromModal(id) {
             const product = products.find(p => p.id === id);
             if (!product) return;
 
-            const grindSelector = document.getElementById('modal-grind-select');
-            const selectedGrind = grindSelector ? grindSelector.value : "Medium (Filter Coffee)";
-
-            addToCartWithGrind(product, selectedGrind);
+            addToCartWithGrind(product);
             closeProductDetailsModal();
         }
 
@@ -806,22 +766,19 @@
 
         function quickAddToCart(id) {
             const product = products.find(p => p.id === id);
-            const selectEl = document.getElementById(`grind-select-${id}`);
-            const grind = selectEl ? selectEl.value : "Medium (Filter Coffee)";
-            
-            addToCartWithGrind(product, grind);
+            addToCartWithGrind(product);
         }
 
-        function addToCartWithGrind(product, grind) {
-            const existing = cart.find(item => item.id === product.id && item.grind === grind);
+        function addToCartWithGrind(product) {
+            const existing = cart.find(item => item.id === product.id);
             
             if(existing) {
                 existing.qty += 1;
             } else {
-                cart.push({...product, qty: 1, grind: grind});
+                cart.push({...product, qty: 1});
             }
             saveCart();
-            showToast(`"${product.title.substring(0, 20)}..." (${grind}) added to basket!`, 'success');
+            showToast(`"${product.title.substring(0, 20)}..." added to basket!`, 'success');
         }
 
         function saveCart() {
@@ -881,7 +838,6 @@
                         <div class="space-y-1 max-w-md">
                             <h4 class="serif-title font-bold text-sm text-stone-900 line-clamp-2 leading-tight">${item.title}</h4>
                             <p class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded w-fit"><i class="fas fa-check"></i> Fresh Batch Roast Checked</p>
-                            <p class="text-xs text-stone-500 font-semibold"><span class="text-stone-400">Grind Format:</span> <span class="text-[#8c502b] font-bold">${item.grind}</span></p>
                             
                             <div class="flex items-center gap-1.5 pt-1.5">
                                 <span class="text-xs text-stone-400 mr-1">Qty:</span>
@@ -1045,7 +1001,7 @@
 
             document.getElementById('form-total').value = finalTotal;
             
-            const itemsSummary = cart.map(item => `${item.title} (${item.grind}) (Qty x ${item.qty})`).join(', ');
+            const itemsSummary = cart.map(item => `${item.title} (Qty x ${item.qty})`).join(', ');
             document.getElementById('form-items').value = itemsSummary;
 
             showPage('address');
@@ -1217,7 +1173,6 @@
                                             <img src="${i.image}" class="w-10 h-10 object-cover rounded border border-stone-200" onerror="this.src='https://placehold.co/50x50/2b190f/ffffff?text=Coffee'">
                                             <div>
                                                 <p class="text-xs font-bold text-stone-800 max-w-sm line-clamp-1">${i.title}</p>
-                                                <p class="text-[10px] text-stone-400 font-medium">Grind Profile Selected: <span class="text-[#8c502b] font-bold">${i.grind}</span></p>
                                             </div>
                                         </div>
                                         <span class="text-xs font-semibold text-stone-500">Qty x${i.qty}</span>
@@ -1263,11 +1218,11 @@
 
             showToast(`Generating Dazeen roast logs for receipt: ${orderId}...`, "success");
             
-            let itemsText = order.items.map(i => `${i.title}\n  Grind Size: ${i.grind}\n  Qty: x${i.qty} | Subtotal: ₹${(i.price * i.qty).toLocaleString('en-IN')}`).join('\n\n');
+            let itemsText = order.items.map(i => `${i.title}\n  Qty: x${i.qty} | Subtotal: ₹${(i.price * i.qty).toLocaleString('en-IN')}`).join('\n\n');
             
             const invoiceContent = `
 ========================================
-     DAZEEN COFFEE ROASTERS INDIA
+                 DAZEEN
       ESTATE TO BREWER TAX INVOICE
 ========================================
 Batch Code:  ${order.orderId}
@@ -1295,7 +1250,7 @@ GRAND TOTAL REMITTED:  ₹${order.total.toLocaleString('en-IN')}
             invoiceWindow.document.write(`
                 <html>
                 <head>
-                    <title>Dazeen Coffee Invoice</title>
+                    <title>Dazeen Invoice</title>
                     <style>
                         body { font-family: monospace; white-space: pre; padding: 25px; background-color: #faf7f2; color: #1e110a; }
                         .print-btn { display: inline-block; background: #d4a373; color: #1e110a; font-weight: bold; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; margin-bottom: 25px; font-family: sans-serif; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
@@ -1321,10 +1276,3 @@ GRAND TOTAL REMITTED:  ₹${order.total.toLocaleString('en-IN')}
     </script>
 </body>
 </html>
-```
-eof
-
-### Summary of updates made:
-- **Integrated Immersive Floating Modal Overlay**: Standardized product details to open inside a high `z-index` responsive container.
-- **Fixed Layer Overlapping**: The floating detail card's overlay is set to `z-[100]`, making sure both the sticky header and the floating mobile navigation menu sit smoothly behind it.
-- **Improved mobile user interactions**: Clean scroll control is simulated inside the popup, allowing smooth scroll properties without moving the underlying home page.
