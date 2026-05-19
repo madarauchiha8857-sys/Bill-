@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dazeen - Premium Specialty Coffee Powder</title>
+    <title>dazeen - Premium Specialty Coffee Powder</title>
     <!-- Tailwind CSS for modern fluid designs -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Playfair Display for headers & Inter for body -->
@@ -15,6 +15,7 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #faf7f2;
+            overflow-x: hidden;
         }
         .serif-title {
             font-family: 'Playfair Display', serif;
@@ -42,11 +43,88 @@
         .live-indicator {
             animation: pulse-ring 2s infinite;
         }
+        @keyframes bounce-arrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .bounce-arrow {
+            animation: bounce-arrow 1.8s infinite ease-in-out;
+        }
+        /* Splash Screen Anim mechanics */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background-color: #1e110a;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.85s cubic-bezier(0.77, 0, 0.175, 1);
+            user-select: none;
+            touch-action: none;
+        }
+        .splash-logo-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .splash-cup {
+            font-size: 3.5rem;
+            color: #d4a373;
+            transform: scale(0);
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .splash-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #faf7f2;
+            width: 0px;
+            opacity: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: width 0.9s ease-in-out, opacity 0.6s ease-in-out;
+            margin-left: 1rem;
+            letter-spacing: -0.05em;
+        }
+        .splash-logo-box.reveal .splash-cup {
+            transform: scale(1);
+        }
+        .splash-logo-box.reveal .splash-text {
+            width: 170px;
+            opacity: 1;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col relative pb-32 md:pb-16 text-stone-800">
+<body class="min-h-screen flex flex-col relative pb-32 md:pb-20 text-stone-800">
 
-    <!-- DYNAMIC ARABICA TOAST NOTIFICATION DOCK -->
+    <!-- INTRO SPLASH PRELOADER CONTAINER -->
+    <div id="splash-screen">
+        <div class="flex flex-col items-center justify-center max-w-sm px-6">
+            <!-- Brand Symmetrical Logo Anim -->
+            <div id="splash-logo" class="splash-logo-box">
+                <i class="fas fa-coffee splash-cup"></i>
+                <span class="splash-text">dazeen</span>
+            </div>
+            
+            <p class="text-[10px] text-stone-400 tracking-widest uppercase font-semibold mt-3 text-center opacity-0 transition-opacity duration-1000 delay-700" id="splash-subtitle">
+                Specialty Roasters India
+            </p>
+
+            <!-- Swipe/Slide interaction controller -->
+            <div id="splash-trigger" class="mt-20 flex flex-col items-center justify-center text-center opacity-0 transition-opacity duration-1000 delay-1000">
+                <span class="text-xs tracking-widest uppercase font-bold text-[#d4a373]">Swipe Up to Enter</span>
+                <button onclick="exitSplash()" class="mt-4 w-12 h-12 rounded-full border border-[#d4a373]/30 bg-[#2b190f] text-[#d4a373] flex items-center justify-center shadow-lg hover:bg-[#d4a373] hover:text-[#1e110a] transition-all bounce-arrow">
+                    <i class="fas fa-chevron-up text-base"></i>
+                </button>
+                <span class="text-[9px] text-stone-500 mt-2 font-light">or tap the arrow above</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- DYNAMIC TOAST NOTIFICATION DOCK -->
     <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
 
     <!-- BRAND HEADER NAVIGATION (DESKTOP) -->
@@ -115,7 +193,7 @@
     </header>
 
     <!-- PREMIUM MOBILE BOTTOM NAVIGATION BAR -->
-    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-[#1e110a]/95 backdrop-blur-md border border-[#3d2417] py-3 px-4 rounded-full shadow-2xl z-50 flex items-center justify-around md:hidden">
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-[#1e110a]/95 backdrop-blur-md border border-[#3d2417] py-3.5 px-4 rounded-full shadow-2xl z-40 flex items-center justify-around md:hidden">
         <button onclick="showPage('home')" class="mobile-nav-btn flex flex-col items-center justify-center text-[#d4a373] transition-all">
             <i class="fas fa-coffee text-xl mb-0.5"></i>
             <span class="text-[9px] font-bold tracking-wide uppercase">Shop</span>
@@ -145,7 +223,7 @@
                 Freshly Roasted <span class="italic text-[#d4a373]">On-Demand</span>
             </h1>
             <p class="text-xs md:text-sm text-stone-300 leading-relaxed font-light">
-                Dazeen imports single-origin cherries from Coorg, Chikmagalur & Mysore, custom profiles, and grinds specifically to match your brewing technique.
+                Dazeen imports single-origin cherries from Coorg, Chikmagalur & Mysore, custom profiles, and grinds specifically to deliver pure coffee powder.
             </p>
         </div>
         <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#faf7f2] to-transparent"></div>
@@ -412,7 +490,7 @@
         const products = [
             {
                 id: 1,
-                title: "Dazeen Signature Espresso Roast (Premium Dark Roast)",
+                title: "Dazeen Signature Espresso Powder (Premium Dark Roast)",
                 category: "House Blends",
                 price: 490,
                 rating: 4.8,
@@ -427,7 +505,7 @@
             },
             {
                 id: 2,
-                title: "Mysore Nuggets Extra Bold Single-Origin (Medium Roast)",
+                title: "Mysore Nuggets Extra Bold Powder (Medium Roast)",
                 category: "Single Origin",
                 price: 580,
                 rating: 4.9,
@@ -449,15 +527,75 @@
         let selectedCategory = 'All';
         let activeDiscountPercentage = 0;
         let currentAuthMode = 'signin';
+        let pendingCartItemId = null; // Stores target product if login intercept occurs
 
         document.addEventListener("DOMContentLoaded", () => {
             renderProducts();
             updateCartCount();
             updateHeaderUI();
-            showPage('home');
+            setupPreloader();
 
             document.getElementById('address-form').addEventListener('submit', handleOrderSubmit);
         });
+
+        // Preloader Reveal Engine
+        function setupPreloader() {
+            const logo = document.getElementById('splash-logo');
+            const sub = document.getElementById('splash-subtitle');
+            const trigger = document.getElementById('splash-trigger');
+
+            // Phase 1: Reveal visual brand logo elements inside Preloader
+            setTimeout(() => {
+                logo.classList.add('reveal');
+            }, 300);
+
+            // Phase 2: Fade-in micro text details
+            setTimeout(() => {
+                sub.classList.remove('opacity-0');
+            }, 1000);
+
+            // Phase 3: Display swipe up interface instructions
+            setTimeout(() => {
+                trigger.classList.remove('opacity-0');
+            }, 1800);
+
+            // Touch Swipe-Up Event Mechanics for Mobile Devices
+            let startY = 0;
+            const splash = document.getElementById('splash-screen');
+
+            splash.addEventListener('touchstart', (e) => {
+                startY = e.touches[0].clientY;
+            }, { passive: true });
+
+            splash.addEventListener('touchmove', (e) => {
+                let currentY = e.touches[0].clientY;
+                let diff = startY - currentY;
+                if (diff > 50) {
+                    splash.style.transform = `translateY(-${diff}px)`;
+                }
+            }, { passive: true });
+
+            splash.addEventListener('touchend', (e) => {
+                let endY = e.changedTouches[0].clientY;
+                let finalDiff = startY - endY;
+                if (finalDiff > 100) {
+                    exitSplash();
+                } else {
+                    // Reset positions smoothly
+                    splash.style.transform = 'translateY(0)';
+                }
+            }, { passive: true });
+        }
+
+        // Swipe up exit splash function
+        function exitSplash() {
+            const splash = document.getElementById('splash-screen');
+            splash.style.transform = 'translateY(-100%)';
+            setTimeout(() => {
+                splash.style.display = 'none';
+            }, 900);
+            showPage('home');
+        }
 
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
@@ -709,7 +847,7 @@
             const product = products.find(p => p.id === id);
             if (!product) return;
 
-            addToCartWithGrind(product);
+            addToCartWithInterception(product);
             closeProductDetailsModal();
         }
 
@@ -764,21 +902,29 @@
             handleSearch();
         }
 
+        // Add to Cart with User Verification Interception
         function quickAddToCart(id) {
             const product = products.find(p => p.id === id);
-            addToCartWithGrind(product);
+            addToCartWithInterception(product);
         }
 
-        function addToCartWithGrind(product) {
+        function addToCartWithInterception(product) {
+            if (!user) {
+                // Save targeted item index to proceed post authentication
+                pendingCartItemId = product.id;
+                showToast("Please authenticate first to proceed with roasting order!", "warning");
+                showPage('login');
+                return;
+            }
+
             const existing = cart.find(item => item.id === product.id);
-            
             if(existing) {
                 existing.qty += 1;
             } else {
                 cart.push({...product, qty: 1});
             }
             saveCart();
-            showToast(`"${product.title.substring(0, 20)}..." added to basket!`, 'success');
+            showToast(`"${product.title.substring(0, 25)}..." added to basket!`, 'success');
         }
 
         function saveCart() {
@@ -981,7 +1127,15 @@
                 showToast(`Connoisseur account created for ${user.name}!`, "success");
             }
 
-            if (cart.length > 0) {
+            // Post-login automatic recovery intercept loop
+            if (pendingCartItemId) {
+                const pendingProduct = products.find(p => p.id === pendingCartItemId);
+                if (pendingProduct) {
+                    addToCartWithInterception(pendingProduct);
+                }
+                pendingCartItemId = null;
+                goToCart();
+            } else if (cart.length > 0) {
                 goToAddressPage();
             } else {
                 showPage('home');
@@ -1242,7 +1396,6 @@ ${itemsText}
 GRAND TOTAL REMITTED:  ₹${order.total.toLocaleString('en-IN')}
 ========================================
   Brew with Love. Drink with Passion.
-        Visit: dazeen.coffee
 ========================================
 `;
             
