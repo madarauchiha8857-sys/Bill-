@@ -1,201 +1,199 @@
-import React, { useState } from 'react';
-import { 
-  ShoppingBag, 
-  UserCircle, 
-  Box, 
-  Store, 
-  Home, 
-  ChevronRight, 
-  Trash2, 
-  Package, 
-  LogOut, 
-  Menu, 
-  X,
-  MapPin,
-  Truck
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dazeen E-Commerce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .hidden-view { display: none; }
+        .active-view { display: block; }
+        .accent-green { color: #059669; }
+        .bg-accent-green { background-color: #059669; }
+        .accent-yellow { color: #d97706; }
+        .bg-accent-chocolate { background-color: #292524; }
+    </style>
+</head>
+<body class="bg-white text-stone-800">
 
-const PRODUCTS = [
-  { id: 1, name: "Premium Leather Satchel", price: 3499, category: "Accessories", desc: "Hand-crafted sustainable leather." },
-  { id: 2, name: "Organic Cotton Hoodie", price: 1899, category: "Apparel", desc: "Breathable, soft, and durable." }
-];
-
-export default function App() {
-  const [user, setUser] = useState(null);
-  const [cart, setCart] = useState([]);
-  const [orders, setOrders] = useState([]);
-  const [view, setView] = useState('home'); // home, shop, cart, orders, account
-  const [showLogin, setShowLogin] = useState(false);
-  const [cartStep, setCartStep] = useState(1); // 1: Cart, 2: Address, 3: Confirm
-  const [address, setAddress] = useState({ street: '', city: '', zip: '' });
-
-  const addToCart = (product) => setCart([...cart, product]);
-  const removeFromCart = (index) => setCart(cart.filter((_, i) => i !== index));
-
-  const Navbar = () => (
-    <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-stone-100">
-      <div className="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
-        <h1 onClick={() => setView('home')} className="text-2xl font-bold cursor-pointer text-emerald-700">
-          Dazeen
-        </h1>
-        <div className="flex gap-6 text-stone-600">
-          <button onClick={() => setView('home')} className="hover:text-emerald-600 font-medium">Home</button>
-          <button onClick={() => setView('shop')} className="hover:text-emerald-600 font-medium">Shop</button>
-          <button onClick={() => setView('orders')} className="hover:text-emerald-600 font-medium">Orders</button>
-          <button onClick={() => setView('account')} className="hover:text-emerald-600 font-medium">Account</button>
+    <nav class="sticky top-0 z-50 bg-white border-b border-stone-100 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 onclick="showView('home')" class="text-2xl font-bold cursor-pointer text-emerald-700">Dazeen</h1>
+            <div class="flex gap-6 text-stone-600">
+                <button onclick="showView('home')" class="hover:text-emerald-600 font-medium transition">Home</button>
+                <button onclick="showView('shop')" class="hover:text-emerald-600 font-medium transition">Shop</button>
+                <button onclick="showView('orders')" class="hover:text-emerald-600 font-medium transition">Orders</button>
+                <button onclick="showView('account')" class="hover:text-emerald-600 font-medium transition">Account</button>
+            </div>
+            <button onclick="showView('cart')" class="relative p-2 hover:bg-stone-100 rounded-full transition">
+                <i data-lucide="shopping-bag" class="text-stone-700"></i>
+                <span id="cart-count" class="absolute top-0 right-0 bg-amber-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">0</span>
+            </button>
         </div>
-        <button onClick={() => { setView('cart'); setCartStep(1); }} className="relative p-2 hover:bg-stone-100 rounded-full transition">
-          <ShoppingBag className="text-stone-700" size={24} />
-          {cart.length > 0 && <span className="absolute top-0 right-0 bg-amber-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">{cart.length}</span>}
-        </button>
-      </div>
     </nav>
-  );
 
-  const renderView = () => {
-    switch (view) {
-      case 'home':
-        return (
-          <main className="max-w-5xl mx-auto p-6">
-            <div className="bg-emerald-50 p-12 rounded-3xl mb-8">
-              <h2 className="text-4xl font-bold text-emerald-900 mb-4">Welcome to Dazeen</h2>
-              <p className="text-emerald-800 text-lg max-w-lg">Premium quality products crafted with care. Experience the blend of style and comfort in every piece we offer.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-6 border rounded-2xl">
-                <h3 className="font-bold text-xl mb-2">Sustainable</h3>
-                <p className="text-stone-500">Ethically sourced materials for a better future.</p>
-              </div>
-              <div className="p-6 border rounded-2xl">
-                <h3 className="font-bold text-xl mb-2">Fast Delivery</h3>
-                <p className="text-stone-500">Quick dispatch across all major cities.</p>
-              </div>
-              <div className="p-6 border rounded-2xl">
-                <h3 className="font-bold text-xl mb-2">Quality Assured</h3>
-                <p className="text-stone-500">Hand-picked quality checks before shipping.</p>
-              </div>
-            </div>
-          </main>
-        );
+    <script>
+        let cart = [];
+        let orders = [];
+        let user = null;
+        let cartStep = 1; // 1: Summary, 2: Address, 3: Confirm
 
-      case 'shop':
-        return (
-          <main className="max-w-5xl mx-auto p-6">
-            <div className="mb-8 border-b pb-6">
-              <h2 className="text-3xl font-bold text-stone-900">Our Collection</h2>
-              <p className="text-stone-500">Browse our latest premium products.</p>
+        const PRODUCTS = [
+            { id: 1, name: "Premium Leather Satchel", price: 3499, desc: "Hand-crafted sustainable leather." },
+            { id: 2, name: "Organic Cotton Hoodie", price: 1899, desc: "Breathable, soft, and durable." }
+        ];
+
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden-view'));
+            document.getElementById(viewId + '-view').classList.remove('hidden-view');
+            lucide.createIcons();
+        }
+
+        function addToCart(productId) {
+            const prod = PRODUCTS.find(p => p.id === productId);
+            cart.push(prod);
+            updateCartUI();
+            alert(`${prod.name} added to cart!`);
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+            renderCart();
+        }
+
+        function toggleLoginModal(show) {
+            document.getElementById('login-modal').classList.toggle('hidden', !show);
+        }
+
+        function handleLogin() {
+            user = { email: "user@dazeen.com" };
+            toggleLoginModal(false);
+            showView('cart');
+            cartStep = 3; // Jump to confirmed state
+            renderCart();
+        }
+    </script>
+
+    <div id="views-container" class="max-w-5xl mx-auto p-6">
+        
+        <!-- Home View -->
+        <section id="home-view" class="view">
+            <div class="bg-emerald-50 p-12 rounded-3xl mb-8">
+                <h2 class="text-4xl font-bold text-emerald-900 mb-4">Welcome to Dazeen</h2>
+                <p class="text-emerald-800 text-lg max-w-lg">Premium quality products crafted with care. Experience the blend of style and comfort in every piece we offer.</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {PRODUCTS.map(p => (
-                <div key={p.id} className="border border-stone-200 p-6 rounded-3xl hover:border-emerald-500 transition shadow-sm">
-                  <div className="h-48 bg-stone-100 rounded-2xl mb-6 flex items-center justify-center text-stone-400">
-                    <Package size={48} />
-                  </div>
-                  <h3 className="font-bold text-xl mb-1">{p.name}</h3>
-                  <p className="text-stone-500 text-sm mb-4">{p.desc}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-2xl text-emerald-700">₹{p.price}</span>
-                    <button onClick={() => addToCart(p)} className="bg-stone-900 text-white px-6 py-2 rounded-lg hover:bg-emerald-600 transition">Add to Cart</button>
-                  </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="p-6 border rounded-2xl border-stone-200">
+                    <h3 class="font-bold text-xl mb-2">Sustainable</h3>
+                    <p class="text-stone-500">Ethically sourced materials.</p>
                 </div>
-              ))}
-            </div>
-          </main>
-        );
-
-      case 'cart':
-        return (
-          <div className="max-w-xl mx-auto p-6">
-            <h2 className="text-2xl font-bold mb-8">Checkout</h2>
-            {cart.length === 0 ? <p className="text-stone-500 text-center py-20">Your cart is empty.</p> : (
-              <div className="bg-white border rounded-3xl p-8 shadow-sm">
-                {cartStep === 1 && (
-                  <>
-                    <h3 className="font-bold text-lg mb-4">Items in Cart</h3>
-                    {cart.map((item, i) => (
-                      <div key={i} className="flex justify-between py-3 border-b">
-                        <span>{item.name}</span>
-                        <span className="font-bold">₹{item.price}</span>
-                      </div>
-                    ))}
-                    <div className="mt-6 flex justify-between font-bold text-xl">
-                      <span>Total</span>
-                      <span className="text-emerald-700">₹{cart.reduce((a, b) => a + b.price, 0)}</span>
-                    </div>
-                    <button onClick={() => setCartStep(2)} className="w-full mt-6 py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition">Next: Add Address</button>
-                  </>
-                )}
-                {cartStep === 2 && (
-                  <div className="space-y-4">
-                    <h3 className="font-bold text-lg mb-4">Delivery Address</h3>
-                    <input className="w-full p-3 border rounded-lg" placeholder="Street Address" onChange={(e) => setAddress({...address, street: e.target.value})} />
-                    <input className="w-full p-3 border rounded-lg" placeholder="City" onChange={(e) => setAddress({...address, city: e.target.value})} />
-                    <button onClick={() => { !user ? setShowLogin(true) : handlePlaceOrder(); }} className="w-full mt-6 py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition">Place Order</button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        );
-
-      case 'orders':
-        return (
-          <div className="max-w-2xl mx-auto p-6">
-            <h2 className="text-2xl font-bold mb-6">My Orders</h2>
-            {orders.length === 0 ? <p className="text-stone-500">No orders yet.</p> : orders.map(o => (
-              <div key={o.id} className="border p-6 rounded-2xl mb-4 bg-stone-50">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-bold text-emerald-700">{o.id}</span>
-                  <span className="text-amber-600 font-bold bg-amber-100 px-3 py-1 rounded-full text-xs">Processing</span>
+                <div class="p-6 border rounded-2xl border-stone-200">
+                    <h3 class="font-bold text-xl mb-2">Fast Delivery</h3>
+                    <p class="text-stone-500">Quick dispatch to your doorstep.</p>
                 </div>
-                {o.items.map((it, i) => <p key={i} className="text-stone-600 text-sm">• {it.name}</p>)}
-              </div>
-            ))}
-          </div>
-        );
-
-      case 'account':
-        return (
-          <div className="max-w-md mx-auto p-6 text-center">
-            <div className="bg-stone-50 p-8 rounded-3xl border">
-              <UserCircle size={64} className="mx-auto text-emerald-600 mb-4" />
-              {user ? (
-                <>
-                  <h2 className="text-xl font-bold">{user.email}</h2>
-                  <button onClick={() => {setUser(null); setView('home');}} className="mt-4 text-red-500 font-bold">Logout</button>
-                </>
-              ) : (
-                <button onClick={() => setShowLogin(true)} className="bg-stone-900 text-white px-8 py-3 rounded-xl font-bold">Login to Account</button>
-              )}
+                <div class="p-6 border rounded-2xl border-stone-200">
+                    <h3 class="font-bold text-xl mb-2">Quality Assured</h3>
+                    <p class="text-stone-500">Hand-picked quality checks.</p>
+                </div>
             </div>
-          </div>
-        );
-      default: return null;
-    }
-  };
+        </section>
 
-  const handlePlaceOrder = () => {
-    const newOrder = { id: "DZ-" + Math.floor(Math.random() * 1000), items: cart, date: new Date().toLocaleDateString() };
-    setOrders([...orders, newOrder]);
-    setCart([]);
-    setView('orders');
-  };
+        <!-- Shop View -->
+        <section id="shop-view" class="view hidden-view">
+            <h2 class="text-3xl font-bold mb-8">Our Collection</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="product-list">
+                <!-- Products dynamically rendered here -->
+            </div>
+        </section>
 
-  return (
-    <div className="min-h-screen bg-white text-stone-800 font-sans">
-      <Navbar />
-      {renderView()}
+        <!-- Cart View -->
+        <section id="cart-view" class="view hidden-view max-w-xl mx-auto">
+            <div id="cart-content"></div>
+        </section>
 
-      {showLogin && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6">
-          <div className="bg-white p-8 rounded-3xl w-full max-w-sm shadow-xl">
-            <h2 className="text-2xl font-bold mb-6">Login</h2>
-            <input type="email" placeholder="Email" className="w-full p-3 border rounded-xl mb-4" />
-            <input type="password" placeholder="Password" className="w-full p-3 border rounded-xl mb-6" />
-            <button onClick={() => { setUser({email: 'user@dazeen.com'}); setShowLogin(false); handlePlaceOrder(); }} className="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold">Sign In & Order</button>
-          </div>
-        </div>
-      )}
+        <!-- Orders View -->
+        <section id="orders-view" class="view hidden-view">
+            <h2 class="text-2xl font-bold mb-6">My Orders</h2>
+            <div id="orders-list">No orders yet.</div>
+        </section>
+
+        <!-- Account View -->
+        <section id="account-view" class="view hidden-view text-center py-20">
+            <i data-lucide="user-circle" size="64" class="mx-auto text-emerald-600 mb-4"></i>
+            <h2 class="text-xl font-bold">Manage Account</h2>
+            <button class="mt-6 bg-stone-900 text-white px-8 py-3 rounded-xl font-bold">Sign In</button>
+        </section>
     </div>
-  );
-}
+
+    <div id="login-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 hidden">
+        <div class="bg-white p-8 rounded-3xl w-full max-w-sm shadow-xl">
+            <h2 class="text-2xl font-bold mb-6">Login to Dazeen</h2>
+            <input type="email" placeholder="Email" class="w-full p-3 border rounded-xl mb-4" />
+            <input type="password" placeholder="Password" class="w-full p-3 border rounded-xl mb-6" />
+            <button onclick="handleLogin()" class="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold">Sign In & Order</button>
+        </div>
+    </div>
+
+    <script>
+        // Render Products
+        const prodList = document.getElementById('product-list');
+        PRODUCTS.forEach(p => {
+            prodList.innerHTML += `
+                <div class="border p-6 rounded-3xl hover:border-emerald-500 transition shadow-sm">
+                    <h3 class="font-bold text-xl">${p.name}</h3>
+                    <p class="text-stone-500 mb-4">${p.desc}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-2xl text-emerald-700">₹${p.price}</span>
+                        <button onclick="addToCart(${p.id})" class="bg-stone-900 text-white px-6 py-2 rounded-lg hover:bg-emerald-600">Add to Cart</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Render Cart
+        function renderCart() {
+            const container = document.getElementById('cart-content');
+            if (cart.length === 0) {
+                container.innerHTML = `<p class="text-center py-20">Your cart is empty.</p>`;
+                return;
+            }
+            
+            let total = cart.reduce((a, b) => a + b.price, 0);
+            
+            if (cartStep === 1) {
+                container.innerHTML = `
+                    <h2 class="text-2xl font-bold mb-8">Summary</h2>
+                    <div class="bg-stone-50 p-6 rounded-2xl">
+                        ${cart.map(i => `<div class="flex justify-between py-2 border-b">${i.name} <span>₹${i.price}</span></div>`).join('')}
+                        <div class="flex justify-between font-bold text-xl mt-4">Total <span>₹${total}</span></div>
+                        <button onclick="cartStep=2; renderCart()" class="w-full mt-6 py-4 bg-emerald-600 text-white rounded-xl font-bold">Proceed to Address</button>
+                    </div>
+                `;
+            } else if (cartStep === 2) {
+                container.innerHTML = `
+                    <h2 class="text-2xl font-bold mb-8">Delivery Address</h2>
+                    <input class="w-full p-3 border rounded-lg mb-4" placeholder="Street Address" />
+                    <input class="w-full p-3 border rounded-lg mb-4" placeholder="City" />
+                    <button onclick="toggleLoginModal(true)" class="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold">Place Order</button>
+                `;
+            } else if (cartStep === 3) {
+                orders.push({id: "DZ-"+Math.floor(Math.random()*1000), items: [...cart]});
+                cart = [];
+                updateCartUI();
+                container.innerHTML = `
+                    <div class="text-center py-10">
+                        <i data-lucide="check-circle" class="mx-auto text-emerald-500 mb-4" size="64"></i>
+                        <h2 class="text-2xl font-bold">Order Placed!</h2>
+                        <p>Check the Orders tab to track.</p>
+                        <button onclick="cartStep=1; showView('home')" class="mt-6 text-emerald-600 font-bold">Back to Home</button>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+        }
+    </script>
+</body>
+</html>
