@@ -648,20 +648,28 @@
       <h2>Welcome Back ☕</h2>
 
       <div class="input-group">
-        <input type="email" id="email" placeholder="Email Address">
+        <input type="tel" id="phone" placeholder="Enter Mobile Number">
       </div>
 
       <div class="input-group">
-        <input type="password" id="password" placeholder="Password">
+        <input type="text" id="otp" placeholder="Enter OTP">
       </div>
 
+      <button class="btn btn-primary" id="sendOtpBtn" style="width:100%;margin-bottom:15px;">
+        Send OTP
+      </button>
+
       <button class="btn btn-primary" id="loginBtn" style="width:100%;margin-bottom:15px;">
-        Login
+        Verify & Login
       </button>
 
       <button class="btn btn-secondary" id="signupBtn" style="width:100%;margin-bottom:15px;">
         Create Account
       </button>
+
+      <p style="text-align:center;color:#666;font-size:14px;">
+        OTP Login Powered by Fast2SMS
+      </p>
 
       <p id="loginStatus" style="text-align:center;color:#17a768;font-weight:600;margin-top:10px;"></p>
 
@@ -707,57 +715,81 @@
       });
     });
 
+    const sendOtpBtn = document.getElementById('sendOtpBtn');
     const loginBtn = document.getElementById('loginBtn');
     const signupBtn = document.getElementById('signupBtn');
     const statusText = document.getElementById('loginStatus');
 
     signupBtn.addEventListener('click', () => {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+      const phone = document.getElementById('phone').value;
 
-      if(email === '' || password === '') {
-        statusText.innerText = 'Please enter email and password';
+      if(phone === '') {
+        statusText.innerText = 'Please enter mobile number';
         statusText.style.color = 'red';
         return;
       }
 
-      localStorage.setItem('dazeenEmail', email);
-      localStorage.setItem('dazeenPassword', password);
+      localStorage.setItem('dazeenPhone', phone);
 
       statusText.innerText = 'Account Created Successfully ☕';
       statusText.style.color = '#17a768';
     });
 
+    sendOtpBtn.addEventListener('click', async () => {
+      const phone = document.getElementById('phone').value;
+
+      if(phone === '') {
+        statusText.innerText = 'Enter mobile number';
+        statusText.style.color = 'red';
+        return;
+      }
+
+      const generatedOtp = Math.floor(1000 + Math.random() * 9000);
+
+      localStorage.setItem('dazeenOTP', generatedOtp);
+
+      statusText.innerText = 'OTP Sent Successfully 🚀';
+      statusText.style.color = '#17a768';
+
+      // IMPORTANT:
+      // Move API key to backend in production.
+
+      fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=14eYp2D6nfUcWLTyxmVtq97JaAzHbi3FjX8sGuvZElRdKoOCrkuyLcNgESHKsbtYhz1DrinmqpxoZTvP&route=dlt&sender_id=DAZEEN&message=214505&variables_values=${generatedOtp}%7C&flash=0&numbers=${phone}`)
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.log(error));
+    });
+
     loginBtn.addEventListener('click', () => {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+      const phone = document.getElementById('phone').value;
+      const otp = document.getElementById('otp').value;
 
-      const savedEmail = localStorage.getItem('dazeenEmail');
-      const savedPassword = localStorage.getItem('dazeenPassword');
+      const savedPhone = localStorage.getItem('dazeenPhone');
+      const savedOtp = localStorage.getItem('dazeenOTP');
 
-      if(email === savedEmail && password === savedPassword) {
+      if(phone === savedPhone && otp === savedOtp) {
         statusText.innerText = 'Login Successful 🚀';
         statusText.style.color = '#17a768';
 
         localStorage.setItem('dazeenLoggedIn', 'true');
 
         document.querySelector('#account h3').innerText = 'Welcome Back';
-        document.querySelector('#account p').innerText = email;
+        document.querySelector('#account p').innerText = phone;
       } else {
-        statusText.innerText = 'Invalid Login Details';
+        statusText.innerText = 'Invalid OTP';
         statusText.style.color = 'red';
       }
     });
 
     window.onload = () => {
       const loggedIn = localStorage.getItem('dazeenLoggedIn');
-      const savedEmail = localStorage.getItem('dazeenEmail');
+      const savedPhone = localStorage.getItem('dazeenPhone');
 
-      if(loggedIn === 'true' && savedEmail) {
+      if(loggedIn === 'true' && savedPhone) {
         statusText.innerText = 'Already Logged In ☕';
 
         document.querySelector('#account h3').innerText = 'Welcome Back';
-        document.querySelector('#account p').innerText = savedEmail;
+        document.querySelector('#account p').innerText = savedPhone;
       }
     }
   </script>
