@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Premium Shop</title>
+  <title>0% Caffeine Coffee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -286,6 +286,73 @@
       outline: none;
     }
 
+    .bottom-nav {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      width: 90%;
+      max-width: 500px;
+      border-radius: 24px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+      z-index: 999;
+    }
+
+    .bottom-nav a {
+      text-decoration: none;
+      color: #555;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .bottom-nav a:hover {
+      color: #17a768;
+      transform: translateY(-3px);
+    }
+
+    .account-section {
+      padding: 100px 8%;
+      background: white;
+    }
+
+    .account-card {
+      background: #f8f9fb;
+      padding: 40px;
+      border-radius: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .order-section {
+      padding: 100px 8%;
+      background: #ffffff;
+    }
+
+    .order-box {
+      background: #f8f9fb;
+      border-radius: 30px;
+      padding: 30px;
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .status {
+      background: #17a768;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
     .footer {
       padding: 40px 8%;
       text-align: center;
@@ -339,24 +406,22 @@
 <body>
 
   <nav class="navbar">
-    <div class="logo">PremiumShop</div>
+    <div class="logo">ZenCoffee</div>
 
     <div class="nav-links">
       <a href="#home">Home</a>
-      <a href="#products">Products</a>
-      <a href="#features">Features</a>
-      <a href="#login">Login</a>
+      <a href="#products">Shop</a>
+      <a href="#orders">Orders</a>
+      <a href="#account">Account</a>
     </div>
   </nav>
 
   <section class="hero" id="home">
     <div class="hero-left">
-      <h1>Luxury Shopping <br><span>Experience</span></h1>
+      <h1>0% Caffeine <br><span>Coffee Experience</span></h1>
 
       <p>
-        Premium ecommerce website with smooth animations,
-        modern UI, secure login system, order management,
-        saved addresses and luxury brand feel.
+        Premium healthy coffee brand website with smooth animations, secure login access, saved orders, user accounts and modern luxury coffee experience.
       </p>
 
       <div class="buttons">
@@ -368,12 +433,12 @@
     <div class="hero-right">
       <div class="hero-card">
         <div class="product-image">
-          🛍️
+          ☕
         </div>
 
         <div class="product-info">
-          <h3>Premium Product</h3>
-          <div class="price">₹999</div>
+          <h3>Zen Coffee Powder</h3>
+          <div class="price">₹499</div>
 
           <button class="btn btn-primary" style="width:100%;">
             Add To Cart
@@ -421,7 +486,7 @@
   <section class="products" id="products">
 
     <div class="section-title">
-      <h2>Trending Products</h2>
+      <h2>0% Caffeine Coffee</h2>
       <p>Minimal premium product showcase</p>
     </div>
 
@@ -431,8 +496,8 @@
         <div class="card-image">✨</div>
 
         <div class="card-content">
-          <h3>Premium Product 1</h3>
-          <div class="price">₹999</div>
+          <h3>Classic Zen Coffee</h3>
+          <div class="price">₹499</div>
 
           <button class="btn btn-primary" style="width:100%;">
             Buy Now
@@ -444,7 +509,7 @@
         <div class="card-image">🔥</div>
 
         <div class="card-content">
-          <h3>Premium Product 2</h3>
+          <h3>Strong Aroma Coffee</h3>
           <div class="price">₹1499</div>
 
           <button class="btn btn-primary" style="width:100%;">
@@ -453,6 +518,36 @@
         </div>
       </div>
 
+    </div>
+  </section>
+
+  <section class="order-section" id="orders">
+    <div class="section-title">
+      <h2>Your Orders</h2>
+      <p>User order tracking with saved order history</p>
+    </div>
+
+    <div class="order-box">
+      <div>
+        <h3>Zen Coffee Powder</h3>
+        <p>Order ID: #ZEN2045</p>
+      </div>
+
+      <div class="status">Delivered</div>
+    </div>
+  </section>
+
+  <section class="account-section" id="account">
+    <div class="section-title">
+      <h2>My Account</h2>
+      <p>User profile with login access</p>
+    </div>
+
+    <div class="account-card">
+      <h3 style="margin-bottom:20px;">Saved User Details</h3>
+      <p><strong>Name:</strong> Demo User</p>
+      <p><strong>Email:</strong> user@gmail.com</p>
+      <p><strong>Saved Address:</strong> Mumbai, India</p>
     </div>
   </section>
 
@@ -475,8 +570,15 @@
   </section>
 
   <footer class="footer">
-    © 2026 PremiumShop — Modern Ecommerce Experience
+    © 2026 ZenCoffee — Premium 0% Caffeine Coffee Experience
   </footer>
+
+  <div class="bottom-nav">
+    <a href="#home">🏠 Home</a>
+    <a href="#products">🛒 Shop</a>
+    <a href="#orders">📦 Orders</a>
+    <a href="#account">👤 Account</a>
+  </div>
 
   <script>
     const buttons = document.querySelectorAll('.btn');
