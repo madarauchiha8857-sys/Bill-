@@ -20,6 +20,17 @@
       background: #ffffff;
       color: #111;
       overflow-x: hidden;
+      padding-bottom: 120px;
+    }
+
+    .page-section {
+      display: none;
+      min-height: 100vh;
+      animation: fadeUp 0.5s ease;
+    }
+
+    .page-section.active-section {
+      display: block;
     }
 
     .navbar {
@@ -258,12 +269,39 @@
     }
 
     .login-box {
-      background: white;
-      padding: 50px;
+      background: linear-gradient(145deg,#ffffff,#f8fff9);
+      padding: 45px;
       width: 100%;
-      max-width: 500px;
-      border-radius: 35px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.06);
+      max-width: 420px;
+      border-radius: 38px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+      border: 1px solid rgba(23,167,104,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-box::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      right: -120px;
+      width: 220px;
+      height: 220px;
+      background: linear-gradient(135deg,#17a768,#ffd43b);
+      border-radius: 50%;
+      opacity: 0.12;
+    }
+
+    .login-box::after {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      left: -100px;
+      width: 180px;
+      height: 180px;
+      background: #17a768;
+      border-radius: 50%;
+      opacity: 0.08;
     }
 
     .login-box h2 {
@@ -278,12 +316,19 @@
 
     .input-group input {
       width: 100%;
-      padding: 18px;
-      border: none;
-      background: #f1f3f5;
-      border-radius: 16px;
+      padding: 18px 20px;
+      border: 2px solid transparent;
+      background: #f4f6f8;
+      border-radius: 18px;
       font-size: 16px;
       outline: none;
+      transition: 0.3s ease;
+    }
+
+    .input-group input:focus {
+      border-color: #17a768;
+      background: white;
+      box-shadow: 0 10px 25px rgba(23,167,104,0.08);
     }
 
     .bottom-nav {
@@ -325,7 +370,13 @@
       font-size: 22px;
     }
 
-    .bottom-nav a.active,
+    .bottom-nav a.active {
+      background: linear-gradient(135deg,#17a768,#11995d);
+      color: white;
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(23,167,104,0.25);
+    }
+
     .bottom-nav a:hover {
       background: linear-gradient(135deg,#17a768,#11995d);
       color: white;
@@ -348,6 +399,62 @@
     .order-section {
       padding: 100px 8%;
       background: #ffffff;
+    }
+
+    .checkout-card {
+      background: linear-gradient(145deg,#ffffff,#f8fff9);
+      border-radius: 32px;
+      padding: 30px;
+      margin-top: 30px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+    }
+
+    .checkout-step {
+      margin-bottom: 30px;
+    }
+
+    .checkout-step h3 {
+      margin-bottom: 18px;
+      font-size: 24px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      color: #444;
+    }
+
+    .address-form input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 16px;
+      border: none;
+      background: #f4f6f8;
+      margin-bottom: 14px;
+      font-size: 15px;
+    }
+
+    .confirmation-animation {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+      animation: fadeUp 0.8s ease;
+    }
+
+    .success-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: auto;
+      background: linear-gradient(135deg,#17a768,#0d6b42);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      color: white;
+      box-shadow: 0 20px 50px rgba(23,167,104,0.3);
+      animation: float 2s ease-in-out infinite;
     }
 
     .order-box {
@@ -442,13 +549,13 @@
 
     <div class="nav-links">
       <a href="#home">Home</a>
-      <a href="#products">Shop</a>
-      <a href="#orders">Orders</a>
-      <a href="#account">Account</a>
+      <a href="#products" onclick="navigateTab(event,'products',this)">Shop</a>
+      <a href="#orders" onclick="navigateTab(event,'orders',this)">Orders</a>
+      <a href="#account" onclick="navigateTab(event,'account',this)">Account</a>
     </div>
   </nav>
 
-  <section class="hero" id="home">
+  <section class="hero page-section active-section" id="home">
 
     <div class="hero-left">
       <div style="display:inline-block;padding:10px 18px;background:#eefaf4;border-radius:50px;color:#17a768;font-weight:600;margin-bottom:20px;">
@@ -487,7 +594,7 @@
 
           <div class="price">₹499</div>
 
-          <button class="btn btn-primary" style="width:100%;">
+          <button class="btn btn-primary add-cart-btn" data-product="Dazeen Classic Coffee" data-price="499" style="width:100%;">
             Add To Cart
           </button>
         </div>
@@ -496,7 +603,7 @@
 
   </section>
 
-  <section class="products" id="products">
+  <section class="products page-section" id="products">
 
     <div class="section-title">
       <h2>Our Coffee Collection</h2>
@@ -519,8 +626,8 @@
 
           <div class="price">₹499</div>
 
-          <button class="btn btn-primary" style="width:100%;">
-            Buy Now
+          <button class="btn btn-primary add-cart-btn" data-product="Dazeen Classic" data-price="499" style="width:100%;">
+            Add To Cart
           </button>
         </div>
       </div>
@@ -539,8 +646,8 @@
 
           <div class="price">₹699</div>
 
-          <button class="btn btn-primary" style="width:100%;">
-            Buy Now
+          <button class="btn btn-primary add-cart-btn" data-product="Dazeen Strong Aroma" data-price="699" style="width:100%;">
+            Add To Cart
           </button>
         </div>
       </div>
@@ -584,34 +691,87 @@
     </div>
   </section>
 
-  <section class="order-section" id="orders">
+  <section class="order-section page-section" id="cart">
 
     <div class="section-title">
-      <h2>My Orders</h2>
-      <p>Saved order history for logged in users</p>
+      <h2>My Cart</h2>
+      <p>Your selected coffee products</p>
     </div>
 
-    <div class="order-box">
-      <div>
-        <h3>Dazeen Classic Coffee</h3>
-        <p>Order ID: #DAZ2045</p>
-      </div>
+    <div id="cartContainer">
+      <div class="order-box">
+        <div>
+          <h3>Cart is Empty ☕</h3>
+          <p>Add products to your cart.</p>
+        </div>
 
-      <div class="status">Delivered</div>
+        <div class="status">0 Items</div>
+      </div>
     </div>
 
-    <div class="order-box">
-      <div>
-        <h3>Dazeen Strong Aroma</h3>
-        <p>Order ID: #DAZ2046</p>
+    <div class="checkout-card">
+
+      <div class="checkout-step">
+        <h3>Order Summary</h3>
+
+        <div id="summaryContainer">
+          <div class="summary-row">
+            <span>No items added</span>
+            <span>₹0</span>
+          </div>
+        </div>
       </div>
 
-      <div class="status">Processing</div>
+      <div class="checkout-step">
+        <h3>Delivery Address</h3>
+
+        <div class="address-form">
+          <input type="text" id="fullName" placeholder="Full Name">
+          <input type="tel" id="mobile" placeholder="Mobile Number">
+          <input type="text" id="address" placeholder="Full Address">
+          <input type="text" id="city" placeholder="City">
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="placeOrderBtn" style="width:100%;">
+        Confirm Order ☕
+      </button>
+
+      <div class="confirmation-animation" id="confirmationAnimation">
+        <div class="success-circle">✓</div>
+
+        <h2 style="margin-top:25px;">Order Confirmed</h2>
+
+        <p style="color:#666;margin-top:10px;">
+          Your Dazeen Coffee is on the way 🚀
+        </p>
+      </div>
+
     </div>
 
   </section>
 
-  <section class="account-section" id="account">
+  <section class="order-section page-section" id="orders">
+
+    <div class="section-title">
+      <h2>My Orders</h2>
+      <p>Your live coffee orders appear here</p>
+    </div>
+
+    <div id="ordersContainer">
+      <div class="order-box">
+        <div>
+          <h3>No Orders Yet ☕</h3>
+          <p>Add products to cart to create orders.</p>
+        </div>
+
+        <div class="status">Waiting</div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="account-section page-section" id="account">
 
     <div class="section-title">
       <h2>My Account</h2>
@@ -641,7 +801,7 @@
 
   </section>
 
-  <section class="login-section" id="login">
+  <section class="login-section page-section" id="login">
 
     <div class="login-box">
 
@@ -667,9 +827,9 @@
         Create Account
       </button>
 
-      <p style="text-align:center;color:#666;font-size:14px;">
-        OTP Login Powered by Fast2SMS
-      </p>
+      <div id="otpTimer" style="text-align:center;color:#17a768;font-size:14px;font-weight:600;display:none;">
+        Resend OTP in 60s
+      </div>
 
       <p id="loginStatus" style="text-align:center;color:#17a768;font-weight:600;margin-top:10px;"></p>
 
@@ -681,28 +841,35 @@
   </footer>
 
   <div class="bottom-nav">
-    <a href="#home" class="active">
+    <a href="#home" class="active" onclick="navigateTab(event,'home',this)">
       <span>🏠</span>
       Home
     </a>
 
-    <a href="#products">
+    <a href="#products" onclick="navigateTab(event,'products',this)">
       <span>🛒</span>
       Shop
     </a>
 
-    <a href="#orders">
+    <a href="#cart" onclick="navigateTab(event,'cart',this)">
+      <span>🛍️</span>
+      Cart
+    </a>
+
+    <a href="#orders" onclick="navigateTab(event,'orders',this)">
       <span>📦</span>
       Orders
     </a>
 
-    <a href="#account">
+    <a href="#account" onclick="navigateTab(event,'account',this)">
       <span>👤</span>
       Account
     </a>
   </div>
 
   <script>
+    let cart = JSON.parse(localStorage.getItem('dazeenCart')) || [];
+
     const buttons = document.querySelectorAll('.btn');
 
     buttons.forEach(button => {
@@ -719,6 +886,7 @@
     const loginBtn = document.getElementById('loginBtn');
     const signupBtn = document.getElementById('signupBtn');
     const statusText = document.getElementById('loginStatus');
+    const otpTimer = document.getElementById('otpTimer');
 
     signupBtn.addEventListener('click', () => {
       const phone = document.getElementById('phone').value;
@@ -749,10 +917,24 @@
       localStorage.setItem('dazeenOTP', generatedOtp);
 
       statusText.innerText = 'OTP Sent Successfully 🚀';
+      otpTimer.style.display = 'block';
+
+      let timeLeft = 60;
+      otpTimer.innerText = `Resend OTP in ${timeLeft}s`;
+
+      const timer = setInterval(() => {
+        timeLeft--;
+        otpTimer.innerText = `Resend OTP in ${timeLeft}s`;
+
+        if(timeLeft <= 0) {
+          clearInterval(timer);
+          otpTimer.innerText = 'You can resend OTP now';
+        }
+      }, 1000);
       statusText.style.color = '#17a768';
 
-      // IMPORTANT:
-      // Move API key to backend in production.
+      // Firebase/Firestore connection should be added using Firebase SDK in production.
+      // Current version uses localStorage demo database.
 
       fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=14eYp2D6nfUcWLTyxmVtq97JaAzHbi3FjX8sGuvZElRdKoOCrkuyLcNgESHKsbtYhz1DrinmqpxoZTvP&route=dlt&sender_id=DAZEEN&message=214505&variables_values=${generatedOtp}%7C&flash=0&numbers=${phone}`)
       .then(response => response.json())
@@ -781,7 +963,218 @@
       }
     });
 
+    function navigateTab(event, sectionId, element) {
+      event.preventDefault();
+
+      document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.remove('active-section');
+      });
+
+      document.getElementById(sectionId).classList.add('active-section');
+
+      document.querySelectorAll('.bottom-nav a').forEach(nav => {
+        nav.classList.remove('active');
+      });
+
+      element.classList.add('active');
+
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    const cartButtons = document.querySelectorAll('.add-cart-btn');
+
+    cartButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const product = button.dataset.product;
+        const price = button.dataset.price;
+
+        cart.push({ product, price });
+
+        localStorage.setItem('dazeenCart', JSON.stringify(cart));
+
+        renderCart();
+
+        renderSummary();
+
+        renderOrders();
+
+        button.innerText = 'Added ✓';
+
+        setTimeout(() => {
+          button.innerText = 'Add To Cart';
+        }, 1500);
+      });
+    });
+
+    function renderCart() {
+      const cartContainer = document.getElementById('cartContainer');
+
+      if(cart.length === 0) {
+        cartContainer.innerHTML = `
+          <div class="order-box">
+            <div>
+              <h3>Cart is Empty ☕</h3>
+              <p>Add products to your cart.</p>
+            </div>
+            <div class="status">0 Items</div>
+          </div>
+        `;
+
+        return;
+      }
+
+      cartContainer.innerHTML = '';
+
+      let total = 0;
+
+      cart.forEach((item,index) => {
+        total += Number(item.price);
+
+        cartContainer.innerHTML += `
+          <div class="order-box">
+            <div>
+              <h3>${item.product}</h3>
+              <p>Premium 0% Caffeine Coffee</p>
+            </div>
+
+            <div>
+              <div class="price">₹${item.price}</div>
+              <div class="status">Added</div>
+            </div>
+          </div>
+        `;
+      });
+
+      cartContainer.innerHTML += `
+        <div class="order-box" style="background:#17a768;color:white;">
+          <div>
+            <h3>Total Amount</h3>
+            <p>${cart.length} Products</p>
+          </div>
+
+          <div>
+            <div style="font-size:30px;font-weight:700;">₹${total}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSummary() {
+      const summaryContainer = document.getElementById('summaryContainer');
+
+      if(cart.length === 0) {
+        summaryContainer.innerHTML = `
+          <div class="summary-row">
+            <span>No items added</span>
+            <span>₹0</span>
+          </div>
+        `;
+        return;
+      }
+
+      summaryContainer.innerHTML = '';
+
+      let total = 0;
+
+      cart.forEach(item => {
+        total += Number(item.price);
+
+        summaryContainer.innerHTML += `
+          <div class="summary-row">
+            <span>${item.product}</span>
+            <span>₹${item.price}</span>
+          </div>
+        `;
+      });
+
+      summaryContainer.innerHTML += `
+        <hr style="margin:16px 0;border:none;height:1px;background:#eee;">
+
+        <div class="summary-row" style="font-weight:700;font-size:20px;color:#111;">
+          <span>Total</span>
+          <span>₹${total}</span>
+        </div>
+      `;
+    }
+
+    function renderOrders() {
+      const ordersContainer = document.getElementById('ordersContainer');
+
+      if(cart.length === 0) {
+        ordersContainer.innerHTML = `
+          <div class="order-box">
+            <div>
+              <h3>No Orders Yet ☕</h3>
+              <p>Add products to cart to create orders.</p>
+            </div>
+            <div class="status">Waiting</div>
+          </div>
+        `;
+
+        return;
+      }
+
+      ordersContainer.innerHTML = '';
+
+      cart.forEach((item,index) => {
+        ordersContainer.innerHTML += `
+          <div class="order-box">
+            <div>
+              <h3>${item.product}</h3>
+              <p>Order ID: #DAZ${2045 + index}</p>
+            </div>
+
+            <div>
+              <div class="price">₹${item.price}</div>
+              <div class="status">Processing</div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    document.getElementById('placeOrderBtn').addEventListener('click', () => {
+      const name = document.getElementById('fullName').value;
+      const mobile = document.getElementById('mobile').value;
+      const address = document.getElementById('address').value;
+      const city = document.getElementById('city').value;
+
+      if(name === '' || mobile === '' || address === '' || city === '') {
+        alert('Please fill all address details');
+        return;
+      }
+
+      document.getElementById('confirmationAnimation').style.display = 'block';
+
+      localStorage.setItem('dazeenAddress', JSON.stringify({
+        name,
+        mobile,
+        address,
+        city
+      }));
+
+      setTimeout(() => {
+        document.querySelectorAll('.page-section').forEach(section => {
+          section.classList.remove('active-section');
+        });
+
+        document.getElementById('orders').classList.add('active-section');
+
+        document.querySelectorAll('.bottom-nav a').forEach(nav => {
+          nav.classList.remove('active');
+        });
+
+        document.querySelectorAll('.bottom-nav a')[3].classList.add('active');
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 2500);
+    });
+
     window.onload = () => {
+      document.getElementById('home').classList.add('active-section');
       const loggedIn = localStorage.getItem('dazeenLoggedIn');
       const savedPhone = localStorage.getItem('dazeenPhone');
 
@@ -791,6 +1184,14 @@
         document.querySelector('#account h3').innerText = 'Welcome Back';
         document.querySelector('#account p').innerText = savedPhone;
       }
+
+      renderCart();
+
+        renderCart();
+
+        renderSummary();
+
+        renderOrders();
     }
   </script>
 
