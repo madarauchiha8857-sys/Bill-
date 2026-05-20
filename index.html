@@ -3,34 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dazeen E-Commerce</title>
+    <title>Dazeen | Caffeine-Free Coffee</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .hidden-view { display: none; }
-        .active-view { display: block; }
-        .accent-green { color: #059669; }
-        .bg-accent-green { background-color: #059669; }
-        .accent-yellow { color: #d97706; }
-        .bg-accent-chocolate { background-color: #292524; }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+        body { font-family: 'Outfit', sans-serif; }
+        .bg-coffee { background-color: #4a3728; }
+        .text-coffee { color: #4a3728; }
+        .border-coffee { border-color: #4a3728; }
+        .success-anim { animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
-<body class="bg-white text-stone-800">
+<body class="bg-stone-50 text-stone-800">
 
-    <nav class="sticky top-0 z-50 bg-white border-b border-stone-100 shadow-sm">
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200">
         <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 onclick="showView('home')" class="text-2xl font-bold cursor-pointer text-emerald-700">Dazeen</h1>
-            <div class="flex gap-6 text-stone-600">
-                <button onclick="showView('home')" class="hover:text-emerald-600 font-medium transition">Home</button>
-                <button onclick="showView('shop')" class="hover:text-emerald-600 font-medium transition">Shop</button>
-                <button onclick="showView('orders')" class="hover:text-emerald-600 font-medium transition">Orders</button>
-                <button onclick="showView('account')" class="hover:text-emerald-600 font-medium transition">Account</button>
+            <h1 class="text-3xl font-bold text-coffee flex items-center gap-2">
+                <i data-lucide="coffee"></i> Dazeen
+            </h1>
+            <div class="flex gap-6 font-semibold text-stone-600">
+                <button onclick="showView('shop')" class="hover:text-emerald-700 transition">Shop</button>
+                <button onclick="showView('orders')" class="hover:text-emerald-700 transition">Orders</button>
+                <button onclick="showView('account')" class="hover:text-emerald-700 transition">Account</button>
             </div>
             <button onclick="showView('cart')" class="relative p-2 hover:bg-stone-100 rounded-full transition">
-                <i data-lucide="shopping-bag" class="text-stone-700"></i>
-                <span id="cart-count" class="absolute top-0 right-0 bg-amber-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">0</span>
+                <i data-lucide="shopping-bag" class="text-coffee"></i>
+                <span id="cart-count" class="absolute top-0 right-0 bg-emerald-600 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">0</span>
             </button>
         </div>
     </nav>
@@ -39,16 +42,16 @@
         let cart = [];
         let orders = [];
         let user = null;
-        let cartStep = 1; // 1: Summary, 2: Address, 3: Confirm
+        let cartStep = 1;
 
         const PRODUCTS = [
-            { id: 1, name: "Premium Leather Satchel", price: 3499, desc: "Hand-crafted sustainable leather." },
-            { id: 2, name: "Organic Cotton Hoodie", price: 1899, desc: "Breathable, soft, and durable." }
+            { id: 1, name: "Golden Morning Roast", price: 599, desc: "Smooth, nutty, and completely caffeine-free." },
+            { id: 2, name: "Midnight Decaf Blend", price: 649, desc: "Rich, intense flavor without the jitters." }
         ];
 
         function showView(viewId) {
-            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden-view'));
-            document.getElementById(viewId + '-view').classList.remove('hidden-view');
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+            document.getElementById(viewId + '-view').classList.remove('hidden');
             lucide.createIcons();
         }
 
@@ -56,108 +59,101 @@
             const prod = PRODUCTS.find(p => p.id === productId);
             cart.push(prod);
             updateCartUI();
-            alert(`${prod.name} added to cart!`);
         }
 
         function updateCartUI() {
             document.getElementById('cart-count').innerText = cart.length;
             renderCart();
         }
-
-        function toggleLoginModal(show) {
-            document.getElementById('login-modal').classList.toggle('hidden', !show);
-        }
-
-        function handleLogin() {
-            user = { email: "user@dazeen.com" };
-            toggleLoginModal(false);
-            showView('cart');
-            cartStep = 3; // Jump to confirmed state
-            renderCart();
-        }
     </script>
 
     <div id="views-container" class="max-w-5xl mx-auto p-6">
         
-        <!-- Home View -->
-        <section id="home-view" class="view">
-            <div class="bg-emerald-50 p-12 rounded-3xl mb-8">
-                <h2 class="text-4xl font-bold text-emerald-900 mb-4">Welcome to Dazeen</h2>
-                <p class="text-emerald-800 text-lg max-w-lg">Premium quality products crafted with care. Experience the blend of style and comfort in every piece we offer.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="p-6 border rounded-2xl border-stone-200">
-                    <h3 class="font-bold text-xl mb-2">Sustainable</h3>
-                    <p class="text-stone-500">Ethically sourced materials.</p>
-                </div>
-                <div class="p-6 border rounded-2xl border-stone-200">
-                    <h3 class="font-bold text-xl mb-2">Fast Delivery</h3>
-                    <p class="text-stone-500">Quick dispatch to your doorstep.</p>
-                </div>
-                <div class="p-6 border rounded-2xl border-stone-200">
-                    <h3 class="font-bold text-xl mb-2">Quality Assured</h3>
-                    <p class="text-stone-500">Hand-picked quality checks.</p>
+        <section id="shop-view" class="view">
+            <!-- Hero Header -->
+            <div class="bg-emerald-900 text-emerald-50 p-12 rounded-[2rem] mb-12 relative overflow-hidden">
+                <h2 class="text-5xl font-bold mb-4">Pure Coffee, <br>Zero Caffeine.</h2>
+                <p class="text-emerald-200 text-lg max-w-lg mb-8">Crafted for those who love the ritual of coffee, without the impact of caffeine. Ethically sourced, perfection in every cup.</p>
+                <div class="flex gap-4">
+                    <button onclick="document.getElementById('product-list').scrollIntoView({behavior:'smooth'})" class="bg-amber-500 text-emerald-900 px-8 py-4 rounded-xl font-bold hover:bg-amber-400 transition">Shop Now</button>
                 </div>
             </div>
-        </section>
-
-        <!-- Shop View -->
-        <section id="shop-view" class="view hidden-view">
-            <h2 class="text-3xl font-bold mb-8">Our Collection</h2>
+            
+            <h2 class="text-3xl font-bold mb-8 text-coffee">Our Signature Blends</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="product-list">
-                <!-- Products dynamically rendered here -->
+                <!-- Products injected by JS -->
             </div>
         </section>
 
-        <!-- Cart View -->
-        <section id="cart-view" class="view hidden-view max-w-xl mx-auto">
+        <section id="cart-view" class="view hidden max-w-xl mx-auto">
             <div id="cart-content"></div>
         </section>
 
-        <!-- Orders View -->
-        <section id="orders-view" class="view hidden-view">
-            <h2 class="text-2xl font-bold mb-6">My Orders</h2>
-            <div id="orders-list">No orders yet.</div>
+        <section id="orders-view" class="view hidden">
+            <h2 class="text-3xl font-bold mb-8 text-coffee">My Orders</h2>
+            <div id="orders-list">
+                <div class="text-stone-500 p-8 border rounded-3xl text-center">No orders yet. Start your journey!</div>
+            </div>
         </section>
 
-        <!-- Account View -->
-        <section id="account-view" class="view hidden-view text-center py-20">
-            <i data-lucide="user-circle" size="64" class="mx-auto text-emerald-600 mb-4"></i>
-            <h2 class="text-xl font-bold">Manage Account</h2>
-            <button class="mt-6 bg-stone-900 text-white px-8 py-3 rounded-xl font-bold">Sign In</button>
+        <section id="account-view" class="view hidden text-center py-20">
+            <div class="bg-white p-12 rounded-3xl border shadow-sm max-w-md mx-auto">
+                <i data-lucide="user-circle" size="64" class="mx-auto text-emerald-600 mb-6"></i>
+                <h2 class="text-2xl font-bold text-coffee mb-2">Member Profile</h2>
+                <p class="text-stone-500 mb-8">Access your orders and preferences.</p>
+                <button onclick="toggleLoginModal(true)" class="bg-coffee text-white px-8 py-3 rounded-xl font-bold w-full">Sign In / Register</button>
+            </div>
         </section>
     </div>
 
-    <div id="login-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 hidden">
-        <div class="bg-white p-8 rounded-3xl w-full max-w-sm shadow-xl">
-            <h2 class="text-2xl font-bold mb-6">Login to Dazeen</h2>
-            <input type="email" placeholder="Email" class="w-full p-3 border rounded-xl mb-4" />
-            <input type="password" placeholder="Password" class="w-full p-3 border rounded-xl mb-6" />
-            <button onclick="handleLogin()" class="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold">Sign In & Order</button>
+    <div id="login-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-6 hidden z-[60]">
+        <div id="login-box" class="bg-white p-10 rounded-[2rem] w-full max-w-sm shadow-2xl relative">
+            <h2 class="text-3xl font-bold mb-2 text-coffee">Welcome back</h2>
+            <p class="text-stone-500 mb-8">Join the Dazeen community.</p>
+            <input type="email" placeholder="Email address" class="w-full p-4 border rounded-xl mb-4 bg-stone-50 focus:ring-2 focus:ring-emerald-500 outline-none" />
+            <input type="password" placeholder="Password" class="w-full p-4 border rounded-xl mb-8 bg-stone-50 focus:ring-2 focus:ring-emerald-500 outline-none" />
+            <button onclick="handleLogin()" class="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition">Sign In</button>
         </div>
     </div>
 
     <script>
-        // Render Products
         const prodList = document.getElementById('product-list');
         PRODUCTS.forEach(p => {
             prodList.innerHTML += `
-                <div class="border p-6 rounded-3xl hover:border-emerald-500 transition shadow-sm">
-                    <h3 class="font-bold text-xl">${p.name}</h3>
-                    <p class="text-stone-500 mb-4">${p.desc}</p>
+                <div class="bg-white p-8 rounded-3xl border border-stone-100 shadow-sm hover:shadow-xl transition">
+                    <h3 class="font-bold text-2xl text-coffee mb-2">${p.name}</h3>
+                    <p class="text-stone-500 mb-6">${p.desc}</p>
                     <div class="flex justify-between items-center">
-                        <span class="font-bold text-2xl text-emerald-700">₹${p.price}</span>
-                        <button onclick="addToCart(${p.id})" class="bg-stone-900 text-white px-6 py-2 rounded-lg hover:bg-emerald-600">Add to Cart</button>
+                        <span class="font-bold text-3xl text-emerald-700">₹${p.price}</span>
+                        <button onclick="addToCart(${p.id})" class="bg-stone-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-emerald-700 transition">Add to Bag</button>
                     </div>
                 </div>
             `;
         });
 
-        // Render Cart
+        function toggleLoginModal(show) {
+            const modal = document.getElementById('login-modal');
+            modal.classList.toggle('hidden', !show);
+            if(show) document.getElementById('login-box').classList.add('success-anim');
+        }
+
+        function handleLogin() {
+            user = { email: "customer@dazeen.com" };
+            toggleLoginModal(false);
+            
+            // Success animation
+            const box = document.getElementById('login-box');
+            alert("Welcome back to Dazeen!");
+            
+            cartStep = 3;
+            renderCart();
+            showView('cart');
+        }
+
         function renderCart() {
             const container = document.getElementById('cart-content');
             if (cart.length === 0) {
-                container.innerHTML = `<p class="text-center py-20">Your cart is empty.</p>`;
+                container.innerHTML = `<p class="text-center py-20 text-stone-500">Your bag is empty. Time to brew something!</p>`;
                 return;
             }
             
@@ -165,35 +161,45 @@
             
             if (cartStep === 1) {
                 container.innerHTML = `
-                    <h2 class="text-2xl font-bold mb-8">Summary</h2>
-                    <div class="bg-stone-50 p-6 rounded-2xl">
-                        ${cart.map(i => `<div class="flex justify-between py-2 border-b">${i.name} <span>₹${i.price}</span></div>`).join('')}
-                        <div class="flex justify-between font-bold text-xl mt-4">Total <span>₹${total}</span></div>
-                        <button onclick="cartStep=2; renderCart()" class="w-full mt-6 py-4 bg-emerald-600 text-white rounded-xl font-bold">Proceed to Address</button>
+                    <h2 class="text-3xl font-bold mb-8 text-coffee">Bag Summary</h2>
+                    <div class="bg-white p-8 rounded-3xl border shadow-sm">
+                        ${cart.map(i => `<div class="flex justify-between py-4 border-b">${i.name} <span class="font-bold">₹${i.price}</span></div>`).join('')}
+                        <div class="flex justify-between font-bold text-xl mt-6">Total <span>₹${total}</span></div>
+                        <button onclick="cartStep=2; renderCart()" class="w-full mt-8 py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700">Add Delivery Details</button>
                     </div>
                 `;
             } else if (cartStep === 2) {
                 container.innerHTML = `
-                    <h2 class="text-2xl font-bold mb-8">Delivery Address</h2>
-                    <input class="w-full p-3 border rounded-lg mb-4" placeholder="Street Address" />
-                    <input class="w-full p-3 border rounded-lg mb-4" placeholder="City" />
-                    <button onclick="toggleLoginModal(true)" class="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold">Place Order</button>
-                `;
-            } else if (cartStep === 3) {
-                orders.push({id: "DZ-"+Math.floor(Math.random()*1000), items: [...cart]});
-                cart = [];
-                updateCartUI();
-                container.innerHTML = `
-                    <div class="text-center py-10">
-                        <i data-lucide="check-circle" class="mx-auto text-emerald-500 mb-4" size="64"></i>
-                        <h2 class="text-2xl font-bold">Order Placed!</h2>
-                        <p>Check the Orders tab to track.</p>
-                        <button onclick="cartStep=1; showView('home')" class="mt-6 text-emerald-600 font-bold">Back to Home</button>
+                    <h2 class="text-3xl font-bold mb-8 text-coffee">Delivery Details</h2>
+                    <div class="bg-white p-8 rounded-3xl border shadow-sm">
+                        <input class="w-full p-4 border rounded-xl mb-4 bg-stone-50" placeholder="Full Name" />
+                        <input class="w-full p-4 border rounded-xl mb-4 bg-stone-50" placeholder="Street Address" />
+                        <input class="w-full p-4 border rounded-xl mb-4 bg-stone-50" placeholder="City" />
+                        <button onclick="${!user ? 'toggleLoginModal(true)' : 'finishOrder()'}" class="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700">Place Order</button>
                     </div>
                 `;
-                lucide.createIcons();
+            } else if (cartStep === 3) {
+                finishOrder();
             }
         }
+
+        function finishOrder() {
+            orders.push({id: "DZ-"+Math.floor(Math.random()*1000), items: [...cart], status: 'Processing'});
+            cart = [];
+            updateCartUI();
+            cartStep = 1;
+            document.getElementById('cart-content').innerHTML = `
+                <div class="text-center py-20 bg-white rounded-3xl border border-emerald-100 shadow-sm">
+                    <i data-lucide="check-circle" class="mx-auto text-emerald-500 mb-6" size="64"></i>
+                    <h2 class="text-3xl font-bold text-coffee mb-2">Order Confirmed!</h2>
+                    <p class="text-stone-500 mb-8">Your caffeine-free experience is on the way.</p>
+                    <button onclick="showView('orders')" class="text-emerald-700 font-bold underline">Track My Order</button>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+        
+        lucide.createIcons();
     </script>
 </body>
 </html>
