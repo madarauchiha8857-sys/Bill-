@@ -1,287 +1,201 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>dazeen - Premium Dates Seed Coffee</title>
-    <!-- Tailwind CSS for modern fluid designs -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts Playfair Display for headers & Inter for body -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,500&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #faf7f2;
-            overflow-x: hidden;
-            /* Safe bottom padding for both iOS and Android native bottom navigation bars */
-            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 120px);
-        }
-        @media (min-width: 768px) {
-            body {
-                padding-bottom: 80px;
-            }
-        }
-        .serif-title {
-            font-family: 'Playfair Display', serif;
-        }
-        /* Custom scrollbar matching coffee brown aesthetics */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f5efe6;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #c6a47e;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a47e5c;
-        }
-        @keyframes pulse-ring {
-            0% { transform: scale(0.95); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-            100% { transform: scale(0.95); opacity: 0.5; }
-        }
-        .live-indicator {
-            animation: pulse-ring 2s infinite;
-        }
+import React, { useState } from 'react';
+import { 
+  ShoppingBag, 
+  UserCircle, 
+  Box, 
+  Store, 
+  Home, 
+  ChevronRight, 
+  Trash2, 
+  Package, 
+  LogOut, 
+  Menu, 
+  X,
+  MapPin,
+  Truck
+} from 'lucide-react';
 
-        /* Safari and iOS compatible glassmorphism backdrop-blur */
-        .glass-modal {
-            -webkit-backdrop-filter: blur(12px);
-            backdrop-filter: blur(12px);
-        }
+const PRODUCTS = [
+  { id: 1, name: "Premium Leather Satchel", price: 3499, category: "Accessories", desc: "Hand-crafted sustainable leather." },
+  { id: 2, name: "Organic Cotton Hoodie", price: 1899, category: "Apparel", desc: "Breathable, soft, and durable." }
+];
 
-        /* Animated verification blue tick reveal */
-        @keyframes bluetick-pop {
-            0% { transform: scale(0); opacity: 0; }
-            70% { transform: scale(1.2); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .animate-bluetick {
-            animation: bluetick-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col relative text-stone-800">
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [cart, setCart] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [view, setView] = useState('home'); // home, shop, cart, orders, account
+  const [showLogin, setShowLogin] = useState(false);
+  const [cartStep, setCartStep] = useState(1); // 1: Cart, 2: Address, 3: Confirm
+  const [address, setAddress] = useState({ street: '', city: '', zip: '' });
 
-    <!-- DYNAMIC TOAST NOTIFICATION DOCK -->
-    <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+  const addToCart = (product) => setCart([...cart, product]);
+  const removeFromCart = (index) => setCart(cart.filter((_, i) => i !== index));
 
-    <!-- BRAND HEADER NAVIGATION (DESKTOP) -->
-    <header class="bg-[#1e110a] text-white sticky top-0 z-[45] shadow-xl border-b border-[#3d2417]">
-        <div class="px-4 py-3 flex flex-wrap items-center justify-between gap-4 max-w-7xl mx-auto">
-            
-            <!-- Left Brand Logo -->
-            <div class="flex items-center space-x-3">
-                <span onclick="showPage('home')" class="cursor-pointer flex items-center space-x-2 select-none">
-                    <span class="w-10 h-10 bg-[#d4a373] text-[#1e110a] rounded-full flex items-center justify-center font-extrabold shadow-md transform hover:rotate-12 transition-transform duration-300">
-                        <i class="fas fa-coffee text-lg"></i>
-                    </span>
-                    <div>
-                        <span class="serif-title text-2xl font-black tracking-wide text-[#faf7f2]">
-                            dazeen
-                        </span>
-                        <p class="text-[9px] text-stone-400 tracking-widest uppercase font-semibold">By Shivhind – ESTD 2026</p>
-                    </div>
-                </span>
-            </div>
-
-            <!-- Global Brew Search Bar -->
-            <div class="flex-1 max-w-md mx-2 relative min-w-[200px]">
-                <div class="flex">
-                    <input type="text" id="search-bar" oninput="handleSearch()" placeholder="Search dates seed brews..." class="w-full px-4 py-2 bg-[#2b190f] text-[#faf7f2] border border-[#3d2417] text-sm rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#d4a373] placeholder-stone-500">
-                    <button onclick="handleSearch()" class="bg-[#d4a373] hover:bg-[#c68b59] text-[#1e110a] px-5 rounded-r-md transition-colors font-bold">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-                <!-- Search Suggestions -->
-                <div id="autocomplete-dropdown" class="absolute left-0 right-0 mt-1 bg-white text-stone-900 rounded-md shadow-2xl border border-stone-200 hidden z-50 max-h-60 overflow-y-auto"></div>
-            </div>
-
-            <!-- Navigation Buttons -->
-            <div class="hidden md:flex items-center space-x-5 text-sm">
-                <div onclick="goToProfile()" class="cursor-pointer hover:text-[#d4a373] transition-colors py-1 flex items-center space-x-2">
-                    <i class="fas fa-user-circle text-lg text-[#d4a373]"></i>
-                    <div class="text-left">
-                        <p class="text-[10px] text-stone-400 leading-none">Hello, Coffee Lover</p>
-                        <p class="font-bold text-xs mt-0.5" id="nav-user-label">Sign In</p>
-                    </div>
-                </div>
-
-                <div onclick="goToCart()" class="cursor-pointer hover:text-[#d4a373] transition-colors relative flex items-center p-1 bg-[#2b190f] px-3 py-1.5 rounded-lg border border-[#3d2417]">
-                    <div class="relative mr-2">
-                        <i class="fas fa-shopping-bag text-lg text-[#d4a373]"></i>
-                        <span id="cart-count" class="absolute -top-2 -right-3 bg-red-500 text-white font-black rounded-full text-[10px] min-w-[18px] h-[18px] px-1 flex items-center justify-center border-2 border-[#1e110a] shadow hidden">0</span>
-                    </div>
-                    <span class="font-bold text-xs text-[#faf7f2]">My Mug</span>
-                </div>
-            </div>
+  const Navbar = () => (
+    <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-stone-100">
+      <div className="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+        <h1 onClick={() => setView('home')} className="text-2xl font-bold cursor-pointer text-emerald-700">
+          Dazeen
+        </h1>
+        <div className="flex gap-6 text-stone-600">
+          <button onClick={() => setView('home')} className="hover:text-emerald-600 font-medium">Home</button>
+          <button onClick={() => setView('shop')} className="hover:text-emerald-600 font-medium">Shop</button>
+          <button onClick={() => setView('orders')} className="hover:text-emerald-600 font-medium">Orders</button>
+          <button onClick={() => setView('account')} className="hover:text-emerald-600 font-medium">Account</button>
         </div>
-    </header>
+        <button onClick={() => { setView('cart'); setCartStep(1); }} className="relative p-2 hover:bg-stone-100 rounded-full transition">
+          <ShoppingBag className="text-stone-700" size={24} />
+          {cart.length > 0 && <span className="absolute top-0 right-0 bg-amber-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">{cart.length}</span>}
+        </button>
+      </div>
+    </nav>
+  );
 
-    <!-- PREMIUM MOBILE BOTTOM NAVIGATION BAR -->
-    <div class="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+16px)] left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-[#1e110a]/95 backdrop-blur-md border border-[#3d2417] py-3 px-2 rounded-full shadow-2xl z-50 flex items-center justify-around md:hidden">
-        <button onclick="showPage('home')" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center text-[#d4a373] py-2 transition-all">
-            <i class="fas fa-coffee text-xl mb-1"></i>
-            <span class="text-[9px] font-bold tracking-wide uppercase">Shop</span>
-        </button>
-        <button onclick="goToCart()" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center text-stone-400 hover:text-white py-2 relative transition-all">
-            <i class="fas fa-shopping-bag text-xl mb-1"></i>
-            <span id="mobile-cart-badge" class="absolute top-1 right-1/4 bg-red-500 text-white font-black rounded-full text-[8px] min-w-[15px] h-[15px] flex items-center justify-center border border-[#1e110a] hidden">0</span>
-            <span class="text-[9px] font-bold tracking-wide uppercase">My Mug</span>
-        </button>
-        <button onclick="goToProfile()" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center text-stone-400 hover:text-white py-2 transition-all">
-            <i class="fas fa-clipboard-list text-xl mb-1"></i>
-            <span class="text-[9px] font-bold tracking-wide uppercase">Orders</span>
-        </button>
-        <button onclick="goToProfile()" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center text-stone-400 hover:text-white py-2 transition-all">
-            <i class="fas fa-user-circle text-xl mb-1"></i>
-            <span class="text-[9px] font-bold tracking-wide uppercase">Account</span>
-        </button>
-    </div>
-
-    <!-- HERO BANNER -->
-    <div id="hero-carousel" class="relative w-full overflow-hidden bg-gradient-to-b from-[#1e110a] to-[#faf7f2] h-[220px] md:h-[280px] flex items-center justify-center text-center">
-        <div class="absolute inset-0 opacity-20 pointer-events-none bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1506370822625-61419d147fc5?auto=format&fit=crop&q=80&w=1200');"></div>
-        
-        <div class="relative z-10 px-4 space-y-3 max-w-2xl">
-            <span class="bg-[#d4a373]/20 border border-[#d4a373] text-[#d4a373] text-[10px] tracking-widest font-bold px-3 py-1 rounded-full uppercase">100% Natural & Caffeine-Free</span>
-            <h1 class="serif-title text-3xl md:text-5xl font-black text-[#faf7f2] drop-shadow-md">
-                Dates Seed <span class="italic text-[#d4a373]">Coffee</span>
-            </h1>
-        </div>
-        <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#faf7f2] to-transparent"></div>
-    </div>
-
-    <!-- MAIN -->
-    <main class="flex-grow container mx-auto p-4 max-w-6xl relative z-10">
-        
-        <section id="page-home" class="page-view space-y-6">
-            <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <!-- Products loaded here -->
+  const renderView = () => {
+    switch (view) {
+      case 'home':
+        return (
+          <main className="max-w-5xl mx-auto p-6">
+            <div className="bg-emerald-50 p-12 rounded-3xl mb-8">
+              <h2 className="text-4xl font-bold text-emerald-900 mb-4">Welcome to Dazeen</h2>
+              <p className="text-emerald-800 text-lg max-w-lg">Premium quality products crafted with care. Experience the blend of style and comfort in every piece we offer.</p>
             </div>
-
-            <!-- Typing Effect Section -->
-            <div id="story-section" class="py-16 px-6 bg-white rounded-2xl shadow-sm border border-stone-200/60 mt-12 mb-8">
-                <div class="max-w-3xl mx-auto space-y-6">
-                    <h3 class="text-[#d4a373] text-xs font-bold uppercase tracking-[0.2em] mb-4">Discover Dazeen</h3>
-                    <div id="story-display" class="serif-title text-xl md:text-2xl text-stone-900 leading-relaxed font-medium italic min-h-[400px]"></div>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-6 border rounded-2xl">
+                <h3 className="font-bold text-xl mb-2">Sustainable</h3>
+                <p className="text-stone-500">Ethically sourced materials for a better future.</p>
+              </div>
+              <div className="p-6 border rounded-2xl">
+                <h3 className="font-bold text-xl mb-2">Fast Delivery</h3>
+                <p className="text-stone-500">Quick dispatch across all major cities.</p>
+              </div>
+              <div className="p-6 border rounded-2xl">
+                <h3 className="font-bold text-xl mb-2">Quality Assured</h3>
+                <p className="text-stone-500">Hand-picked quality checks before shipping.</p>
+              </div>
             </div>
-        </section>
+          </main>
+        );
 
-        <!-- (Cart, Login, Address, Profile sections kept for logic) -->
-        <section id="page-cart" class="page-view hidden space-y-6"></section>
-        <section id="page-login" class="page-view hidden max-w-md mx-auto"></section>
-        <section id="page-address" class="page-view hidden max-w-2xl mx-auto"></section>
-        <section id="page-profile" class="page-view hidden space-y-6"></section>
-
-    </main>
-
-    <!-- PRODUCT MODAL -->
-    <div id="product-detail-modal" class="fixed inset-0 bg-[#1e110a]/80 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative border border-stone-200/60">
-            <button onclick="closeProductDetailsModal()" class="absolute top-4 right-4 bg-[#1e110a] text-white rounded-full w-8 h-8 z-[110]"><i class="fas fa-times"></i></button>
-            <div id="modal-content-area" class="p-8"></div>
-        </div>
-    </div>
-
-    <script>
-        // Story Data
-        const storyContent = `OUR STORY
-
-Born in Pune, brewed for the world.
-
-Dazeen was born from a simple realization: India loves coffee, but the caffeine dependency and health issues that come with it are often ignored. We discovered the ancient, healthy practice of roasting date seeds and decided to bring this handcrafted, superfood beverage to modern kitchens. Our journey started in Pune.
-
-OUR MISSION
-
-"To provide a premium, 100% caffeine-free alternative to traditional coffee without compromise."
-
-OUR VISION
-
-"To become India's leading brand in healthy alternative beverages, making caffeine-free living premium."`;
-
-        const displayEl = document.getElementById('story-display');
-        let storyInterval = null;
-
-        function typeStory() {
-            if (displayEl.textContent.length > 0) return;
-            let i = 0;
-            storyInterval = setInterval(() => {
-                if (i < storyContent.length) {
-                    displayEl.textContent += storyContent.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(storyInterval);
-                }
-            }, 30);
-        }
-
-        function eraseStory() {
-            clearInterval(storyInterval);
-            displayEl.textContent = "";
-        }
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) typeStory();
-                else eraseStory();
-            });
-        }, { threshold: 0.3 });
-        observer.observe(document.getElementById('story-section'));
-
-        // Products
-        const products = [
-            { id: 1, title: "Dazeen Signature Dates Seed Powder (Dark Roast)", price: 490, rating: 4.8, image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=400", roastLevel: "Dark Roast", body: "Heavy", acidity: "Free", desc: "100% Caffeine free, rich & intense." },
-            { id: 2, title: "Dazeen Classic Dates Seed Powder (Medium Roast)", price: 450, rating: 4.9, image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=400", roastLevel: "Medium Roast", body: "Smooth", acidity: "Free", desc: "Balanced & smooth daily brew." }
-        ];
-
-        function renderProducts() {
-            const container = document.getElementById('product-list');
-            if(!container) return;
-            container.innerHTML = products.map(p => `
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200">
-                    <img src="${p.image}" class="w-full h-48 object-cover rounded-xl mb-4">
-                    <h3 class="font-bold text-lg text-stone-900">${p.title}</h3>
-                    <p class="text-2xl font-black mt-2">₹${p.price}</p>
-                    <button onclick="openProductDetailsModal(${p.id})" class="mt-4 w-full bg-[#1e110a] text-[#d4a373] py-3 rounded-lg font-bold">View Product</button>
+      case 'shop':
+        return (
+          <main className="max-w-5xl mx-auto p-6">
+            <div className="mb-8 border-b pb-6">
+              <h2 className="text-3xl font-bold text-stone-900">Our Collection</h2>
+              <p className="text-stone-500">Browse our latest premium products.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {PRODUCTS.map(p => (
+                <div key={p.id} className="border border-stone-200 p-6 rounded-3xl hover:border-emerald-500 transition shadow-sm">
+                  <div className="h-48 bg-stone-100 rounded-2xl mb-6 flex items-center justify-center text-stone-400">
+                    <Package size={48} />
+                  </div>
+                  <h3 className="font-bold text-xl mb-1">{p.name}</h3>
+                  <p className="text-stone-500 text-sm mb-4">{p.desc}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-2xl text-emerald-700">₹{p.price}</span>
+                    <button onClick={() => addToCart(p)} className="bg-stone-900 text-white px-6 py-2 rounded-lg hover:bg-emerald-600 transition">Add to Cart</button>
+                  </div>
                 </div>
-            `).join('');
-        }
+              ))}
+            </div>
+          </main>
+        );
 
-        function showPage(pageId) {
-            document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
-            const page = document.getElementById(`page-${pageId}`);
-            if(page) page.classList.remove('hidden');
-        }
+      case 'cart':
+        return (
+          <div className="max-w-xl mx-auto p-6">
+            <h2 className="text-2xl font-bold mb-8">Checkout</h2>
+            {cart.length === 0 ? <p className="text-stone-500 text-center py-20">Your cart is empty.</p> : (
+              <div className="bg-white border rounded-3xl p-8 shadow-sm">
+                {cartStep === 1 && (
+                  <>
+                    <h3 className="font-bold text-lg mb-4">Items in Cart</h3>
+                    {cart.map((item, i) => (
+                      <div key={i} className="flex justify-between py-3 border-b">
+                        <span>{item.name}</span>
+                        <span className="font-bold">₹{item.price}</span>
+                      </div>
+                    ))}
+                    <div className="mt-6 flex justify-between font-bold text-xl">
+                      <span>Total</span>
+                      <span className="text-emerald-700">₹{cart.reduce((a, b) => a + b.price, 0)}</span>
+                    </div>
+                    <button onClick={() => setCartStep(2)} className="w-full mt-6 py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition">Next: Add Address</button>
+                  </>
+                )}
+                {cartStep === 2 && (
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-lg mb-4">Delivery Address</h3>
+                    <input className="w-full p-3 border rounded-lg" placeholder="Street Address" onChange={(e) => setAddress({...address, street: e.target.value})} />
+                    <input className="w-full p-3 border rounded-lg" placeholder="City" onChange={(e) => setAddress({...address, city: e.target.value})} />
+                    <button onClick={() => { !user ? setShowLogin(true) : handlePlaceOrder(); }} className="w-full mt-6 py-4 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition">Place Order</button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
 
-        function openProductDetailsModal(id) {
-            const p = products.find(prod => prod.id === id);
-            if(!p) return;
-            document.getElementById('modal-content-area').innerHTML = `
-                <h1 class="serif-title text-2xl font-bold">${p.title}</h1>
-                <p class="text-stone-600 my-4">${p.desc}</p>
-                <p class="text-3xl font-black">₹${p.price}</p>
-                <button onclick="closeProductDetailsModal()" class="mt-6 w-full bg-[#d4a373] text-[#1e110a] py-3 rounded-xl font-bold">Close</button>
-            `;
-            document.getElementById('product-detail-modal').classList.remove('hidden');
-        }
+      case 'orders':
+        return (
+          <div className="max-w-2xl mx-auto p-6">
+            <h2 className="text-2xl font-bold mb-6">My Orders</h2>
+            {orders.length === 0 ? <p className="text-stone-500">No orders yet.</p> : orders.map(o => (
+              <div key={o.id} className="border p-6 rounded-2xl mb-4 bg-stone-50">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-bold text-emerald-700">{o.id}</span>
+                  <span className="text-amber-600 font-bold bg-amber-100 px-3 py-1 rounded-full text-xs">Processing</span>
+                </div>
+                {o.items.map((it, i) => <p key={i} className="text-stone-600 text-sm">• {it.name}</p>)}
+              </div>
+            ))}
+          </div>
+        );
 
-        function closeProductDetailsModal() {
-            document.getElementById('product-detail-modal').classList.add('hidden');
-        }
+      case 'account':
+        return (
+          <div className="max-w-md mx-auto p-6 text-center">
+            <div className="bg-stone-50 p-8 rounded-3xl border">
+              <UserCircle size={64} className="mx-auto text-emerald-600 mb-4" />
+              {user ? (
+                <>
+                  <h2 className="text-xl font-bold">{user.email}</h2>
+                  <button onClick={() => {setUser(null); setView('home');}} className="mt-4 text-red-500 font-bold">Logout</button>
+                </>
+              ) : (
+                <button onClick={() => setShowLogin(true)} className="bg-stone-900 text-white px-8 py-3 rounded-xl font-bold">Login to Account</button>
+              )}
+            </div>
+          </div>
+        );
+      default: return null;
+    }
+  };
 
-        // Init
-        document.addEventListener("DOMContentLoaded", () => {
-            renderProducts();
-        });
-    </script>
-</body>
-</html>
+  const handlePlaceOrder = () => {
+    const newOrder = { id: "DZ-" + Math.floor(Math.random() * 1000), items: cart, date: new Date().toLocaleDateString() };
+    setOrders([...orders, newOrder]);
+    setCart([]);
+    setView('orders');
+  };
+
+  return (
+    <div className="min-h-screen bg-white text-stone-800 font-sans">
+      <Navbar />
+      {renderView()}
+
+      {showLogin && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6">
+          <div className="bg-white p-8 rounded-3xl w-full max-w-sm shadow-xl">
+            <h2 className="text-2xl font-bold mb-6">Login</h2>
+            <input type="email" placeholder="Email" className="w-full p-3 border rounded-xl mb-4" />
+            <input type="password" placeholder="Password" className="w-full p-3 border rounded-xl mb-6" />
+            <button onClick={() => { setUser({email: 'user@dazeen.com'}); setShowLogin(false); handlePlaceOrder(); }} className="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold">Sign In & Order</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
