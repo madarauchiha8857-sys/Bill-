@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>0% Caffeine Coffee</title>
+  <title>Dazeen Coffee</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -288,32 +288,49 @@
 
     .bottom-nav {
       position: fixed;
-      bottom: 20px;
+      bottom: 14px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(12px);
-      width: 90%;
-      max-width: 500px;
-      border-radius: 24px;
-      padding: 16px 20px;
+      width: calc(100% - 24px);
+      max-width: 430px;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(18px);
+      border-radius: 30px;
+      padding: 12px 10px;
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
       align-items: center;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.08);
-      z-index: 999;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+      z-index: 9999;
+      border: 1px solid rgba(255,255,255,0.5);
     }
 
     .bottom-nav a {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
       text-decoration: none;
-      color: #555;
+      color: #666;
+      font-size: 12px;
       font-weight: 600;
-      transition: 0.3s;
+      padding: 10px 6px;
+      border-radius: 18px;
+      transition: all 0.3s ease;
     }
 
+    .bottom-nav a span {
+      font-size: 22px;
+    }
+
+    .bottom-nav a.active,
     .bottom-nav a:hover {
-      color: #17a768;
-      transform: translateY(-3px);
+      background: linear-gradient(135deg,#17a768,#11995d);
+      color: white;
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(23,167,104,0.25);
     }
 
     .account-section {
@@ -397,6 +414,21 @@
         width: 100%;
       }
 
+      .bottom-nav {
+        bottom: 10px;
+        width: calc(100% - 16px);
+        border-radius: 24px;
+      }
+
+      .bottom-nav a {
+        font-size: 11px;
+        padding: 8px 4px;
+      }
+
+      .bottom-nav a span {
+        font-size: 20px;
+      }
+
       .nav-links {
         display: none;
       }
@@ -406,7 +438,7 @@
 <body>
 
   <nav class="navbar">
-    <div class="logo">ZenCoffee</div>
+    <div class="logo">☕ Dazeen</div>
 
     <div class="nav-links">
       <a href="#home">Home</a>
@@ -417,11 +449,20 @@
   </nav>
 
   <section class="hero" id="home">
+
     <div class="hero-left">
-      <h1>0% Caffeine <br><span>Coffee Experience</span></h1>
+      <div style="display:inline-block;padding:10px 18px;background:#eefaf4;border-radius:50px;color:#17a768;font-weight:600;margin-bottom:20px;">
+        0% Caffeine Coffee
+      </div>
+
+      <h1>
+        Pure Taste <br>
+        Better <span>You</span>
+      </h1>
 
       <p>
-        Premium healthy coffee brand website with smooth animations, secure login access, saved orders, user accounts and modern luxury coffee experience.
+        Premium healthy coffee experience with smooth animations,
+        secure user login, saved orders and luxury coffee branding.
       </p>
 
       <div class="buttons">
@@ -432,12 +473,18 @@
 
     <div class="hero-right">
       <div class="hero-card">
-        <div class="product-image">
+
+        <div class="product-image" style="font-size:140px; background:linear-gradient(160deg,#0d6b42,#17a768,#ffd43b);">
           ☕
         </div>
 
         <div class="product-info">
-          <h3>Zen Coffee Powder</h3>
+          <h3>Dazeen Classic Coffee</h3>
+
+          <p style="color:#666;margin-bottom:15px;">
+            Smooth Aroma • 0% Caffeine
+          </p>
+
           <div class="price">₹499</div>
 
           <button class="btn btn-primary" style="width:100%;">
@@ -446,57 +493,30 @@
         </div>
       </div>
     </div>
-  </section>
 
-  <section class="features" id="features">
-    <div class="section-title">
-      <h2>Premium Features</h2>
-      <p>Modern ecommerce features with smooth experience</p>
-    </div>
-
-    <div class="feature-grid">
-
-      <div class="feature-card">
-        <div class="feature-icon">🔐</div>
-        <h3>Secure Login</h3>
-        <p>Email & password authentication with saved sessions.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">📦</div>
-        <h3>Order Tracking</h3>
-        <p>User can track orders with modern UI animations.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">📍</div>
-        <h3>Saved Address</h3>
-        <p>Users can save and manage delivery addresses.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Fast Experience</h3>
-        <p>Super smooth animations and premium performance.</p>
-      </div>
-
-    </div>
   </section>
 
   <section class="products" id="products">
 
     <div class="section-title">
-      <h2>0% Caffeine Coffee</h2>
-      <p>Minimal premium product showcase</p>
+      <h2>Our Coffee Collection</h2>
+      <p>Premium modern coffee products</p>
     </div>
 
     <div class="product-grid">
 
       <div class="product-card">
-        <div class="card-image">✨</div>
+        <div class="card-image" style="background:linear-gradient(160deg,#0d6b42,#17a768,#ffd43b);">
+          ☕
+        </div>
 
         <div class="card-content">
-          <h3>Classic Zen Coffee</h3>
+          <h3>Dazeen Classic</h3>
+
+          <p style="color:#666;margin-bottom:12px;">
+            Premium calming coffee blend
+          </p>
+
           <div class="price">₹499</div>
 
           <button class="btn btn-primary" style="width:100%;">
@@ -506,11 +526,18 @@
       </div>
 
       <div class="product-card">
-        <div class="card-image">🔥</div>
+        <div class="card-image" style="background:linear-gradient(160deg,#1b1b1b,#333,#17a768);">
+          🌿
+        </div>
 
         <div class="card-content">
-          <h3>Strong Aroma Coffee</h3>
-          <div class="price">₹1499</div>
+          <h3>Dazeen Strong Aroma</h3>
+
+          <p style="color:#666;margin-bottom:12px;">
+            Rich flavor and relaxing experience
+          </p>
+
+          <div class="price">₹699</div>
 
           <button class="btn btn-primary" style="width:100%;">
             Buy Now
@@ -521,63 +548,150 @@
     </div>
   </section>
 
-  <section class="order-section" id="orders">
+  <section class="features" id="features">
+
     <div class="section-title">
-      <h2>Your Orders</h2>
-      <p>User order tracking with saved order history</p>
+      <h2>Premium Features</h2>
+      <p>Luxury ecommerce feel like the UI design</p>
+    </div>
+
+    <div class="feature-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon">🔐</div>
+        <h3>Secure Login</h3>
+        <p>Email password authentication with session save.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h3>Order Tracking</h3>
+        <p>Track orders with premium modern design.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📍</div>
+        <h3>Saved Address</h3>
+        <p>User address and account details remain saved.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Fast UI</h3>
+        <p>Luxury smooth animations and transitions.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="order-section" id="orders">
+
+    <div class="section-title">
+      <h2>My Orders</h2>
+      <p>Saved order history for logged in users</p>
     </div>
 
     <div class="order-box">
       <div>
-        <h3>Zen Coffee Powder</h3>
-        <p>Order ID: #ZEN2045</p>
+        <h3>Dazeen Classic Coffee</h3>
+        <p>Order ID: #DAZ2045</p>
       </div>
 
       <div class="status">Delivered</div>
     </div>
+
+    <div class="order-box">
+      <div>
+        <h3>Dazeen Strong Aroma</h3>
+        <p>Order ID: #DAZ2046</p>
+      </div>
+
+      <div class="status">Processing</div>
+    </div>
+
   </section>
 
   <section class="account-section" id="account">
+
     <div class="section-title">
       <h2>My Account</h2>
-      <p>User profile with login access</p>
+      <p>User profile and saved information</p>
     </div>
 
     <div class="account-card">
-      <h3 style="margin-bottom:20px;">Saved User Details</h3>
-      <p><strong>Name:</strong> Demo User</p>
-      <p><strong>Email:</strong> user@gmail.com</p>
-      <p><strong>Saved Address:</strong> Mumbai, India</p>
+
+      <div style="display:flex;align-items:center;gap:20px;margin-bottom:25px;">
+
+        <div style="height:80px;width:80px;border-radius:50%;background:#17a768;color:white;display:flex;align-items:center;justify-content:center;font-size:32px;">
+          👤
+        </div>
+
+        <div>
+          <h3>Dazeen User</h3>
+          <p style="color:#666;">coffeeuser@gmail.com</p>
+        </div>
+
+      </div>
+
+      <p style="margin-bottom:12px;"><strong>Saved Address:</strong> Mumbai, India</p>
+      <p style="margin-bottom:12px;"><strong>Orders:</strong> 2 Completed</p>
+      <p><strong>Membership:</strong> Premium Customer</p>
+
     </div>
+
   </section>
 
   <section class="login-section" id="login">
+
     <div class="login-box">
-      <h2>User Login</h2>
+
+      <h2>Welcome Back ☕</h2>
 
       <div class="input-group">
-        <input type="email" placeholder="Enter your email">
+        <input type="email" id="email" placeholder="Email Address">
       </div>
 
       <div class="input-group">
-        <input type="password" placeholder="Enter your password">
+        <input type="password" id="password" placeholder="Password">
       </div>
 
-      <button class="btn btn-primary" style="width:100%;">
+      <button class="btn btn-primary" id="loginBtn" style="width:100%;margin-bottom:15px;">
         Login
       </button>
+
+      <button class="btn btn-secondary" id="signupBtn" style="width:100%;margin-bottom:15px;">
+        Create Account
+      </button>
+
+      <p id="loginStatus" style="text-align:center;color:#17a768;font-weight:600;margin-top:10px;"></p>
+
     </div>
   </section>
 
   <footer class="footer">
-    © 2026 ZenCoffee — Premium 0% Caffeine Coffee Experience
+    © 2026 Dazeen Coffee — Pure Taste. Better You.
   </footer>
 
   <div class="bottom-nav">
-    <a href="#home">🏠 Home</a>
-    <a href="#products">🛒 Shop</a>
-    <a href="#orders">📦 Orders</a>
-    <a href="#account">👤 Account</a>
+    <a href="#home" class="active">
+      <span>🏠</span>
+      Home
+    </a>
+
+    <a href="#products">
+      <span>🛒</span>
+      Shop
+    </a>
+
+    <a href="#orders">
+      <span>📦</span>
+      Orders
+    </a>
+
+    <a href="#account">
+      <span>👤</span>
+      Account
+    </a>
   </div>
 
   <script>
@@ -593,18 +707,59 @@
       });
     });
 
-    window.addEventListener('scroll', () => {
-      const cards = document.querySelectorAll('.feature-card, .product-card');
+    const loginBtn = document.getElementById('loginBtn');
+    const signupBtn = document.getElementById('signupBtn');
+    const statusText = document.getElementById('loginStatus');
 
-      cards.forEach(card => {
-        const position = card.getBoundingClientRect().top;
+    signupBtn.addEventListener('click', () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
 
-        if(position < window.innerHeight - 100) {
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0px)';
-        }
-      });
+      if(email === '' || password === '') {
+        statusText.innerText = 'Please enter email and password';
+        statusText.style.color = 'red';
+        return;
+      }
+
+      localStorage.setItem('dazeenEmail', email);
+      localStorage.setItem('dazeenPassword', password);
+
+      statusText.innerText = 'Account Created Successfully ☕';
+      statusText.style.color = '#17a768';
     });
+
+    loginBtn.addEventListener('click', () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const savedEmail = localStorage.getItem('dazeenEmail');
+      const savedPassword = localStorage.getItem('dazeenPassword');
+
+      if(email === savedEmail && password === savedPassword) {
+        statusText.innerText = 'Login Successful 🚀';
+        statusText.style.color = '#17a768';
+
+        localStorage.setItem('dazeenLoggedIn', 'true');
+
+        document.querySelector('#account h3').innerText = 'Welcome Back';
+        document.querySelector('#account p').innerText = email;
+      } else {
+        statusText.innerText = 'Invalid Login Details';
+        statusText.style.color = 'red';
+      }
+    });
+
+    window.onload = () => {
+      const loggedIn = localStorage.getItem('dazeenLoggedIn');
+      const savedEmail = localStorage.getItem('dazeenEmail');
+
+      if(loggedIn === 'true' && savedEmail) {
+        statusText.innerText = 'Already Logged In ☕';
+
+        document.querySelector('#account h3').innerText = 'Welcome Back';
+        document.querySelector('#account p').innerText = savedEmail;
+      }
+    }
   </script>
 
 </body>
