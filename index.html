@@ -1,195 +1,509 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dazeen | Premium Caffeine-Free Coffee</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
-        
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background-color: #faf9f6; 
-            color: #2c1e14; 
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Premium Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        .bg-coffee-dark { background-color: #2c1e14; }
-        .text-coffee-dark { color: #2c1e14; }
-        .bg-emerald-dazeen { background-color: #059669; }
-        .text-emerald-dazeen { color: #059669; }
-        .bg-amber-dazeen { background-color: #f59e0b; }
-        
-        .premium-shadow { box-shadow: 0 10px 25px -5px rgba(44, 30, 20, 0.1); }
-        
-        .login-success-anim { animation: successPulse 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes successPulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-    </style>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #ffffff;
+      color: #111;
+      overflow-x: hidden;
+    }
+
+    .navbar {
+      width: 100%;
+      padding: 18px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      color: #17a768;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #222;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #17a768;
+    }
+
+    .hero {
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8%;
+      gap: 50px;
+    }
+
+    .hero-left {
+      animation: fadeUp 1s ease;
+    }
+
+    .hero-left h1 {
+      font-size: 64px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .hero-left h1 span {
+      color: #17a768;
+    }
+
+    .hero-left p {
+      font-size: 18px;
+      color: #555;
+      margin-bottom: 35px;
+      max-width: 600px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 20px;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .btn-primary {
+      background: #17a768;
+      color: white;
+      box-shadow: 0 10px 25px rgba(23,167,104,0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn-secondary {
+      background: #ffd43b;
+      color: #111;
+    }
+
+    .hero-right {
+      position: relative;
+      animation: float 5s ease-in-out infinite;
+    }
+
+    .hero-card {
+      width: 380px;
+      background: white;
+      border-radius: 35px;
+      padding: 25px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+    }
+
+    .product-image {
+      height: 320px;
+      border-radius: 25px;
+      background: linear-gradient(135deg, #17a768, #ffd43b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 100px;
+      color: white;
+    }
+
+    .product-info {
+      margin-top: 20px;
+    }
+
+    .product-info h3 {
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .price {
+      color: #17a768;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .features {
+      padding: 100px 8%;
+      background: #f8f9fb;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 70px;
+    }
+
+    .section-title h2 {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .section-title p {
+      color: #666;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 35px;
+      border-radius: 28px;
+      transition: 0.4s;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+    }
+
+    .feature-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 20px;
+      background: #17a768;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .products {
+      padding: 100px 8%;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 35px;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+      transition: 0.4s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-12px);
+    }
+
+    .card-image {
+      height: 260px;
+      background: linear-gradient(135deg, #17a768, #ffd43b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      color: white;
+    }
+
+    .card-content {
+      padding: 25px;
+    }
+
+    .card-content h3 {
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    .login-section {
+      padding: 100px 8%;
+      background: #f8f9fb;
+      display: flex;
+      justify-content: center;
+    }
+
+    .login-box {
+      background: white;
+      padding: 50px;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 35px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.06);
+    }
+
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 35px;
+      font-size: 38px;
+    }
+
+    .input-group {
+      margin-bottom: 25px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      background: #f1f3f5;
+      border-radius: 16px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .footer {
+      padding: 40px 8%;
+      text-align: center;
+      background: white;
+      color: #666;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media(max-width: 900px) {
+      .hero {
+        flex-direction: column;
+        padding-top: 60px;
+      }
+
+      .hero-left h1 {
+        font-size: 44px;
+      }
+
+      .hero-card {
+        width: 100%;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Global State Initialization -->
-    <script>
-        window.appState = {
-            cart: [],
-            products: [
-                { id: 1, name: "Golden Morning Roast", price: 599, desc: "Smooth, nutty, caffeine-free.", img: "https://placehold.co/600x400/f59e0b/white?text=Coffee+1" },
-                { id: 2, name: "Midnight Decaf Blend", price: 649, desc: "Rich, intense, no jitters.", img: "https://placehold.co/600x400/2c1e14/white?text=Coffee+2" }
-            ],
-            user: null
-        };
-    </script>
+  <nav class="navbar">
+    <div class="logo">PremiumShop</div>
 
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200">
-        <div class="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-coffee-dark cursor-pointer flex items-center gap-2" onclick="showView('shop')">
-                <i data-lucide="coffee"></i> Dazeen
-            </h1>
-            <div class="hidden md:flex gap-8 font-semibold text-stone-600">
-                <button onclick="showView('shop')" class="hover:text-emerald-dazeen transition">Shop</button>
-                <button onclick="showView('orders')" class="hover:text-emerald-dazeen transition">Orders</button>
-                <button onclick="showView('account')" class="hover:text-emerald-dazeen transition">Account</button>
-            </div>
-            <button onclick="showView('cart')" class="relative p-2 hover:bg-stone-100 rounded-full transition">
-                <i data-lucide="shopping-bag" class="text-coffee-dark"></i>
-                <span id="cart-count" class="absolute -top-1 -right-1 bg-amber-dazeen text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">0</span>
-            </button>
-        </div>
-    </nav>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#products">Products</a>
+      <a href="#features">Features</a>
+      <a href="#login">Login</a>
+    </div>
+  </nav>
 
-    <div id="views-container" class="max-w-6xl mx-auto p-6 min-h-[80vh]">
-        <section id="shop-view" class="view">
-            <div class="bg-coffee-dark text-white p-16 rounded-[2.5rem] mb-12 flex flex-col items-center text-center">
-                <h2 class="text-6xl font-bold mb-6">Welcome to Dazeen</h2>
-                <p class="text-emerald-200 text-xl max-w-xl mb-8">Elevate your mornings with our ethically sourced, caffeine-free coffee blends.</p>
-                <button onclick="document.getElementById('product-list').scrollIntoView({behavior:'smooth'})" class="bg-amber-dazeen text-coffee-dark px-10 py-4 rounded-full font-bold text-lg hover:scale-105 transition">Shop Now</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10" id="product-list"></div>
-        </section>
+  <section class="hero" id="home">
+    <div class="hero-left">
+      <h1>Luxury Shopping <br><span>Experience</span></h1>
 
-        <section id="detail-view" class="view hidden">
-            <button onclick="showView('shop')" class="mb-8 flex items-center gap-2 text-stone-500 hover:text-emerald-dazeen">
-                <i data-lucide="arrow-left"></i> Continue Shopping
-            </button>
-            <div id="product-detail-content" class="grid md:grid-cols-2 gap-16 bg-white p-10 rounded-[2rem] border border-stone-100 premium-shadow"></div>
-        </section>
+      <p>
+        Premium ecommerce website with smooth animations,
+        modern UI, secure login system, order management,
+        saved addresses and luxury brand feel.
+      </p>
 
-        <section id="cart-view" class="view hidden max-w-2xl mx-auto">
-            <h2 class="text-4xl font-bold mb-10 text-coffee-dark">Your Cart</h2>
-            <div id="cart-content" class="space-y-6"></div>
-        </section>
-
-        <section id="orders-view" class="view hidden">
-            <h2 class="text-4xl font-bold mb-10 text-coffee-dark">Order History</h2>
-            <div id="orders-list" class="space-y-4"></div>
-        </section>
-        
-        <section id="account-view" class="view hidden">
-            <div class="max-w-md mx-auto bg-white p-10 rounded-3xl border text-center">
-                <i data-lucide="user-circle" class="w-20 h-20 text-emerald-dazeen mx-auto mb-6"></i>
-                <h3 class="text-2xl font-bold">Account Profile</h3>
-                <p class="text-stone-500 mt-2">Sign in to manage your profile</p>
-                <button onclick="loginModal()" class="mt-8 bg-coffee-dark text-white px-8 py-3 rounded-xl font-bold">Sign In</button>
-            </div>
-        </section>
+      <div class="buttons">
+        <button class="btn btn-primary">Shop Now</button>
+        <button class="btn btn-secondary">Explore</button>
+      </div>
     </div>
 
-    <script>
-        function showView(viewId) {
-            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
-            document.getElementById(viewId + '-view').classList.remove('hidden');
-            if(viewId === 'shop') renderProducts();
-            lucide.createIcons();
-        }
+    <div class="hero-right">
+      <div class="hero-card">
+        <div class="product-image">
+          🛍️
+        </div>
 
-        function renderProducts() {
-            const list = document.getElementById('product-list');
-            list.innerHTML = window.appState.products.map(p => `
-                <div class="bg-white p-6 rounded-[2rem] border hover:border-emerald-dazeen transition group cursor-pointer" onclick="viewProduct(${p.id})">
-                    <img src="${p.img}" class="rounded-3xl mb-6 w-full h-72 object-cover group-hover:scale-[1.02] transition">
-                    <h3 class="text-3xl font-bold text-coffee-dark mb-2">${p.name}</h3>
-                    <p class="text-stone-500 mb-6">${p.desc}</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-3xl font-bold text-emerald-dazeen">₹${p.price}</span>
-                        <button class="bg-stone-900 text-white px-6 py-3 rounded-full hover:bg-emerald-dazeen">Details</button>
-                    </div>
-                </div>
-            `).join('');
-        }
+        <div class="product-info">
+          <h3>Premium Product</h3>
+          <div class="price">₹999</div>
 
-        function viewProduct(id) {
-            const p = window.appState.products.find(x => x.id === id);
-            const detail = document.getElementById('product-detail-content');
-            detail.innerHTML = `
-                <img src="${p.img}" class="rounded-3xl w-full h-full object-cover">
-                <div>
-                    <h2 class="text-5xl font-bold text-coffee-dark mb-6">${p.name}</h2>
-                    <p class="text-xl text-stone-600 mb-8">${p.desc} This signature blend is crafted with notes of cocoa and toasted oak.</p>
-                    <div class="text-4xl font-bold text-emerald-dazeen mb-10">₹${p.price}</div>
-                    <button onclick="addToCart(${p.id})" class="w-full py-5 bg-coffee-dark text-white rounded-2xl font-bold text-lg hover:bg-emerald-dazeen transition">Buy Now</button>
-                </div>
-            `;
-            showView('detail');
-        }
+          <button class="btn btn-primary" style="width:100%;">
+            Add To Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        function addToCart(pid) {
-            const p = window.appState.products.find(x => x.id === pid);
-            window.appState.cart.push(p);
-            document.getElementById('cart-count').innerText = window.appState.cart.length;
-            renderCart();
-            showView('cart');
-        }
+  <section class="features" id="features">
+    <div class="section-title">
+      <h2>Premium Features</h2>
+      <p>Modern ecommerce features with smooth experience</p>
+    </div>
 
-        function renderCart() {
-            const content = document.getElementById('cart-content');
-            content.innerHTML = window.appState.cart.length === 0 
-                ? `<p class="text-center text-stone-500 py-20">Your coffee cup is empty.</p>`
-                : `
-                    <div class="bg-white p-8 rounded-3xl border space-y-6">
-                        ${window.appState.cart.map(i => `<div class="flex justify-between border-b pb-4"><span class="font-bold">${i.name}</span><span>₹${i.price}</span></div>`).join('')}
-                        <button onclick="checkout()" class="w-full py-5 bg-emerald-dazeen text-white rounded-2xl font-bold">Place Order</button>
-                    </div>
-                `;
-        }
+    <div class="feature-grid">
 
-        function loginModal() {
-            document.body.insertAdjacentHTML('beforeend', `
-                <div id="login-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 z-[100]">
-                    <div id="login-box" class="bg-white p-10 rounded-[2rem] w-full max-w-sm shadow-2xl">
-                        <h2 class="text-3xl font-bold mb-2">Welcome</h2>
-                        <input type="email" placeholder="Email" class="w-full p-4 border rounded-xl mb-4">
-                        <button onclick="finishLogin()" class="w-full py-4 bg-emerald-dazeen text-white rounded-xl font-bold">Sign In</button>
-                    </div>
-                </div>
-            `);
-        }
+      <div class="feature-card">
+        <div class="feature-icon">🔐</div>
+        <h3>Secure Login</h3>
+        <p>Email & password authentication with saved sessions.</p>
+      </div>
 
-        function finishLogin() {
-            document.getElementById('login-box').classList.add('login-success-anim');
-            setTimeout(() => {
-                document.getElementById('login-modal').remove();
-                window.appState.user = { email: 'user@dazeen.com' };
-            }, 800);
-        }
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h3>Order Tracking</h3>
+        <p>User can track orders with modern UI animations.</p>
+      </div>
 
-        function checkout() {
-            if (!window.appState.user) {
-                loginModal();
-            } else {
-                alert('Order placed successfully!');
-                window.appState.cart = [];
-                document.getElementById('cart-count').innerText = 0;
-                showView('shop');
-            }
-        }
+      <div class="feature-card">
+        <div class="feature-icon">📍</div>
+        <h3>Saved Address</h3>
+        <p>Users can save and manage delivery addresses.</p>
+      </div>
 
-        renderProducts();
-        lucide.createIcons();
-    </script>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Fast Experience</h3>
+        <p>Super smooth animations and premium performance.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="products" id="products">
+
+    <div class="section-title">
+      <h2>Trending Products</h2>
+      <p>Minimal premium product showcase</p>
+    </div>
+
+    <div class="product-grid">
+
+      <div class="product-card">
+        <div class="card-image">✨</div>
+
+        <div class="card-content">
+          <h3>Premium Product 1</h3>
+          <div class="price">₹999</div>
+
+          <button class="btn btn-primary" style="width:100%;">
+            Buy Now
+          </button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-image">🔥</div>
+
+        <div class="card-content">
+          <h3>Premium Product 2</h3>
+          <div class="price">₹1499</div>
+
+          <button class="btn btn-primary" style="width:100%;">
+            Buy Now
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="login-section" id="login">
+    <div class="login-box">
+      <h2>User Login</h2>
+
+      <div class="input-group">
+        <input type="email" placeholder="Enter your email">
+      </div>
+
+      <div class="input-group">
+        <input type="password" placeholder="Enter your password">
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;">
+        Login
+      </button>
+    </div>
+  </section>
+
+  <footer class="footer">
+    © 2026 PremiumShop — Modern Ecommerce Experience
+  </footer>
+
+  <script>
+    const buttons = document.querySelectorAll('.btn');
+
+    buttons.forEach(button => {
+      button.addEventListener('mouseenter', () => {
+        button.style.transform = 'scale(1.05)';
+      });
+
+      button.addEventListener('mouseleave', () => {
+        button.style.transform = 'scale(1)';
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      const cards = document.querySelectorAll('.feature-card, .product-card');
+
+      cards.forEach(card => {
+        const position = card.getBoundingClientRect().top;
+
+        if(position < window.innerHeight - 100) {
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0px)';
+        }
+      });
+    });
+  </script>
+
 </body>
 </html>
