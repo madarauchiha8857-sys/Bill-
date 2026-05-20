@@ -3,162 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dazeen | Caffeine-Free Coffee</title>
+    <title>Dazeen | Premium Caffeine-Free Coffee</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
-        body { font-family: 'Outfit', sans-serif; }
-        .bg-coffee { background-color: #4a3728; }
-        .text-coffee { color: #4a3728; }
-        .border-coffee { border-color: #4a3728; }
-        .success-anim { animation: pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes pop {
-            0% { transform: scale(0.9); opacity: 0; }
+        
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background-color: #faf9f6; 
+            color: #2c1e14; 
+        }
+
+        .bg-coffee-dark { background-color: #2c1e14; }
+        .text-coffee-dark { color: #2c1e14; }
+        .bg-emerald-dazeen { background-color: #059669; }
+        .text-emerald-dazeen { color: #059669; }
+        .bg-amber-dazeen { background-color: #f59e0b; }
+        
+        .premium-shadow { box-shadow: 0 10px 25px -5px rgba(44, 30, 20, 0.1); }
+        
+        .login-success-anim { animation: successPulse 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes successPulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); }
             100% { transform: scale(1); opacity: 1; }
         }
-        .nav-active { color: #059669; font-weight: 700; }
     </style>
 </head>
-<body class="bg-stone-50 text-stone-800">
+<body>
 
-    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-coffee flex items-center gap-2 cursor-pointer" onclick="showView('shop')">
+    <!-- Global State Initialization -->
+    <script>
+        window.appState = {
+            cart: [],
+            products: [
+                { id: 1, name: "Golden Morning Roast", price: 599, desc: "Smooth, nutty, caffeine-free.", img: "https://placehold.co/600x400/f59e0b/white?text=Coffee+1" },
+                { id: 2, name: "Midnight Decaf Blend", price: 649, desc: "Rich, intense, no jitters.", img: "https://placehold.co/600x400/2c1e14/white?text=Coffee+2" }
+            ],
+            user: null
+        };
+    </script>
+
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200">
+        <div class="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-coffee-dark cursor-pointer flex items-center gap-2" onclick="showView('shop')">
                 <i data-lucide="coffee"></i> Dazeen
             </h1>
-            <div class="flex gap-6 font-semibold text-stone-600">
-                <button onclick="showView('shop')" class="hover:text-emerald-700 transition">Shop</button>
-                <button onclick="showView('orders')" class="hover:text-emerald-700 transition">Orders</button>
-                <button onclick="showView('account')" class="hover:text-emerald-700 transition">Account</button>
+            <div class="hidden md:flex gap-8 font-semibold text-stone-600">
+                <button onclick="showView('shop')" class="hover:text-emerald-dazeen transition">Shop</button>
+                <button onclick="showView('orders')" class="hover:text-emerald-dazeen transition">Orders</button>
+                <button onclick="showView('account')" class="hover:text-emerald-dazeen transition">Account</button>
             </div>
             <button onclick="showView('cart')" class="relative p-2 hover:bg-stone-100 rounded-full transition">
-                <i data-lucide="shopping-bag" class="text-coffee"></i>
-                <span id="cart-count" class="absolute top-0 right-0 bg-emerald-600 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">0</span>
+                <i data-lucide="shopping-bag" class="text-coffee-dark"></i>
+                <span id="cart-count" class="absolute -top-1 -right-1 bg-amber-dazeen text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">0</span>
             </button>
         </div>
     </nav>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'dazeen-default';
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        window.db = db;
-        window.auth = auth;
-        window.appId = appId;
-        window.collection = collection;
-        window.getDocs = getDocs;
-        window.addDoc = addDoc;
-        window.doc = doc;
-        window.setDoc = setDoc;
-
-        // Initialize user session
-        signInAnonymously(auth).then(() => {
-            console.log("User signed in");
-            loadProducts();
-        });
-    </script>
-
-    <div id="views-container" class="max-w-5xl mx-auto p-6">
+    <div id="views-container" class="max-w-6xl mx-auto p-6 min-h-[80vh]">
         <section id="shop-view" class="view">
-            <div class="bg-emerald-900 text-emerald-50 p-12 rounded-[2rem] mb-12 relative overflow-hidden">
-                <h2 class="text-5xl font-bold mb-4">Pure Coffee, <br>Zero Caffeine.</h2>
-                <p class="text-emerald-200 text-lg max-w-lg mb-8">Crafted for those who love the ritual of coffee, without the impact of caffeine. Ethically sourced.</p>
-                <button onclick="document.getElementById('product-list').scrollIntoView({behavior:'smooth'})" class="bg-amber-500 text-emerald-900 px-8 py-4 rounded-xl font-bold hover:bg-amber-400 transition">Explore</button>
+            <div class="bg-coffee-dark text-white p-16 rounded-[2.5rem] mb-12 flex flex-col items-center text-center">
+                <h2 class="text-6xl font-bold mb-6">Welcome to Dazeen</h2>
+                <p class="text-emerald-200 text-xl max-w-xl mb-8">Elevate your mornings with our ethically sourced, caffeine-free coffee blends.</p>
+                <button onclick="document.getElementById('product-list').scrollIntoView({behavior:'smooth'})" class="bg-amber-dazeen text-coffee-dark px-10 py-4 rounded-full font-bold text-lg hover:scale-105 transition">Shop Now</button>
             </div>
-            
-            <h2 class="text-3xl font-bold mb-8 text-coffee">Our Signature Blends</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="product-list">
-                <!-- Products loaded by JS -->
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10" id="product-list"></div>
         </section>
 
         <section id="detail-view" class="view hidden">
-            <button onclick="showView('shop')" class="mb-6 flex items-center gap-2 text-stone-500 hover:text-coffee">
-                <i data-lucide="arrow-left"></i> Back to Shop
+            <button onclick="showView('shop')" class="mb-8 flex items-center gap-2 text-stone-500 hover:text-emerald-dazeen">
+                <i data-lucide="arrow-left"></i> Continue Shopping
             </button>
-            <div id="product-detail-content" class="grid md:grid-cols-2 gap-12 bg-white p-8 rounded-3xl border"></div>
+            <div id="product-detail-content" class="grid md:grid-cols-2 gap-16 bg-white p-10 rounded-[2rem] border border-stone-100 premium-shadow"></div>
         </section>
 
-        <section id="cart-view" class="view hidden max-w-xl mx-auto"><div id="cart-content"></div></section>
-        <section id="orders-view" class="view hidden"><h2 class="text-3xl font-bold mb-8 text-coffee">My Orders</h2><div id="orders-list"></div></section>
-        <section id="account-view" class="view hidden text-center py-20"><div id="account-content" class="bg-white p-12 rounded-3xl border shadow-sm max-w-md mx-auto"></div></section>
-    </div>
+        <section id="cart-view" class="view hidden max-w-2xl mx-auto">
+            <h2 class="text-4xl font-bold mb-10 text-coffee-dark">Your Cart</h2>
+            <div id="cart-content" class="space-y-6"></div>
+        </section>
 
-    <div id="login-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-6 hidden z-[60]">
-        <div id="login-box" class="bg-white p-10 rounded-[2rem] w-full max-w-sm shadow-2xl relative">
-            <h2 class="text-3xl font-bold mb-2 text-coffee">Welcome back</h2>
-            <p class="text-stone-500 mb-8">Sign in to save your progress.</p>
-            <input type="email" id="email-in" placeholder="Email address" class="w-full p-4 border rounded-xl mb-4 bg-stone-50" />
-            <input type="password" id="pass-in" placeholder="Password" class="w-full p-4 border rounded-xl mb-8 bg-stone-50" />
-            <button onclick="handleLogin()" class="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold">Sign In</button>
-        </div>
+        <section id="orders-view" class="view hidden">
+            <h2 class="text-4xl font-bold mb-10 text-coffee-dark">Order History</h2>
+            <div id="orders-list" class="space-y-4"></div>
+        </section>
+        
+        <section id="account-view" class="view hidden">
+            <div class="max-w-md mx-auto bg-white p-10 rounded-3xl border text-center">
+                <i data-lucide="user-circle" class="w-20 h-20 text-emerald-dazeen mx-auto mb-6"></i>
+                <h3 class="text-2xl font-bold">Account Profile</h3>
+                <p class="text-stone-500 mt-2">Sign in to manage your profile</p>
+                <button onclick="loginModal()" class="mt-8 bg-coffee-dark text-white px-8 py-3 rounded-xl font-bold">Sign In</button>
+            </div>
+        </section>
     </div>
 
     <script>
-        let cart = [];
-        let products = [
-            { id: 1, name: "Golden Morning Roast", price: 599, desc: "Smooth, nutty, caffeine-free.", img: "https://placehold.co/400x300/eab308/white?text=Coffee1" },
-            { id: 2, name: "Midnight Decaf Blend", price: 649, desc: "Rich, intense, no jitters.", img: "https://placehold.co/400x300/4a3728/white?text=Coffee2" }
-        ];
-
-        async function loadProducts() {
-            const list = document.getElementById('product-list');
-            list.innerHTML = products.map(p => `
-                <div class="bg-white p-6 rounded-3xl border hover:shadow-xl transition cursor-pointer" onclick="viewProduct(${p.id})">
-                    <img src="${p.img}" class="rounded-2xl mb-4 w-full h-48 object-cover">
-                    <h3 class="font-bold text-2xl text-coffee mb-2">${p.name}</h3>
-                    <p class="text-stone-500 mb-6">${p.desc}</p>
-                    <span class="font-bold text-2xl text-emerald-700">₹${p.price}</span>
-                </div>
-            `).join('');
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+            document.getElementById(viewId + '-view').classList.remove('hidden');
+            if(viewId === 'shop') renderProducts();
             lucide.createIcons();
         }
 
+        function renderProducts() {
+            const list = document.getElementById('product-list');
+            list.innerHTML = window.appState.products.map(p => `
+                <div class="bg-white p-6 rounded-[2rem] border hover:border-emerald-dazeen transition group cursor-pointer" onclick="viewProduct(${p.id})">
+                    <img src="${p.img}" class="rounded-3xl mb-6 w-full h-72 object-cover group-hover:scale-[1.02] transition">
+                    <h3 class="text-3xl font-bold text-coffee-dark mb-2">${p.name}</h3>
+                    <p class="text-stone-500 mb-6">${p.desc}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-3xl font-bold text-emerald-dazeen">₹${p.price}</span>
+                        <button class="bg-stone-900 text-white px-6 py-3 rounded-full hover:bg-emerald-dazeen">Details</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function viewProduct(id) {
-            const p = products.find(x => x.id === id);
+            const p = window.appState.products.find(x => x.id === id);
             const detail = document.getElementById('product-detail-content');
             detail.innerHTML = `
-                <img src="${p.img}" class="rounded-2xl w-full h-64 object-cover">
+                <img src="${p.img}" class="rounded-3xl w-full h-full object-cover">
                 <div>
-                    <h2 class="text-4xl font-bold text-coffee mb-4">${p.name}</h2>
-                    <p class="text-stone-600 mb-6">${p.desc} This is our premium blend sourced from the best estates.</p>
-                    <div class="text-3xl font-bold text-emerald-700 mb-8">₹${p.price}</div>
-                    <button onclick="addToCart(${p.id}); showView('shop')" class="bg-coffee text-white w-full py-4 rounded-xl font-bold">Buy Now</button>
+                    <h2 class="text-5xl font-bold text-coffee-dark mb-6">${p.name}</h2>
+                    <p class="text-xl text-stone-600 mb-8">${p.desc} This signature blend is crafted with notes of cocoa and toasted oak.</p>
+                    <div class="text-4xl font-bold text-emerald-dazeen mb-10">₹${p.price}</div>
+                    <button onclick="addToCart(${p.id})" class="w-full py-5 bg-coffee-dark text-white rounded-2xl font-bold text-lg hover:bg-emerald-dazeen transition">Buy Now</button>
                 </div>
             `;
             showView('detail');
         }
 
-        function showView(viewId) {
-            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
-            document.getElementById(viewId + '-view').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
         function addToCart(pid) {
-            const p = products.find(x => x.id === pid);
-            cart.push(p);
-            document.getElementById('cart-count').innerText = cart.length;
+            const p = window.appState.products.find(x => x.id === pid);
+            window.appState.cart.push(p);
+            document.getElementById('cart-count').innerText = window.appState.cart.length;
+            renderCart();
+            showView('cart');
         }
 
-        function handleLogin() {
-            const box = document.getElementById('login-box');
-            box.classList.remove('success-anim');
-            void box.offsetWidth; // Force reflow
-            box.classList.add('success-anim');
+        function renderCart() {
+            const content = document.getElementById('cart-content');
+            content.innerHTML = window.appState.cart.length === 0 
+                ? `<p class="text-center text-stone-500 py-20">Your coffee cup is empty.</p>`
+                : `
+                    <div class="bg-white p-8 rounded-3xl border space-y-6">
+                        ${window.appState.cart.map(i => `<div class="flex justify-between border-b pb-4"><span class="font-bold">${i.name}</span><span>₹${i.price}</span></div>`).join('')}
+                        <button onclick="checkout()" class="w-full py-5 bg-emerald-dazeen text-white rounded-2xl font-bold">Place Order</button>
+                    </div>
+                `;
+        }
+
+        function loginModal() {
+            document.body.insertAdjacentHTML('beforeend', `
+                <div id="login-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 z-[100]">
+                    <div id="login-box" class="bg-white p-10 rounded-[2rem] w-full max-w-sm shadow-2xl">
+                        <h2 class="text-3xl font-bold mb-2">Welcome</h2>
+                        <input type="email" placeholder="Email" class="w-full p-4 border rounded-xl mb-4">
+                        <button onclick="finishLogin()" class="w-full py-4 bg-emerald-dazeen text-white rounded-xl font-bold">Sign In</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function finishLogin() {
+            document.getElementById('login-box').classList.add('login-success-anim');
             setTimeout(() => {
-                document.getElementById('login-modal').classList.add('hidden');
-            }, 600);
+                document.getElementById('login-modal').remove();
+                window.appState.user = { email: 'user@dazeen.com' };
+            }, 800);
         }
 
+        function checkout() {
+            if (!window.appState.user) {
+                loginModal();
+            } else {
+                alert('Order placed successfully!');
+                window.appState.cart = [];
+                document.getElementById('cart-count').innerText = 0;
+                showView('shop');
+            }
+        }
+
+        renderProducts();
         lucide.createIcons();
     </script>
 </body>
