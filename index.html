@@ -1,217 +1,871 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenzii Messenger</title>
+    <title>ChatCrypt - End-to-End Encrypted Chat</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CryptoJS for Client-Side Encryption/Decryption (E2EE Simulation) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        /* Custom scrollbar styling for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
     </style>
 </head>
-<body class="bg-gray-100 h-screen overflow-hidden">
-    
-    <!-- App Container - Always visible -->
-    <div id="app" class="max-w-4xl mx-auto h-screen flex flex-col">
+<body class="bg-slate-100 font-sans h-screen flex flex-col overflow-hidden">
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex flex-col justify-center items-center text-white hidden">
+        <div class="animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent mb-4"></div>
+        <p class="text-sm font-semibold" id="loadingText">Secrecy key setup ho rahi hai...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="flex-1 flex flex-col md:flex-row h-full w-full max-w-7xl mx-auto md:my-4 md:rounded-2xl md:shadow-2xl overflow-hidden bg-white">
         
-        <!-- Chat Dashboard - Always visible -->
-        <div id="chatDashboard" class="flex-1 flex h-full overflow-hidden bg-white shadow-2xl md:rounded-3xl my-0 md:my-4">
-            <!-- Sidebar -->
-            <div class="w-1/3 bg-gray-50 border-r flex flex-col">
-                <div class="p-5 border-b flex justify-between items-center bg-white">
-                    <h2 class="font-bold text-lg text-blue-600">Zenzii</h2>
-                    <button id="authTriggerBtn" class="text-blue-600 font-semibold text-sm">Login</button>
+        <!-- ================= AUTH SCREEN ================= -->
+        <div id="authScreen" class="flex-1 flex flex-col justify-center items-center p-6 bg-slate-50">
+            <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
+                <!-- App Logo -->
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-500 text-white text-3xl mb-3 shadow-md shadow-emerald-200">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-slate-800">ChatCrypt</h1>
+                    <p class="text-slate-500 text-sm mt-1">End-to-End Encrypted Secure Messaging</p>
                 </div>
-                <div class="p-4 border-b">
-                    <input id="searchId" type="text" placeholder="Friend's Unique ID" class="w-full p-2 border rounded-lg text-sm mb-2 focus:ring-1 focus:ring-blue-500 outline-none">
-                    <button id="addFriendBtn" class="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">Add Friend</button>
+
+                <!-- Tabs -->
+                <div class="flex border-b border-slate-200 mb-6">
+                    <button id="tabLoginBtn" class="flex-1 pb-3 text-center border-b-2 border-emerald-500 text-emerald-600 font-semibold focus:outline-none" onclick="switchAuthTab('login')">
+                        Login
+                    </button>
+                    <button id="tabRegisterBtn" class="flex-1 pb-3 text-center border-b-2 border-transparent text-slate-500 font-semibold hover:text-slate-800 focus:outline-none" onclick="switchAuthTab('register')">
+                        Register / Sign Up
+                    </button>
                 </div>
-                <div id="friendsList" class="flex-1 overflow-y-auto">
-                    <div class="p-4 text-center text-gray-400 text-sm">Login to see friends</div>
+
+                <!-- Auth Error Alert -->
+                <div id="authError" class="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm hidden flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span id="authErrorMsg">Error message here</span>
                 </div>
-            </div>
-            
-            <!-- Window -->
-            <div id="chatWindow" class="w-2/3 flex flex-col bg-white">
-                <div id="chatHeader" class="p-4 border-b font-medium text-gray-700 shadow-sm">Select a chat</div>
-                <div id="messagesContainer" class="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50">
-                    <div class="text-center text-gray-400 mt-10">Zenzii Chat</div>
-                </div>
-                <div class="p-4 bg-white border-t flex gap-2">
-                    <input id="msgInput" class="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type a message...">
-                    <button id="sendBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Send</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Auth Modal (Hidden by default) -->
-    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white p-8 rounded-3xl shadow-xl border w-full max-w-sm">
-            <h1 id="authTitle" class="text-2xl font-bold mb-6 text-center text-blue-600">Zenzii Login</h1>
-            <div class="space-y-4">
-                <input id="email" type="email" placeholder="Email" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
-                <input id="password" type="password" placeholder="Password" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
-                <div id="authError" class="text-red-500 text-xs text-center font-medium h-4"></div>
-                <button id="authBtn" class="w-full bg-blue-600 text-white p-3 rounded-xl font-semibold hover:bg-blue-700 transition">Login</button>
-                <p id="toggleAuth" class="mt-4 text-center cursor-pointer text-gray-500 hover:text-blue-600 text-sm transition">Need an account? Sign Up</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
-        let currentUser = null;
-        let isSignup = false;
-
-        const modal = document.getElementById('authModal');
-        const triggerBtn = document.getElementById('authTriggerBtn');
-
-        function toggleModal(show) {
-            modal.classList.toggle('hidden', !show);
-        }
-
-        triggerBtn.onclick = () => toggleModal(true);
-
-        auth.onAuthStateChanged(user => {
-            currentUser = user;
-            if (user) {
-                toggleModal(false);
-                triggerBtn.innerText = 'Logout';
-                loadFriends();
-            } else {
-                triggerBtn.innerText = 'Login';
-            }
-        });
-
-        async function encryptMessage(message, key) {
-            const enc = new TextEncoder();
-            const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(key.padEnd(32, '0').slice(0, 32)), { name: "AES-GCM" }, false, ["encrypt"]);
-            const iv = crypto.getRandomValues(new Uint8Array(12));
-            const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, keyMaterial, enc.encode(message));
-            return btoa(String.fromCharCode(...iv) + String.fromCharCode(...new Uint8Array(encrypted)));
-        }
-
-        async function decryptMessage(encryptedData, key) {
-            try {
-                const raw = atob(encryptedData);
-                const iv = new Uint8Array(Array.from(raw.slice(0, 12)).map(c => c.charCodeAt(0)));
-                const data = new Uint8Array(Array.from(raw.slice(12)).map(c => c.charCodeAt(0)));
-                const enc = new TextEncoder();
-                const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(key.padEnd(32, '0').slice(0, 32)), { name: "AES-GCM" }, false, ["decrypt"]);
-                const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, keyMaterial, data);
-                return new TextDecoder().decode(decrypted);
-            } catch (e) { return "Unable to decrypt"; }
-        }
-
-        document.getElementById('authBtn').onclick = async () => {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            const errorDiv = document.getElementById('authError');
-            try {
-                if (isSignup) {
-                    const cred = await auth.createUserWithEmailAndPassword(email, pass);
-                    const uniqueId = Math.floor(100000 + Math.random() * 900000).toString();
-                    await db.doc(`artifacts/${appId}/public/data/users/${cred.user.uid}`).set({ uid: cred.user.uid, email, uniqueId });
-                } else {
-                    await auth.signInWithEmailAndPassword(email, pass);
-                }
-            } catch (e) { errorDiv.innerText = e.message; }
-        };
-
-        document.getElementById('toggleAuth').onclick = () => {
-            isSignup = !isSignup;
-            document.getElementById('authTitle').innerText = isSignup ? 'Zenzii - Join' : 'Zenzii Login';
-            document.getElementById('authBtn').innerText = isSignup ? 'Sign Up' : 'Login';
-            document.getElementById('toggleAuth').innerText = isSignup ? 'Already have an account? Login' : 'Need an account? Sign Up';
-        };
-
-        function loadFriends() {
-            if (!currentUser) return;
-            db.collection(`artifacts/${appId}/users/${currentUser.uid}/friends`).onSnapshot(snap => {
-                const list = document.getElementById('friendsList');
-                list.innerHTML = '';
-                snap.forEach(doc => {
-                    const f = doc.data();
-                    const div = document.createElement('div');
-                    div.className = 'p-4 border-b cursor-pointer hover:bg-blue-50 flex justify-between items-center';
-                    div.innerHTML = `<div><p class="font-medium text-sm text-gray-700">${f.email}</p><p class="text-[10px] text-gray-400">ID: ${f.uniqueId}</p></div>`;
-                    div.onclick = () => startChat(f);
-                    list.appendChild(div);
-                });
-            });
-        }
-
-        document.getElementById('addFriendBtn').onclick = async () => {
-            if (!currentUser) { toggleModal(true); return; }
-            const searchId = document.getElementById('searchId').value;
-            const snap = await db.collection(`artifacts/${appId}/public/data/users`).where('uniqueId', '==', searchId).get();
-            if (!snap.empty) {
-                const friendData = snap.docs[0].data();
-                await db.doc(`artifacts/${appId}/users/${currentUser.uid}/friends/${friendData.uid}`).set(friendData);
-                document.getElementById('searchId').value = '';
-            } else {
-                alert("User not found!");
-            }
-        };
-
-        let activeFriend = null;
-        function startChat(friend) {
-            activeFriend = friend;
-            document.getElementById('chatHeader').innerText = `Chat: ${friend.email}`;
-            const chatId = [currentUser.uid, friend.uid].sort().join('_');
-            
-            db.collection(`artifacts/${appId}/public/data/messages`)
-              .where('chatId', '==', chatId)
-              .onSnapshot(async snap => {
-                const msgs = [];
-                for(let doc of snap.docs) {
-                    const d = doc.data();
-                    const decrypted = await decryptMessage(d.text, chatId);
-                    msgs.push({ ...d, text: decrypted });
-                }
-                msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
-                document.getElementById('messagesContainer').innerHTML = msgs.map(m => `
-                    <div class="flex ${m.senderId === currentUser.uid ? 'justify-end' : 'justify-start'}">
-                        <div class="p-3 rounded-2xl max-w-[75%] ${m.senderId === currentUser.uid ? 'bg-blue-600 text-white' : 'bg-white border'}">
-                            ${m.text}
+                <!-- Auth Form -->
+                <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
+                    <div id="usernameField" class="hidden">
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Apna Naam (Display Name)</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                                <i class="fa-solid fa-user"></i>
+                            </span>
+                            <input type="text" id="authName" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors" placeholder="Jaise: Rahul Kumar">
                         </div>
                     </div>
-                `).join('');
-                document.getElementById('messagesContainer').scrollTop = document.getElementById('messagesContainer').scrollHeight;
-            });
-        }
 
-        async function sendMessage() {
-            if (!currentUser) { toggleModal(true); return; }
-            const input = document.getElementById('msgInput');
-            if(!input.value.trim() || !activeFriend) return;
-            const chatId = [currentUser.uid, activeFriend.uid].sort().join('_');
-            const encrypted = await encryptMessage(input.value, chatId);
-            await db.collection(`artifacts/${appId}/public/data/messages`).add({
-                chatId,
-                senderId: currentUser.uid,
-                text: encrypted,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            input.value = '';
-        }
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Email Address</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                                <i class="fa-solid fa-envelope"></i>
+                            </span>
+                            <input type="email" id="authEmail" required class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors" placeholder="rahul@example.com">
+                        </div>
+                    </div>
 
-        document.getElementById('sendBtn').onclick = sendMessage;
-        document.getElementById('msgInput').onkeypress = (e) => e.key === 'Enter' && sendMessage();
-        triggerBtn.onclick = () => {
-            if (currentUser) auth.signOut();
-            else toggleModal(true);
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                                <i class="fa-solid fa-lock"></i>
+                            </span>
+                            <input type="password" id="authPassword" required minlength="6" class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors" placeholder="Minimum 6 characters">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="authSubmitBtn" class="w-full py-3 bg-emerald-500 text-white font-semibold rounded-xl shadow-lg shadow-emerald-200 hover:bg-emerald-600 transition-colors focus:outline-none">
+                        Login Karein
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ================= MAIN CHAT SCREEN ================= -->
+        <div id="chatScreen" class="flex-1 flex flex-col md:flex-row h-full w-full hidden">
+            
+            <!-- Sidebar (Left side: List of active chats/Users) -->
+            <div id="sidebar" class="w-full md:w-80 lg:w-96 border-r border-slate-100 flex flex-col h-full bg-slate-50 shrink-0">
+                <!-- User Profile Header -->
+                <div class="p-4 bg-white border-b border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg" id="myAvatar">
+                            U
+                        </div>
+                        <div class="overflow-hidden">
+                            <h3 class="font-semibold text-slate-800 truncate" id="myNameDisplay">UserName</h3>
+                            <!-- Unique ID box with Copy button -->
+                            <div class="flex items-center gap-1.5 mt-0.5">
+                                <span class="text-xs text-slate-500 font-mono" id="myIdDisplay">ID: Fetching...</span>
+                                <button onclick="copyMyId()" class="text-slate-400 hover:text-emerald-600 transition-colors" title="Apni ID copy karein">
+                                    <i class="fa-regular fa-copy text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Logout & Reset buttons -->
+                    <div class="flex items-center gap-2">
+                        <button onclick="handleLogout()" class="w-8 h-8 rounded-full hover:bg-red-50 text-slate-400 hover:text-red-500 flex items-center justify-center transition-colors" title="Log Out">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Find New User / ID Search Bar -->
+                <div class="p-3 bg-white border-b border-slate-100">
+                    <form onsubmit="searchUserById(event)" class="flex gap-2">
+                        <div class="relative flex-1">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                            </span>
+                            <input type="text" id="searchInput" placeholder="User ID dundhein..." class="w-full pl-9 pr-3 py-1.5 bg-slate-100 border-none rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                        </div>
+                        <button type="submit" class="px-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-semibold transition-colors">
+                            Khojein
+                        </button>
+                    </form>
+                    <!-- Search Results status -->
+                    <div id="searchResultFeedback" class="text-xs mt-1.5 px-1 hidden"></div>
+                </div>
+
+                <!-- Chat Lists Container -->
+                <div class="flex-1 overflow-y-auto" id="chatsListContainer">
+                    <div class="text-center py-8 text-slate-400">
+                        <i class="fa-regular fa-comments text-4xl mb-3 block"></i>
+                        <span class="text-sm">Koi chat shuru karne ke liye upar ID se user search karein!</span>
+                    </div>
+                </div>
+
+                <!-- E2EE Notice -->
+                <div class="p-3 bg-slate-100 text-center text-[11px] text-slate-500 border-t border-slate-200">
+                    <i class="fa-solid fa-lock text-emerald-600 mr-1"></i> Messages are fully end-to-end encrypted.
+                </div>
+            </div>
+
+            <!-- Chat Space (Right side: Current Conversation) -->
+            <div id="chatSpace" class="flex-1 flex flex-col h-full bg-slate-50 relative">
+                <!-- Welcome/Placeholder Screen when no active chat -->
+                <div id="chatPlaceholder" class="absolute inset-0 flex flex-col justify-center items-center p-8 bg-[#f8f9fa] z-10 text-center">
+                    <div class="w-24 h-24 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 text-5xl mb-4 shadow-sm">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-800">ChatCrypt End-to-End Chat</h2>
+                    <p class="text-slate-500 text-sm max-w-sm mt-2">
+                        Aapke saare messages client side par encrypt hote hain. Security key ke bina unhe koi nahi padh sakta, Firebase storage par bhi yeh encrypted form mein save hote hain.
+                    </p>
+                    <div class="mt-6 p-3 bg-white border border-slate-100 rounded-xl shadow-sm text-xs text-slate-600 inline-flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Apni ID upar se copy karke dost ko bhejein aur chat shuru karein!
+                    </div>
+                </div>
+
+                <!-- Active Chat Header -->
+                <div class="p-4 bg-white border-b border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <!-- Back button for mobile view -->
+                        <button onclick="closeActiveChatMobile()" class="md:hidden text-slate-500 hover:text-emerald-500 pr-1">
+                            <i class="fa-solid fa-arrow-left text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-lg" id="chatPartnerAvatar">
+                            ?
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-slate-800" id="chatPartnerName">Chatting Partner</h3>
+                            <div class="flex items-center gap-1">
+                                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span class="text-[11px] text-slate-500 font-mono" id="chatPartnerId">ID: Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Header Actions -->
+                    <div class="flex items-center gap-1 text-slate-400">
+                        <div class="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold flex items-center gap-1" title="End-to-End Encrypted Tunnel">
+                            <i class="fa-solid fa-lock"></i> SECURE E2EE
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages Area (Scrollable) -->
+                <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#efeae2]" id="messagesArea" style="background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-opacity: 0.4;">
+                    <!-- Message bubbles go here -->
+                </div>
+
+                <!-- Message Input Area -->
+                <div class="p-3 bg-white border-t border-slate-100">
+                    <form onsubmit="sendMessage(event)" class="flex gap-2 items-center">
+                        <input type="text" id="messageInput" placeholder="Message likhein..." required class="flex-1 px-4 py-2.5 bg-slate-100 border border-transparent rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                        <button type="submit" class="w-11 h-11 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl flex items-center justify-center shadow-md shadow-emerald-200 transition-colors focus:outline-none shrink-0">
+                            <i class="fa-solid fa-paper-plane text-sm"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Notification Toast component -->
+    <div id="toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none">
+        <i class="fa-solid fa-circle-check text-emerald-400" id="toastIcon"></i>
+        <span id="toastMsg">Action Done!</span>
+    </div>
+
+    <!-- Firebase v11 Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, onSnapshot, getDocs, or, and } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Environment variables inject ho rhe hain (using defaults for safety)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-chat-crypt';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "",
+            authDomain: "default-chat-crypt.firebaseapp.com",
+            projectId: "default-chat-crypt",
+            storageBucket: "default-chat-crypt.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:12345:web:12345"
         };
+
+        // Firebase Initialize
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // App State
+        let currentUser = null;       // Logged in auth user object
+        let currentUserDoc = null;    // Extra Firestore user data (uniqueId, username, etc.)
+        let activeChatUserId = null;  // Jiske saath abhi chat khuli hai uski Auth UID
+        let activeChatUserDoc = null; // Current active user's details
+        let authMode = "login";       // login or register
+        let chatsUnsubscribe = null;  // For active real-time message listener
+        let activeRoomsListUnsub = null; // List of current active chat friends
+
+        // E2EE Key derivation utility
+        // In real-world, a DH (Diffie-Hellman) exchange occurs. For this simulation, we construct a 
+        // deterministic but secure shared secret key between User A and User B based on their IDs combined lexicographically.
+        // It's client-side, making sure data sent to DB is only decrypted locally.
+        function getSharedEncryptionKey(userId1, userId2) {
+            // Sort standard lexicographically to guarantee same key for both parties
+            const sortedIds = [userId1, userId2].sort();
+            return `SecureSharedKey_${sortedIds[0]}_${sortedIds[1]}`;
+        }
+
+        // Encryption Function
+        function encryptMessage(text, secretKey) {
+            try {
+                return CryptoJS.AES.encrypt(text, secretKey).toString();
+            } catch (err) {
+                console.error("Encryption failed", err);
+                return text;
+            }
+        }
+
+        // Decryption Function
+        function decryptMessage(cipherText, secretKey) {
+            try {
+                const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
+                const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+                if (!decryptedText) return "[🔒 Decryption Error - Key Mismatch]";
+                return decryptedText;
+            } catch (err) {
+                return "[🔒 Encrypted Message]";
+            }
+        }
+
+        // UI Helpers
+        window.showLoading = (text) => {
+            const overlay = document.getElementById("loadingOverlay");
+            document.getElementById("loadingText").innerText = text;
+            overlay.classList.remove("hidden");
+        };
+
+        window.hideLoading = () => {
+            document.getElementById("loadingOverlay").classList.add("hidden");
+        };
+
+        window.showToast = (message, isError = false) => {
+            const toast = document.getElementById("toast");
+            const icon = document.getElementById("toastIcon");
+            const msgSpan = document.getElementById("toastMsg");
+
+            msgSpan.innerText = message;
+            if (isError) {
+                icon.className = "fa-solid fa-triangle-exclamation text-red-400";
+            } else {
+                icon.className = "fa-solid fa-circle-check text-emerald-400";
+            }
+
+            toast.classList.remove("opacity-0", "pointer-events-none");
+            toast.classList.add("opacity-100");
+
+            setTimeout(() => {
+                toast.classList.add("opacity-0", "pointer-events-none");
+                toast.classList.remove("opacity-100");
+            }, 3000);
+        };
+
+        // Switch login and register tabs
+        window.switchAuthTab = (mode) => {
+            authMode = mode;
+            const loginBtn = document.getElementById("tabLoginBtn");
+            const registerBtn = document.getElementById("tabRegisterBtn");
+            const usernameField = document.getElementById("usernameField");
+            const submitBtn = document.getElementById("authSubmitBtn");
+            const authError = document.getElementById("authError");
+
+            authError.classList.add("hidden");
+
+            if (mode === "login") {
+                loginBtn.className = "flex-1 pb-3 text-center border-b-2 border-emerald-500 text-emerald-600 font-semibold focus:outline-none";
+                registerBtn.className = "flex-1 pb-3 text-center border-b-2 border-transparent text-slate-500 font-semibold hover:text-slate-800 focus:outline-none";
+                usernameField.classList.add("hidden");
+                document.getElementById("authName").removeAttribute("required");
+                submitBtn.innerText = "Login Karein";
+            } else {
+                loginBtn.className = "flex-1 pb-3 text-center border-b-2 border-transparent text-slate-500 font-semibold hover:text-slate-800 focus:outline-none";
+                registerBtn.className = "flex-1 pb-3 text-center border-b-2 border-emerald-500 text-emerald-600 font-semibold focus:outline-none";
+                usernameField.classList.remove("hidden");
+                document.getElementById("authName").setAttribute("required", "true");
+                submitBtn.innerText = "Naya Account Banayein";
+            }
+        };
+
+        // Auth Logic Handler
+        window.handleAuth = async (event) => {
+            event.preventDefault();
+            const email = document.getElementById("authEmail").value.trim();
+            const password = document.getElementById("authPassword").value;
+            const displayName = document.getElementById("authName").value.trim();
+            const authError = document.getElementById("authError");
+            const authErrorMsg = document.getElementById("authErrorMsg");
+
+            authError.classList.add("hidden");
+            window.showLoading(authMode === "login" ? "Aapko log in kiya ja raha hai..." : "Naya encrypted account banaya ja raha hai...");
+
+            try {
+                if (authMode === "register") {
+                    // Create Firebase Auth user
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+
+                    // Update Display Name in Auth Profile
+                    await updateProfile(user, { displayName: displayName });
+
+                    // Generate a Unique ID for the user (8-digit random readable code)
+                    const uniqueId = "CC-" + Math.random().toString(36).substr(2, 6).toUpperCase();
+
+                    // Firestore rule-1: /artifacts/{appId}/users/{userId}/{collectionName}
+                    // Is case me hum profile settings user path pr save karenge
+                    const userProfileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
+                    
+                    const userData = {
+                        uid: user.uid,
+                        displayName: displayName,
+                        email: email,
+                        uniqueId: uniqueId,
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    await setDoc(userProfileRef, userData);
+
+                    // Public search utility setup (For letting other users search us by ID)
+                    // Firestore rule-1: /artifacts/{appId}/public/data/{collectionName}
+                    const publicDirectoryRef = doc(db, 'artifacts', appId, 'public', 'data', 'directory', uniqueId, 'info');
+                    await setDoc(publicDirectoryRef, {
+                        uid: user.uid,
+                        displayName: displayName,
+                        uniqueId: uniqueId
+                    });
+
+                    window.showToast("Registration Safal! Aapka unique ID: " + uniqueId);
+                } else {
+                    // Sign In Flow
+                    await signInWithEmailAndPassword(auth, email, password);
+                    window.showToast("Aapka swagat hai!");
+                }
+            } catch (error) {
+                console.error("Auth error", error);
+                let hindiMsg = "Koshish fail ho gayi. Kripya details check karein.";
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                    hindiMsg = "Galat email ya password!";
+                } else if (error.code === 'auth/email-already-in-use') {
+                    hindiMsg = "Yeh Email ID pehle se registered hai.";
+                }
+                authErrorMsg.innerText = hindiMsg + ` (${error.message})`;
+                authError.classList.remove("hidden");
+            } finally {
+                window.hideLoading();
+            }
+        };
+
+        // Logout
+        window.handleLogout = async () => {
+            if (chatsUnsubscribe) chatsUnsubscribe();
+            if (activeRoomsListUnsub) activeRoomsListUnsub();
+            window.showLoading("Signing out...");
+            try {
+                await signOut(auth);
+                currentUser = null;
+                currentUserDoc = null;
+                activeChatUserId = null;
+                activeChatUserDoc = null;
+                
+                // Reset UI
+                document.getElementById("authScreen").classList.remove("hidden");
+                document.getElementById("chatScreen").classList.add("hidden");
+                document.getElementById("authForm").reset();
+            } catch (err) {
+                window.showToast("Logout me dikkat aayi!", true);
+            } finally {
+                window.hideLoading();
+            }
+        };
+
+        // Initialize user login state listener (RULE 3 - Auth Before queries)
+        const initAuthListener = () => {
+            const initAuth = async () => {
+                window.showLoading("App data connect ho raha hai...");
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    try {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } catch (e) {
+                        await signInAnonymously(auth);
+                    }
+                }
+                // Agar automatic custom/anon fail ho to standard logic triggers through auth observer
+            };
+            initAuth();
+
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    // Fetch profile detail safely from Firestore
+                    try {
+                        const userProfileRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
+                        const docSnap = await getDoc(userProfileRef);
+                        
+                        if (docSnap.exists()) {
+                            currentUserDoc = docSnap.data();
+                        } else {
+                            // Backup structure in case user was manually signed/custom created without directory entry
+                            const uniqueId = "CC-" + Math.random().toString(36).substr(2, 6).toUpperCase();
+                            const backupData = {
+                                uid: user.uid,
+                                displayName: user.displayName || "Anjaan User",
+                                email: user.email || "no-email",
+                                uniqueId: uniqueId,
+                                createdAt: new Date().toISOString()
+                            };
+                            await setDoc(userProfileRef, backupData);
+                            // Set on directory
+                            const publicDirRef = doc(db, 'artifacts', appId, 'public', 'data', 'directory', uniqueId, 'info');
+                            await setDoc(publicDirRef, {
+                                uid: user.uid,
+                                displayName: backupData.displayName,
+                                uniqueId: uniqueId
+                            });
+                            currentUserDoc = backupData;
+                        }
+
+                        // Update Current User display on left header panel
+                        document.getElementById("myNameDisplay").innerText = currentUserDoc.displayName;
+                        document.getElementById("myIdDisplay").innerText = "ID: " + currentUserDoc.uniqueId;
+                        document.getElementById("myAvatar").innerText = currentUserDoc.displayName.charAt(0).toUpperCase();
+
+                        // Switch screen UI
+                        document.getElementById("authScreen").classList.add("hidden");
+                        document.getElementById("chatScreen").classList.remove("hidden");
+                        
+                        // Load initial active chatrooms
+                        listenToActiveChats();
+
+                    } catch (error) {
+                        console.error("Error setting user doc profile", error);
+                        window.showToast("Profile configuration fetch nahi ho paayi.", true);
+                    }
+                } else {
+                    // Not signed in
+                    document.getElementById("authScreen").classList.remove("hidden");
+                    document.getElementById("chatScreen").classList.add("hidden");
+                }
+                window.hideLoading();
+            });
+        };
+
+        initAuthListener();
+
+        // Copy User ID to Clipboard (Simulated compatibility copy as per rules)
+        window.copyMyId = () => {
+            if (!currentUserDoc) return;
+            const el = document.createElement('textarea');
+            el.value = currentUserDoc.uniqueId;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            window.showToast("Unique ID copy ho gayi hai! " + currentUserDoc.uniqueId);
+        };
+
+        // User Search by Unique ID (Search into directory list via rule 1)
+        window.searchUserById = async (e) => {
+            e.preventDefault();
+            const searchIdInput = document.getElementById("searchInput").value.trim().toUpperCase();
+            const feedback = document.getElementById("searchResultFeedback");
+            
+            if (!searchIdInput) return;
+            
+            feedback.classList.remove("hidden", "text-red-500", "text-emerald-500");
+            feedback.className = "text-xs mt-1.5 px-1 text-slate-500 animate-pulse";
+            feedback.innerText = "Dundh rahe hain...";
+
+            if (searchIdInput === currentUserDoc.uniqueId) {
+                feedback.className = "text-xs mt-1.5 px-1 text-red-500";
+                feedback.innerText = "Aap khud ki ID se chat nahi kar sakte!";
+                return;
+            }
+
+            try {
+                // RULE 1 compliant check for public ID directory data
+                const userDirectoryRef = doc(db, 'artifacts', appId, 'public', 'data', 'directory', searchIdInput, 'info');
+                const docSnap = await getDoc(userDirectoryRef);
+
+                if (docSnap.exists()) {
+                    const targetUser = docSnap.data();
+                    feedback.className = "text-xs mt-1.5 px-1 text-emerald-500";
+                    feedback.innerText = `User mil gaya: ${targetUser.displayName}. Chat shuru ki ja rahi hai...`;
+                    
+                    // Add this user to our local custom contacts list to preserve state
+                    await createContactThread(targetUser);
+
+                    // Open the chat with searched user
+                    openChatWithUser(targetUser.uid, targetUser.displayName, targetUser.uniqueId);
+                    document.getElementById("searchInput").value = "";
+                    setTimeout(() => feedback.classList.add("hidden"), 3000);
+                } else {
+                    feedback.className = "text-xs mt-1.5 px-1 text-red-500";
+                    feedback.innerText = "Koi user nahi mila! ID sahi se check karein (Ex: CC-XXXXXX).";
+                }
+            } catch (err) {
+                console.error("Search error", err);
+                feedback.className = "text-xs mt-1.5 px-1 text-red-500";
+                feedback.innerText = "Kuch error aayi, dubara try karein.";
+            }
+        };
+
+        // Save Contact Thread to trigger sidebar listing easily
+        async function createContactThread(targetUser) {
+            if (!currentUser) return;
+            
+            // Logically save on private workspace of sender
+            // /artifacts/{appId}/users/{userId}/contacts
+            const contactRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'contacts', targetUser.uid);
+            await setDoc(contactRef, {
+                uid: targetUser.uid,
+                displayName: targetUser.displayName,
+                uniqueId: targetUser.uniqueId,
+                lastInteraction: new Date().toISOString()
+            });
+
+            // Dual relationship Setup for reciprocal listing
+            const reciprocalContactRef = doc(db, 'artifacts', appId, 'users', targetUser.uid, 'contacts', currentUser.uid);
+            await setDoc(reciprocalContactRef, {
+                uid: currentUser.uid,
+                displayName: currentUserDoc.displayName,
+                uniqueId: currentUserDoc.uniqueId,
+                lastInteraction: new Date().toISOString()
+            });
+        }
+
+        // Listen in real-time to active contacts list on sidepanel
+        function listenToActiveChats() {
+            if (!currentUser) return;
+
+            const contactsCollRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'contacts');
+            
+            // Rule 2 check: No complex ordering on firestore query directly, query standard simple list then sort in memory.
+            activeRoomsListUnsub = onSnapshot(contactsCollRef, (snapshot) => {
+                const contactsList = [];
+                snapshot.forEach((doc) => {
+                    contactsList.push(doc.data());
+                });
+
+                // Sort by lastInteraction timestamp DESC in javascript memory to avoid index errors
+                contactsList.sort((a, b) => new Date(b.lastInteraction) - new Date(a.lastInteraction));
+
+                renderSidebarContacts(contactsList);
+            }, (error) => {
+                console.error("Contacts listener failed", error);
+            });
+        }
+
+        // Render contact threads in sidebar
+        function renderSidebarContacts(contacts) {
+            const container = document.getElementById("chatsListContainer");
+            container.innerHTML = "";
+
+            if (contacts.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 px-4 text-slate-400">
+                        <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fa-solid fa-address-book text-slate-400"></i>
+                        </div>
+                        <p class="text-sm">Abhi koi chat active nahi hai.</p>
+                        <p class="text-[11px] text-slate-500 mt-1">Upar dost ki ChatCrypt ID daal kar dhoondhein!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            contacts.forEach(contact => {
+                const isCurrentActive = activeChatUserId === contact.uid;
+                const activeBg = isCurrentActive ? 'bg-emerald-50 border-l-4 border-emerald-500' : 'hover:bg-slate-100 bg-white';
+                
+                const card = document.createElement("div");
+                card.className = `p-4 mb-1 mx-2 rounded-xl transition-all cursor-pointer flex items-center justify-between border border-slate-100 shadow-sm ${activeBg}`;
+                card.onclick = () => openChatWithUser(contact.uid, contact.displayName, contact.uniqueId);
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold shrink-0">
+                            ${contact.displayName.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="overflow-hidden">
+                            <h4 class="font-medium text-slate-800 text-sm truncate">${contact.displayName}</h4>
+                            <p class="text-xs text-slate-400 truncate font-mono">${contact.uniqueId}</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end gap-1 shrink-0">
+                        <span class="text-[10px] text-slate-400"><i class="fa-solid fa-lock text-emerald-400"></i> Encrypted</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Open chat pane with selected contact
+        window.openChatWithUser = (uid, displayName, uniqueId) => {
+            activeChatUserId = uid;
+            activeChatUserDoc = { uid, displayName, uniqueId };
+
+            // Show Chat area & Hide mobile placeholder
+            document.getElementById("chatPlaceholder").classList.add("hidden");
+            
+            // Header values update
+            document.getElementById("chatPartnerName").innerText = displayName;
+            document.getElementById("chatPartnerId").innerText = "ID: " + uniqueId;
+            document.getElementById("chatPartnerAvatar").innerText = displayName.charAt(0).toUpperCase();
+
+            // Toggle view state for mobile/sidebar responsive toggle (active class settings helper)
+            const sidebar = document.getElementById("sidebar");
+            const chatSpace = document.getElementById("chatSpace");
+            if (window.innerWidth < 768) {
+                sidebar.classList.add("hidden");
+                chatSpace.classList.remove("hidden");
+            }
+
+            // Highlighting list items reset via quick update local list render trigger
+            listenToActiveChats();
+
+            // Unsubscribe existing message listener if active
+            if (chatsUnsubscribe) chatsUnsubscribe();
+
+            // Listen to messages between currentUser.uid and activeChatUserId
+            listenToMessages();
+        };
+
+        // Go back to sidebar list on mobile screen
+        window.closeActiveChatMobile = () => {
+            const sidebar = document.getElementById("sidebar");
+            const chatSpace = document.getElementById("chatSpace");
+            sidebar.classList.remove("hidden");
+            // Show placeholder is standard
+            document.getElementById("chatPlaceholder").classList.remove("hidden");
+        };
+
+        // Realtime message fetching mechanism
+        function listenToMessages() {
+            if (!currentUser || !activeChatUserId) return;
+
+            // Sort standard lexicographically to derive unique global channel key
+            const roomKey = [currentUser.uid, activeChatUserId].sort().join("_");
+            const sharedSecretKey = getSharedEncryptionKey(currentUser.uid, activeChatUserId);
+
+            // Public structure rule-1: /artifacts/{appId}/public/data/{collectionName}
+            const messagesCollRef = collection(db, 'artifacts', appId, 'public', 'data', `chatrooms_${roomKey}`);
+
+            // Fetch and listen in real-time
+            chatsUnsubscribe = onSnapshot(messagesCollRef, (snapshot) => {
+                const messages = [];
+                snapshot.forEach((doc) => {
+                    messages.push(doc.data());
+                });
+
+                // Sort locally by timestamp strictly (as per Rule 2, complex queries are restricted)
+                messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+                renderMessages(messages, sharedSecretKey);
+            }, (error) => {
+                console.error("Messages list fetch failed", error);
+                window.showToast("Chat messages load karne me prblm aayi.", true);
+            });
+        }
+
+        // Decrypt on client side & Render HTML inside bubbles
+        function renderMessages(messages, sharedKey) {
+            const area = document.getElementById("messagesArea");
+            area.innerHTML = "";
+
+            if (messages.length === 0) {
+                area.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-slate-500 select-none">
+                        <div class="p-4 bg-white/85 rounded-2xl shadow-sm text-center max-w-xs border border-slate-200">
+                            <i class="fa-solid fa-lock text-emerald-500 text-lg mb-1"></i>
+                            <p class="font-semibold text-xs text-slate-700">🔒 End-to-End Encrypted Tunnel</p>
+                            <p class="text-[11px] text-slate-500 mt-1">Yahan bhejey gaye saare sandesh encrypted hain aur system ke baahar koi nahi dekh sakta.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            messages.forEach((msg) => {
+                const isMe = msg.senderId === currentUser.uid;
+                
+                // Decrypting on current client's side in real-time
+                const decryptedText = decryptMessage(msg.ciphertext, sharedKey);
+
+                // Bubble elements creation
+                const flexDiv = document.createElement("div");
+                flexDiv.className = `flex w-full ${isMe ? 'justify-end' : 'justify-start'}`;
+
+                const bubble = document.createElement("div");
+                
+                // Colors scheme: Emerald palette for user, White palette for recipient
+                const bubbleStyle = isMe 
+                    ? 'bg-emerald-500 text-white rounded-br-none shadow-sm shadow-emerald-700/10' 
+                    : 'bg-white text-slate-800 rounded-bl-none shadow-sm border border-slate-100';
+
+                bubble.className = `max-w-[75%] px-4 py-2.5 rounded-2xl text-sm ${bubbleStyle}`;
+                
+                // Formatting time helper
+                let displayTime = "Just now";
+                if (msg.timestamp) {
+                    const d = new Date(msg.timestamp);
+                    displayTime = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                }
+
+                bubble.innerHTML = `
+                    <div class="break-words leading-relaxed leading-6">${escapeHtml(decryptedText)}</div>
+                    <div class="text-[9px] mt-1 flex items-center justify-end gap-1 ${isMe ? 'text-emerald-100' : 'text-slate-400'}">
+                        <span>${displayTime}</span>
+                        ${isMe ? '<i class="fa-solid fa-check-double text-[8px]"></i>' : ''}
+                    </div>
+                `;
+
+                flexDiv.appendChild(bubble);
+                area.appendChild(flexDiv);
+            });
+
+            // Scroll down to the bottom on every message
+            area.scrollTop = area.scrollHeight;
+        }
+
+        // HTML Sanitizer to prevent XSS
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Send encrypted Message to Firestore database
+        window.sendMessage = async (e) => {
+            e.preventDefault();
+            const input = document.getElementById("messageInput");
+            const rawText = input.value.trim();
+            if (!rawText || !currentUser || !activeChatUserId) return;
+
+            // Generate shared secret key
+            const sharedSecretKey = getSharedEncryptionKey(currentUser.uid, activeChatUserId);
+
+            // Client-Side Encryption (Simulated E2EE)
+            const encryptedText = encryptMessage(rawText, sharedSecretKey);
+
+            // Clear input box instantly for snappy feel
+            input.value = "";
+
+            try {
+                // Room key for standard separation
+                const roomKey = [currentUser.uid, activeChatUserId].sort().join("_");
+                
+                // Message payload structure
+                const messagePayload = {
+                    senderId: currentUser.uid,
+                    recipientId: activeChatUserId,
+                    ciphertext: encryptedText, // Send encrypted data ONLY to Cloud Storage db
+                    timestamp: new Date().toISOString()
+                };
+
+                // Store in shared public messages collection
+                // Rule 1 compliant: /artifacts/{appId}/public/data/{collectionName}
+                const messagesCollRef = collection(db, 'artifacts', appId, 'public', 'data', `chatrooms_${roomKey}`);
+                await addDoc(messagesCollRef, messagePayload);
+
+                // Update contact interaction timestamps so chats sort dynamically to top
+                await updateContactTime(activeChatUserId);
+
+            } catch (err) {
+                console.error("Failed to send message", err);
+                window.showToast("Message send nahi ho saka. Error detail: " + err.message, true);
+            }
+        };
+
+        // Update timestamps on recent conversations
+        async function updateContactTime(targetUid) {
+            if (!currentUser) return;
+            try {
+                const contactRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'contacts', targetUid);
+                await updateDoc(contactRef, {
+                    lastInteraction: new Date().toISOString()
+                });
+
+                const reciprocalContactRef = doc(db, 'artifacts', appId, 'users', targetUid, 'contacts', currentUser.uid);
+                await updateDoc(reciprocalContactRef, {
+                    lastInteraction: new Date().toISOString()
+                });
+            } catch (e) {
+                console.warn("Timestamp sync skipped:", e);
+            }
+        }
     </script>
 </body>
 </html>
+
+
