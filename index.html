@@ -53,40 +53,49 @@
                     </div>
                 </div>
             `;
-            document.getElementById('chatList').onclick = openChat;
+            document.getElementById('chatList').onclick = () => openChat("Zenzii Team");
         }
 
-        function openChat(name = "Zenzii Team") {
+        function openChat(name) {
             document.getElementById('contentArea').innerHTML = `
                 <div class="flex flex-col h-full fade-in">
                     <div class="flex items-center gap-2 mb-4 cursor-pointer" onclick="renderChats()">
                         <i data-lucide="arrow-left"></i> <span class="font-bold">Back</span>
                     </div>
-                    <div id="msgContainer" class="flex-1 bg-emerald-50 p-4 rounded-xl mb-4 overflow-y-auto">
-                        <p class="bg-white p-3 rounded-lg shadow-sm mb-2">Connected to ${name}. Start typing!</p>
+                    <div id="msgContainer" class="flex-1 bg-emerald-50 p-4 rounded-xl mb-4 overflow-y-auto space-y-2">
+                        <p class="bg-white p-3 rounded-lg shadow-sm w-fit text-sm">Chatting with ${name}.</p>
                     </div>
                     <div class="flex gap-2">
-                        <input id="msgInput" type="text" placeholder="Type..." class="flex-1 p-2 border rounded-full">
-                        <button id="sendBtn" class="bg-emerald-600 text-white px-4 py-2 rounded-full">Send</button>
+                        <input id="msgInput" type="text" placeholder="Type a message..." class="flex-1 p-2 border rounded-full outline-none px-4">
+                        <button id="sendBtn" class="bg-emerald-600 text-white px-5 py-2 rounded-full font-bold">Send</button>
                     </div>
                 </div>
             `;
+            const msgContainer = document.getElementById('msgContainer');
+            const msgInput = document.getElementById('msgInput');
             document.getElementById('sendBtn').onclick = () => {
-                const msg = document.getElementById('msgInput').value;
-                if(msg) {
-                    const div = document.createElement('p');
-                    div.className = "bg-emerald-600 text-white p-3 rounded-lg shadow-sm mb-2 ml-auto w-fit";
-                    div.innerText = msg;
-                    document.getElementById('msgContainer').appendChild(div);
-                    document.getElementById('msgInput').value = '';
+                const text = msgInput.value.trim();
+                if(text) {
+                    const msgDiv = document.createElement('p');
+                    msgDiv.className = "bg-emerald-600 text-white p-3 rounded-lg shadow-sm ml-auto w-fit max-w-[80%] text-sm";
+                    msgDiv.innerText = text;
+                    msgContainer.appendChild(msgDiv);
+                    msgInput.value = '';
+                    msgContainer.scrollTop = msgContainer.scrollHeight;
                 }
             };
             lucide.createIcons();
         }
 
+        // Search logic fix
+        document.getElementById('searchBtn').onclick = () => {
+            if(!userData.isLoggedIn) { document.getElementById('loginModal').classList.remove('hidden'); return; }
+            const searchId = prompt("Enter User ID to chat (e.g., z123456)");
+            if(searchId) openChat(searchId);
+        };
+
         document.getElementById('navChats').onclick = renderChats;
-        document.getElementById('navStories').onclick = () => document.getElementById('contentArea').innerHTML = `<div class="p-4 fade-in">Stories coming soon!</div>`;
-        
+        document.getElementById('navStories').onclick = () => document.getElementById('contentArea').innerHTML = `<div class="p-4 fade-in">Stories are coming soon, Supreme Being!</div>`;
         document.getElementById('navSettings').onclick = () => {
             if(!userData.isLoggedIn) { document.getElementById('loginModal').classList.remove('hidden'); return; }
             document.getElementById('contentArea').innerHTML = `
@@ -96,35 +105,20 @@
                         <p><strong>Name:</strong> ${userData.name}</p>
                         <p><strong>Email:</strong> ${userData.email}</p>
                         <p><strong>Unique ID:</strong> <span class="font-mono bg-gray-100 p-1 px-2 rounded">${userData.userId}</span></p>
-                        <button id="logoutBtn" class="w-full mt-4 bg-red-500 text-white py-2 rounded-xl">Logout</button>
+                        <button id="logoutBtn" class="w-full mt-4 bg-red-500 text-white py-2 rounded-xl font-bold">Logout</button>
                     </div>
                 </div>`;
-            document.getElementById('logoutBtn').onclick = () => {
-                localStorage.clear();
-                userData = { isLoggedIn: false, email: "", userId: "", name: "Supreme Being" };
-                location.reload();
-            };
+            document.getElementById('logoutBtn').onclick = () => { localStorage.clear(); location.reload(); };
         };
 
         document.getElementById('loginSubmit').onclick = () => {
-            userData = {
-                isLoggedIn: true,
-                email: document.getElementById('emailInput').value,
-                userId: "z" + Math.floor(Math.random() * 900000 + 100000),
-                name: "Supreme Being"
-            };
+            userData = { isLoggedIn: true, email: document.getElementById('emailInput').value, userId: "z" + Math.floor(Math.random() * 900000 + 100000), name: "Supreme Being" };
             localStorage.setItem('zenziiUser', JSON.stringify(userData));
             document.getElementById('loginModal').classList.add('hidden');
             renderChats();
         };
 
-        document.getElementById('searchBtn').onclick = () => {
-             const searchId = prompt("Enter User ID to chat (e.g., z123456)");
-             if(searchId) openChat(searchId);
-        };
-
         document.getElementById('closeModal').onclick = () => document.getElementById('loginModal').classList.add('hidden');
-
         renderChats();
     </script>
 </body>
