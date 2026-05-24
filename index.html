@@ -1,128 +1,113 @@
-react
-import React, { useState } from 'react';
-import { MessageCircle, Search, Settings, BookOpen, Send, Check, CheckCheck, User, LogOut, Smartphone, ArrowLeft, X } from 'lucide-react';
-import { supabase } from './supabaseClient';
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState('chats');
-  const [selectedChat, setSelectedChat] = useState(null);
-  const [messages, setMessages] = useState([{ id: 1, text: 'Welcome to Zenzii!', sender: 'Zenzii Team', seen: true }]);
-  const [newMessage, setNewMessage] = useState('');
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('zenziiUser')) || null);
-  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenzii Messenger</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .bg-whatsapp { background-color: #075e54; }
+        .bg-chat { background-color: #e5ddd5; }
+        .msg-sent { background-color: #dcf8c6; }
+    </style>
+</head>
+<body class="bg-gray-100 h-screen font-sans">
+    <div id="app" class="h-full max-w-md mx-auto bg-white shadow-xl flex flex-col relative overflow-hidden">
+        <!-- Header -->
+        <header id="header" class="bg-whatsapp text-white p-4 flex justify-between items-center shadow-md z-50">
+            <div class="flex items-center gap-3">
+                <i id="backBtn" data-lucide="arrow-left" class="hidden cursor-pointer" onclick="render('chats')"></i>
+                <h1 id="headerTitle" class="text-xl font-bold">Zenzii</h1>
+            </div>
+            <i id="searchBtn" data-lucide="search" class="cursor-pointer" onclick="toggleSearch()"></i>
+        </header>
 
-  const handleLogin = () => {
-    if(loginForm.email && loginForm.password) {
-      const newUser = { name: 'User', email: loginForm.email, userId: 'z' + Math.floor(Math.random() * 900000 + 100000) };
-      setUser(newUser);
-      localStorage.setItem('zenziiUser', JSON.stringify(newUser));
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('zenziiUser');
-    setUser(null);
-    setSelectedChat(null);
-    setActiveTab('chats');
-  };
-
-  const handleSend = () => {
-    if (!newMessage.trim()) return;
-    setMessages([...messages, { id: Date.now(), text: newMessage, sender: 'me', seen: false }]);
-    setNewMessage('');
-    setTimeout(() => {
-      setMessages(prev => prev.map(m => ({ ...m, seen: true })));
-    }, 2000);
-  };
-
-  return (
-    <div className="h-screen flex flex-col max-w-md mx-auto bg-gray-50 border-x relative overflow-hidden font-sans">
-      <header className="bg-[#075e54] text-white p-4 flex justify-between items-center shadow-md">
-        <div className="flex items-center gap-3">
-          {selectedChat && <ArrowLeft className="cursor-pointer" onClick={() => setSelectedChat(null)} />}
-          <h1 className="text-xl font-bold">{selectedChat ? selectedChat.name : 'Zenzii'}</h1>
+        <!-- Search Box -->
+        <div id="searchBox" class="hidden bg-white p-3 border-b flex items-center gap-2 z-40">
+            <input id="searchInput" class="flex-1 p-2 border rounded-full px-4 outline-none" placeholder="Search user ID...">
+            <i id="closeSearch" data-lucide="x" class="cursor-pointer" onclick="toggleSearch()"></i>
         </div>
-        {!selectedChat && !showSearch && <Search className="cursor-pointer" onClick={() => setShowSearch(true)} />}
-      </header>
 
-      {showSearch && (
-        <div className="bg-white p-3 flex items-center gap-2 border-b shadow-sm">
-          <input 
-            autoFocus 
-            className="flex-1 p-2 border rounded-full px-4 outline-none" 
-            placeholder="Search User ID (e.g. z123456)" 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <X className="cursor-pointer text-gray-500" onClick={() => { setShowSearch(false); setSearchQuery(''); }} />
-        </div>
-      )}
+        <!-- Content -->
+        <div id="content" class="flex-1 overflow-y-auto bg-gray-50"></div>
 
-      <div className="flex-1 overflow-y-auto">
-        {activeTab === 'chats' && !selectedChat && (
-          <div className="p-4 bg-white flex items-center gap-4 cursor-pointer border-b hover:bg-gray-50" onClick={() => setSelectedChat({name: 'Zenzii Team'})}>
-            <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center font-bold text-white relative">
-              Z
-              <span className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-0.5 border-2 border-white"><Check size={10} /></span>
-            </div>
-            <div>
-              <h2 className="font-semibold flex items-center gap-1">Zenzii Team <span className="text-blue-500">✓</span></h2>
-              <p className="text-sm text-gray-500">Welcome to Zenzii...</p>
-            </div>
-          </div>
-        )}
-
-        {selectedChat && (
-          <div className="h-full flex flex-col bg-[#e5ddd5]">
-            <div className="flex-1 p-4 space-y-2 overflow-y-auto pb-20">
-              {messages.map(m => (
-                <div key={m.id} className={`p-3 rounded-lg w-fit text-sm ${m.sender === 'me' ? 'bg-[#dcf8c6] ml-auto shadow-sm' : 'bg-white shadow-sm'}`}>
-                  {m.text}
-                  {m.sender === 'me' && (
-                    <span className="ml-2 text-xs">{m.seen ? <CheckCheck size={14} className="inline text-blue-500" /> : <Check size={14} className="inline" />}</span>
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="p-2 bg-[#f0f0f0] flex gap-2 border-t absolute bottom-0 w-full">
-              <input value={newMessage} onChange={(e) => setNewMessage(e.target.value)} className="flex-1 p-3 rounded-full px-4 outline-none shadow-inner" placeholder="Type a message" />
-              <button onClick={handleSend} className="bg-[#075e54] text-white p-3 rounded-full"><Send size={20} /></button>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'stories' && !selectedChat && <div className="p-6 text-center text-gray-500">Coming soon...</div>}
-
-        {activeTab === 'settings' && !selectedChat && (
-          <div className="p-0 h-full bg-white">
-            {!user ? (
-              <div className="h-full flex flex-col items-center justify-center p-8 bg-white">
-                <Smartphone size={48} className="text-[#075e54] mb-6" />
-                <h2 className="text-2xl font-bold mb-2">Login to Zenzii</h2>
-                <input type="email" placeholder="Email" className="w-full p-3 border-b-2 mb-4" onChange={(e) => setLoginForm({...loginForm, email: e.target.value})} />
-                <input type="password" placeholder="Password" className="w-full p-3 border-b-2 mb-8" onChange={(e) => setLoginForm({...loginForm, password: e.target.value})} />
-                <button onClick={handleLogin} className="w-full bg-[#075e54] text-white py-3 rounded-full font-bold">Login</button>
-              </div>
-            ) : (
-              <div className="p-6">
-                <button onClick={handleLogout} className="w-full bg-red-50 text-red-600 p-3 rounded-lg font-semibold">Logout</button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {!selectedChat && !showSearch && (
-        <nav className="w-full bg-white border-t flex justify-around p-3 shadow-lg z-30">
-          <MessageCircle onClick={() => setActiveTab('chats')} className={activeTab === 'chats' ? 'text-[#075e54]' : 'text-gray-400'} />
-          <BookOpen onClick={() => setActiveTab('stories')} className={activeTab === 'stories' ? 'text-[#075e54]' : 'text-gray-400'} />
-          <Settings onClick={() => setActiveTab('settings')} className={activeTab === 'settings' ? 'text-[#075e54]' : 'text-gray-400'} />
+        <!-- Navigation -->
+        <nav id="navBar" class="bg-white border-t flex justify-around p-4 shadow-lg z-50">
+            <i data-lucide="message-circle" class="cursor-pointer text-[#075e54]" onclick="render('chats')"></i>
+            <i data-lucide="book-open" class="cursor-pointer text-gray-400" onclick="render('stories')"></i>
+            <i data-lucide="settings" class="cursor-pointer text-gray-400" onclick="render('settings')"></i>
         </nav>
-      )}
     </div>
-  );
-}
+
+    <script>
+        let user = JSON.parse(localStorage.getItem('zenziiUser'));
+        
+        function toggleSearch() {
+            document.getElementById('searchBox').classList.toggle('hidden');
+        }
+
+        function render(view) {
+            const content = document.getElementById('content');
+            const navBar = document.getElementById('navBar');
+            const searchBtn = document.getElementById('searchBtn');
+            const backBtn = document.getElementById('backBtn');
+            const headerTitle = document.getElementById('headerTitle');
+            const searchBox = document.getElementById('searchBox');
+
+            searchBox.classList.add('hidden'); // Close search on navigation
+
+            if(view === 'chatDetail') {
+                navBar.classList.add('hidden');
+                searchBtn.classList.add('hidden');
+                backBtn.classList.remove('hidden');
+                headerTitle.innerText = "Zenzii Team";
+                content.className = "flex-1 bg-chat p-4 flex flex-col";
+                content.innerHTML = `<div class="flex-1 space-y-2 overflow-y-auto pb-4">
+                                        <div class="bg-white p-3 rounded-lg w-fit text-sm shadow-sm">Hello Supreme Being!</div>
+                                        <div class="msg-sent p-3 rounded-lg w-fit text-sm shadow-sm ml-auto">Everything is stable now.</div>
+                                     </div>
+                                     <div class="sticky bottom-0 bg-[#f0f0f0] p-2 flex gap-2 border-t">
+                                        <input class="flex-1 p-2 rounded-full px-4 outline-none" placeholder="Type a message...">
+                                        <button class="bg-whatsapp text-white p-2 rounded-full"><i data-lucide="send"></i></button>
+                                     </div>`;
+            } else {
+                navBar.classList.remove('hidden');
+                searchBtn.classList.remove('hidden');
+                backBtn.classList.add('hidden');
+                headerTitle.innerText = "Zenzii";
+                content.className = "flex-1 overflow-y-auto bg-gray-50";
+                
+                if(view === 'chats') {
+                    content.innerHTML = `<div class="p-4 bg-white flex items-center gap-4 cursor-pointer border-b" onclick="render('chatDetail')">
+                                            <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center font-bold text-white relative">Z
+                                            <span class="absolute bottom-0 right-0 bg-blue-500 rounded-full p-0.5 border-2 border-white"><i data-lucide="check" class="w-2 h-2 text-white"></i></span></div>
+                                            <div><h2 class="font-bold">Zenzii Team</h2><p class="text-sm text-gray-500">Everything is stable now.</p></div>
+                                         </div>`;
+                } else if(view === 'settings') {
+                    content.innerHTML = user ? 
+                        `<div class="p-6"><button onclick="logout()" class="w-full bg-red-50 text-red-600 p-3 rounded-lg font-bold">Logout</button></div>` :
+                        `<div class="p-8 flex flex-col gap-4"><input id="e" placeholder="Email" class="p-3 border-b-2 outline-none"><input id="p" type="password" placeholder="Password" class="p-3 border-b-2 outline-none"><button onclick="login()" class="bg-whatsapp text-white p-3 rounded-full font-bold">Login</button></div>`;
+                } else {
+                    content.innerHTML = `<div class="p-8 text-center text-gray-500">Coming soon...</div>`;
+                }
+            }
+            lucide.createIcons();
+        }
+
+        function login() {
+            const email = document.getElementById('e').value;
+            if(email) {
+                localStorage.setItem('zenziiUser', JSON.stringify({email}));
+                location.reload();
+            }
+        }
+        function logout() { localStorage.clear(); location.reload(); }
+
+        render('chats');
+    </script>
+</body>
+</html>
 
 
