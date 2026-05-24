@@ -3,53 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Messenger</title>
+    <title>Zenzii Messenger</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
     <style>
-        body { font-family: sans-serif; }
-        .hidden { display: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
+    
+    <!-- App Container -->
     <div id="app" class="max-w-4xl mx-auto h-screen flex flex-col">
+        
         <!-- Auth Screen -->
         <div id="authScreen" class="flex-1 flex items-center justify-center p-4">
-            <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm">
-                <h1 id="authTitle" class="text-2xl font-bold mb-6 text-center">Login</h1>
+            <div class="bg-white p-8 rounded-3xl shadow-xl border w-full max-w-sm">
+                <h1 id="authTitle" class="text-3xl font-bold mb-2 text-center text-blue-600">Zenzii</h1>
+                <p class="text-gray-500 text-center mb-6 text-sm">Secure E2EE Messenger</p>
                 <div class="space-y-4">
-                    <input id="email" type="email" placeholder="Email" class="w-full p-3 border rounded-lg">
-                    <input id="password" type="password" placeholder="Password" class="w-full p-3 border rounded-lg">
-                    <p id="authError" class="text-red-500 text-xs text-center font-medium"></p>
-                    <button id="authBtn" class="w-full bg-green-600 text-white p-3 rounded-lg font-semibold">Login</button>
-                    <p id="toggleAuth" class="mt-4 text-center cursor-pointer text-blue-600 text-sm">Need an account? Sign Up</p>
+                    <input id="email" type="email" placeholder="Email" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input id="password" type="password" placeholder="Password" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                    <div id="authError" class="text-red-500 text-xs text-center font-medium h-4"></div>
+                    <button id="authBtn" class="w-full bg-blue-600 text-white p-3 rounded-xl font-semibold hover:bg-blue-700 transition">Login</button>
+                    <p id="toggleAuth" class="mt-4 text-center cursor-pointer text-gray-500 hover:text-blue-600 text-sm transition">Need an account? Sign Up</p>
                 </div>
             </div>
         </div>
 
         <!-- Chat Dashboard -->
-        <div id="chatDashboard" class="hidden flex-1 flex h-full overflow-hidden">
+        <div id="chatDashboard" class="hidden flex-1 flex h-full overflow-hidden bg-white shadow-2xl md:rounded-3xl my-0 md:my-4">
             <!-- Sidebar -->
-            <div class="w-1/3 bg-white border-r flex flex-col">
-                <div class="p-4 border-b font-bold flex justify-between">
-                    <span>Chats</span>
-                    <button id="logoutBtn" class="text-red-500 text-sm">Logout</button>
+            <div class="w-1/3 bg-gray-50 border-r flex flex-col">
+                <div class="p-5 border-b flex justify-between items-center bg-white">
+                    <h2 class="font-bold text-lg text-blue-600">Zenzii</h2>
+                    <button id="logoutBtn" class="text-gray-400 hover:text-red-500 transition text-sm">Logout</button>
                 </div>
-                <div class="p-2 border-b">
-                    <input id="searchId" type="text" placeholder="Search ID..." class="w-full p-2 border rounded text-sm mb-2">
-                    <button id="addFriendBtn" class="w-full bg-blue-500 text-white py-1 rounded text-sm">Add Friend</button>
+                <div class="p-4 border-b">
+                    <input id="searchId" type="text" placeholder="Friend's Unique ID" class="w-full p-2 border rounded-lg text-sm mb-2 focus:ring-1 focus:ring-blue-500 outline-none">
+                    <button id="addFriendBtn" class="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">Add Friend</button>
                 </div>
-                <div id="friendsList" class="flex-1 overflow-y-auto"></div>
+                <div id="friendsList" class="flex-1 overflow-y-auto">
+                    <!-- Friends will appear here -->
+                </div>
             </div>
+            
             <!-- Window -->
-            <div id="chatWindow" class="w-2/3 bg-gray-50 flex flex-col">
-                <div id="chatHeader" class="p-4 border-b bg-white font-medium">Select a chat</div>
-                <div id="messagesContainer" class="flex-1 p-4 overflow-y-auto space-y-2"></div>
-                <div class="p-4 border-t flex gap-2">
-                    <input id="msgInput" class="flex-1 p-2 border rounded" placeholder="Type a message...">
-                    <button id="sendBtn" class="bg-green-600 text-white px-4 py-2 rounded">Send</button>
+            <div id="chatWindow" class="w-2/3 flex flex-col bg-white">
+                <div id="chatHeader" class="p-4 border-b font-medium text-gray-700 shadow-sm flex items-center gap-2">Select a chat</div>
+                <div id="messagesContainer" class="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50"></div>
+                <div class="p-4 bg-white border-t flex gap-2">
+                    <input id="msgInput" class="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type a message...">
+                    <button id="sendBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Send</button>
                 </div>
             </div>
         </div>
@@ -62,6 +69,7 @@
         const db = firebase.firestore();
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
+        // E2EE logic
         async function encryptMessage(message, key) {
             const enc = new TextEncoder();
             const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(key.padEnd(32, '0').slice(0, 32)), { name: "AES-GCM" }, false, ["encrypt"]);
@@ -102,8 +110,6 @@
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
             const errorDiv = document.getElementById('authError');
-            errorDiv.innerText = '';
-            
             try {
                 if (isSignup) {
                     const cred = await auth.createUserWithEmailAndPassword(email, pass);
@@ -112,15 +118,12 @@
                 } else {
                     await auth.signInWithEmailAndPassword(email, pass);
                 }
-            } catch (e) { 
-                console.error(e); 
-                errorDiv.innerText = e.message;
-            }
+            } catch (e) { errorDiv.innerText = e.message; }
         };
 
         document.getElementById('toggleAuth').onclick = () => {
             isSignup = !isSignup;
-            document.getElementById('authTitle').innerText = isSignup ? 'Sign Up' : 'Login';
+            document.getElementById('authTitle').innerText = isSignup ? 'Zenzii - Join' : 'Zenzii';
             document.getElementById('authBtn').innerText = isSignup ? 'Sign Up' : 'Login';
             document.getElementById('toggleAuth').innerText = isSignup ? 'Already have an account? Login' : 'Need an account? Sign Up';
         };
@@ -132,8 +135,8 @@
                 snap.forEach(doc => {
                     const f = doc.data();
                     const div = document.createElement('div');
-                    div.className = 'p-3 border-b cursor-pointer hover:bg-gray-50';
-                    div.innerHTML = `<p>${f.email}</p><p class="text-xs text-gray-400">ID: ${f.uniqueId}</p>`;
+                    div.className = 'p-4 border-b cursor-pointer hover:bg-blue-50 flex justify-between items-center';
+                    div.innerHTML = `<div><p class="font-medium text-sm text-gray-700">${f.email}</p><p class="text-[10px] text-gray-400">ID: ${f.uniqueId}</p></div>`;
                     div.onclick = () => startChat(f);
                     list.appendChild(div);
                 });
@@ -147,13 +150,14 @@
                 const friendData = snap.docs[0].data();
                 await db.doc(`artifacts/${appId}/users/${currentUser.uid}/friends/${friendData.uid}`).set(friendData);
                 document.getElementById('searchId').value = '';
+            } else {
+                alert("User not found!");
             }
         };
 
         function startChat(friend) {
             activeFriend = friend;
-            document.getElementById('chatHeader').innerText = friend.email;
-            document.getElementById('messagesContainer').innerHTML = '';
+            document.getElementById('chatHeader').innerText = `Chat: ${friend.email}`;
             const chatId = [currentUser.uid, friend.uid].sort().join('_');
             
             db.collection(`artifacts/${appId}/public/data/messages`)
@@ -165,16 +169,19 @@
                     const decrypted = await decryptMessage(d.text, chatId);
                     msgs.push({ ...d, text: decrypted });
                 }
-                msgs.sort((a,b) => a.timestamp - b.timestamp);
+                msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
                 document.getElementById('messagesContainer').innerHTML = msgs.map(m => `
-                    <div class="p-2 rounded ${m.senderId === currentUser.uid ? 'bg-green-100 ml-auto' : 'bg-white'} max-w-[70%]">
-                        ${m.text}
+                    <div class="flex ${m.senderId === currentUser.uid ? 'justify-end' : 'justify-start'}">
+                        <div class="p-3 rounded-2xl max-w-[75%] ${m.senderId === currentUser.uid ? 'bg-blue-600 text-white' : 'bg-white border'}">
+                            ${m.text}
+                        </div>
                     </div>
                 `).join('');
+                document.getElementById('messagesContainer').scrollTop = document.getElementById('messagesContainer').scrollHeight;
             });
         }
 
-        document.getElementById('sendBtn').onclick = async () => {
+        async function sendMessage() {
             const input = document.getElementById('msgInput');
             if(!input.value.trim() || !activeFriend) return;
             const chatId = [currentUser.uid, activeFriend.uid].sort().join('_');
@@ -186,8 +193,10 @@
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
             input.value = '';
-        };
+        }
 
+        document.getElementById('sendBtn').onclick = sendMessage;
+        document.getElementById('msgInput').onkeypress = (e) => e.key === 'Enter' && sendMessage();
         document.getElementById('logoutBtn').onclick = () => auth.signOut();
 
     </script>
