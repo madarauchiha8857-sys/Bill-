@@ -122,6 +122,7 @@
             isSignup = !isSignup;
             document.getElementById('authTitle').innerText = isSignup ? 'Sign Up' : 'Login';
             document.getElementById('authBtn').innerText = isSignup ? 'Sign Up' : 'Login';
+            document.getElementById('toggleAuth').innerText = isSignup ? 'Already have an account? Login' : 'Need an account? Sign Up';
         };
 
         function loadFriends() {
