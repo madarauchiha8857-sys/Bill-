@@ -22,6 +22,7 @@
                 <div class="space-y-4">
                     <input id="email" type="email" placeholder="Email" class="w-full p-3 border rounded-lg">
                     <input id="password" type="password" placeholder="Password" class="w-full p-3 border rounded-lg">
+                    <p id="authError" class="text-red-500 text-xs text-center font-medium"></p>
                     <button id="authBtn" class="w-full bg-green-600 text-white p-3 rounded-lg font-semibold">Login</button>
                     <p id="toggleAuth" class="mt-4 text-center cursor-pointer text-blue-600 text-sm">Need an account? Sign Up</p>
                 </div>
@@ -100,6 +101,9 @@
         document.getElementById('authBtn').onclick = async () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
+            const errorDiv = document.getElementById('authError');
+            errorDiv.innerText = '';
+            
             try {
                 if (isSignup) {
                     const cred = await auth.createUserWithEmailAndPassword(email, pass);
@@ -108,7 +112,10 @@
                 } else {
                     await auth.signInWithEmailAndPassword(email, pass);
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error(e); 
+                errorDiv.innerText = e.message;
+            }
         };
 
         document.getElementById('toggleAuth').onclick = () => {
