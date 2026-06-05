@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Export Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen p-8">
+
+    <div id="main-ui" class="max-w-md mx-auto mt-10 bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+        <div id="progress-container">
+            <h1 class="text-xl font-bold text-gray-800">Exporting Data</h1>
+            <p class="text-gray-500 text-sm mb-6">Manisha Archive (290GB)</p>
+            
+            <div class="flex justify-between text-xs font-bold text-blue-600 mb-1">
+                <span id="status-text">Starting...</span>
+                <span id="percent-text">0%</span>
+            </div>
+            <div id="timer-text" class="text-[10px] text-red-500 font-mono mb-2 hidden">Remaining: 40:00</div>
+            <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                <div id="progress-bar" class="bg-blue-600 h-2 w-0 transition-all duration-500"></div>
+            </div>
+            <button id="start-btn" class="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">Initialize Export</button>
+        </div>
+
+        <div id="menu-container" class="hidden space-y-4 mt-6">
+            <h2 class="font-bold text-gray-800 mb-4">Select items to download:</h2>
+            <div id="file-list"></div>
+        </div>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const bar = document.getElementById('progress-bar');
+        const status = document.getElementById('status-text');
+        const percentText = document.getElementById('percent-text');
+        const timerText = document.getElementById('timer-text');
+        const menu = document.getElementById('menu-container');
+        const fileList = document.getElementById('file-list');
+
+        const items = ["Manisha Chats", "Manisha Video Calls", "Manisha Voice Calls", "Manisha Recording", "Manisha Images"];
+
+        startBtn.addEventListener('click', async () => {
+            startBtn.classList.add('hidden');
+            
+            // Step 1: Jump to 49% and start timer
+            updateUI(49, "Preparing archive...");
+            startCountdown(40 * 60); 
+            
+            // Step 2: 49% to 50% in 30 mins
+            await simulate(49, 50, 30 * 60, "Downloading...");
+            
+            // Step 3: Unzipping 50% to 100% in 15 mins
+            await simulate(50, 100, 15 * 60, "Unzipping...");
+            
+            showMenu();
+        });
+
+        function startCountdown(seconds) {
+            timerText.classList.remove('hidden');
+            const interval = setInterval(() => {
+                seconds--;
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                timerText.innerText = `Remaining: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                if (seconds <= 0) clearInterval(interval);
+            }, 1000);
+        }
+
+        function showMenu() {
+            document.getElementById('progress-container').classList.add('hidden');
+            menu.classList.remove('hidden');
+            items.forEach(item => {
+                fileList.innerHTML += `<div class="flex justify-between items-center p-3 border rounded-lg bg-gray-50">
+                    <span>${item}</span>
+                    <button onclick="downloadFolder('${item}')" class="text-sm bg-green-600 text-white px-3 py-1 rounded">Download</button>
+                </div>`;
+            });
+        }
+
+        async function downloadFolder(name) {
+            alert("Starting download for " + name + " (This will take 1 hour)");
+            await new Promise(r => setTimeout(r, 60 * 60 * 1000));
+            alert(name + " download complete!");
+        }
+
+        function updateUI(p, msg) {
+            bar.style.width = p + "%";
+            percentText.innerText = Math.floor(p) + "%";
+            status.innerText = msg;
+        }
+
+        function simulate(start, end, durationSec, msg) {
+            return new Promise(resolve => {
+                let current = start;
+                const stepTime = (durationSec * 1000) / (end - start);
+                const interval = setInterval(() => {
+                    current++;
+                    updateUI(current, msg);
+                    if (current >= end) {
+                        clearInterval(interval);
+                        resolve();
+                    }
+                }, stepTime);
+            });
+        }
+    </script>
+</body>
+</html>
+
+
